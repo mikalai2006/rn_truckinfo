@@ -1,0 +1,71 @@
+/** @type {import('tailwindcss').Config} */
+const colors = require('tailwindcss/colors');
+const nativewind = require('nativewind/tailwind/css');
+
+module.exports = {
+  // mode: 'jit',
+  // darkMode: 'class',
+  content: [
+    './App.{js,jsx,ts,tsx}',
+    './src/**/*.{js,jsx,ts,tsx}',
+    './src/components/*.{js,jsx,ts,tsx}',
+  ],
+  theme: {
+    colors: {
+      transparent: 'transparent',
+      current: 'currentColor',
+      black: '#000',
+      white: '#fff',
+      // gray: colors.neutral,
+      // lime: colors.lime,
+      // purple: colors.purple,
+      // second: colors.neutral,
+      blue: colors.blue,
+      p: colors.indigo, // primary -purple -violet -cyan
+      s: colors.slate, // second -slate
+      su: colors.green, // success
+      d: colors.red, // danger -red
+      a: colors.orange, // accent
+    },
+    extend: {
+      spacing: {
+        98: '26rem',
+        100: '30rem',
+        128: '32rem',
+      },
+      width: {
+        98: '26rem',
+        100: '30rem',
+        128: '32rem',
+      },
+      opacity: {
+        0: '0',
+        5: '0.05',
+        10: '0.1',
+        25: '.25',
+        50: '.5',
+        75: '.75',
+        90: '.90',
+        95: '.95',
+        100: '100',
+      },
+    },
+  },
+  variants: {
+    extend: {
+      ringColor: ['hover', 'active', 'dark'],
+      ringOffsetWidth: ['hover', 'active', 'dark'],
+      borderStyle: ['responsive', 'hover'],
+      borderWidth: ['responsive', 'hover', 'focus'],
+      borderRadius: ['hover', 'focus'],
+      height: ['responsive', 'hover'],
+      overflow: ['responsive', 'hover'],
+      padding: ['responsive', 'hover'],
+      zIndex: ['responsive', 'hover'],
+      backgroundColor: ['checked'],
+      borderColor: ['checked'],
+      space: ['responsive'],
+    },
+  },
+  plugins: [nativewind()],
+};
