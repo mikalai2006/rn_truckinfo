@@ -36,12 +36,16 @@ export default function useTrack() {
     };
     const onAddListPointToTrack = async ({list}) => {
         console.log('Need send ', list.length);
-        const body = list.map(x => {
-            return {
-                lat: x.latitude,
-                lon: x.longitude,
-            };
-        });
+
+        const pointsForSave = list.filter(x => x.coords?.accuracy < 30);
+        const body = pointsForSave
+            .map(x => {
+                return {
+                    lat: x.coords.latitude,
+                    lon: x.coords.longitude,
+                };
+            })
+            .sort((a, b) => a.timestamp > b.timestamp);
         console.log(JSON.stringify(body));
 
         return await fetch(host + '/api/v1/track/list/', {

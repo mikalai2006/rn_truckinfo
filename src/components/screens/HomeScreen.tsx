@@ -5,21 +5,32 @@ import {useAppSelector} from '../../store/hooks';
 import {tokens} from '../../store/appSlice';
 import WidgetAuth from '../widgets/WidgetAuth';
 import Onboarding from '../Onboarding';
-import {StyledComponent} from 'nativewind';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import {StyledComponent, useColorScheme} from 'nativewind';
+// import {SafeAreaView} from 'react-native-safe-area-context';
 
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import WidgetLocation from '~components/widgets/WidgetLocation';
+import FocusStatusBar from '~components/FocusStatusBar';
+import WidgetHeaderApp from '~components/widgets/WidgetHeaderApp';
 // import HomeTabStack from '../navigations/HomeTabStack';
 
 const Stack = createNativeStackNavigator();
 
-const HomeScreen = ({navigation}) => {
+const HomeScreen = ({}) => {
     const token = useAppSelector(tokens);
     const [helloScreen] = useState(false);
+    const {colorScheme} = useColorScheme();
 
     return (
-        <SafeAreaView tw="flex-1">
+        <View style={{flex: 1, paddingTop: 0}} tw="bg-s-100 dark:bg-s-900">
+            <FocusStatusBar
+                barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'}
+                translucent
+                backgroundColor="transparent"
+            />
+            <View tw="mt-10 mb-4">
+                <WidgetHeaderApp />
+            </View>
             <StyledComponent component={View} tw="flex-1 flex bg-s-100 dark:bg-s-900">
                 {helloScreen ? (
                     <Onboarding />
@@ -45,14 +56,14 @@ const HomeScreen = ({navigation}) => {
                 {/* <Text className="font-bold">{token.refresh_token}</Text> */}
                 {/* <WebviewBlok
         source={{
-          uri: 'http://localhost:1111/',
+          uri: 'http://localhost:3000/',
           // headers: {
           //   Cookie: `jwt-handmade=${token.refresh_token};`,
           // },
         }}
       /> */}
             </StyledComponent>
-        </SafeAreaView>
+        </View>
     );
 };
 

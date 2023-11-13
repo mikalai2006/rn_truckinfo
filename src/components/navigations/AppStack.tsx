@@ -4,10 +4,8 @@ import {DrawerContentScrollView, DrawerItemList, createDrawerNavigator} from '@r
 import {Text, TouchableOpacity, View, useWindowDimensions} from 'react-native';
 import {useColorScheme} from 'nativewind';
 
-import SettingScreen from '../screens/SettingScreen';
-import MapScreen from '../screens/MapScreen';
-// import CameraScreen from '../screens/CameraScreen';
-// import {MediaScreen} from '../screens/MediaScreen';
+import CameraScreen from '../screens/CameraScreen';
+import {MediaScreen} from '../screens/MediaScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -25,12 +23,13 @@ import {useSelector} from 'react-redux';
 
 import colors from '../../utils/colors';
 
-import HomeTabStack from './HomeTabStack';
 import UserInfo from '~components/UserInfo';
 import AuthScreen from '~components/screens/AuthScreen';
 import useAuth from '~hooks/useAuth';
-import WidgetAuthorization from '~components/widgets/WidgetAuthorization';
+// import WidgetAuthorization from '~components/widgets/WidgetAuthorization';
 import MapStack from './MapStack';
+import {HomeScreen} from '~components/screens';
+import SettingStack from './SettingStack';
 
 const Drawer = createDrawerNavigator();
 
@@ -61,7 +60,7 @@ export function CustomDrawerContent(props) {
             {/* <Text>{token.access_token}</Text>
       <Text>{token.refresh_token}</Text> */}
             <UserInfo />
-            <View className={`flex-1 flex ${colorScheme === 'dark' ? 'bg-slate-800' : 'bg-slate-100'}`}>
+            <View className={`flex-1 flex ${colorScheme === 'dark' ? 'bg-s-800' : 'bg-s-100'}`}>
                 <View className="flex-auto m-0 p-0">
                     <DrawerItemList {...props} />
                 </View>
@@ -103,6 +102,7 @@ export default function AppStack() {
     const {colorScheme} = useColorScheme();
     const [dark, setDark] = React.useState<boolean>(false);
     const token = useSelector(tokens);
+    console.log('Render AppStack');
 
     React.useEffect(() => {
         const getDark = async () => {
@@ -121,13 +121,14 @@ export default function AppStack() {
 
     return (
         <>
-            <WidgetAuthorization />
+            {/* <WidgetAuthorization /> */}
             <Drawer.Navigator
                 drawerContent={props => <CustomDrawerContent {...props} />}
                 screenOptions={{
                     // drawerHideStatusBarOnOpen: true,
                     drawerPosition: 'left',
-                    header: () => {},
+                    // header: () => {},
+                    headerShown: false,
                     drawerType: dimensions.width >= 768 ? 'permanent' : 'front',
                     headerStyle: {
                         backgroundColor: colorScheme === 'dark' ? '#0f172a' : colors.s[100],
@@ -141,11 +142,11 @@ export default function AppStack() {
                     drawerInactiveTintColor: colorScheme !== 'dark' ? '#0f172a' : '#fff',
                 }}
                 initialRouteName={token.access_token === '' ? 'AuthScreen' : 'HomeTabStack'}>
-                <Drawer.Screen name="HomeTabStack" component={HomeTabStack} />
+                <Drawer.Screen name="HomeScreen" component={HomeScreen} />
                 <Drawer.Screen name="MapStack" component={MapStack} />
                 <Drawer.Screen
-                    name="SettingScreen"
-                    component={SettingScreen}
+                    name="SettingStack"
+                    component={SettingStack}
                     options={
                         {
                             // drawerItemStyle: {display: 'none'},
@@ -162,8 +163,8 @@ export default function AppStack() {
                         drawerItemStyle: {display: 'none'},
                     }}
                 />
-                {/* <Drawer.Screen name="CameraScreen" component={CameraScreen} />
-                <Drawer.Screen name="MediaScreen" component={MediaScreen} /> */}
+                <Drawer.Screen name="CameraScreen" component={CameraScreen} />
+                <Drawer.Screen name="MediaScreen" component={MediaScreen} />
             </Drawer.Navigator>
         </>
     );

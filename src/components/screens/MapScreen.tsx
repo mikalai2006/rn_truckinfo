@@ -1,16 +1,22 @@
-import React, {useEffect, useRef} from 'react';
-import {Text, View} from 'react-native';
-
-import WebView from 'react-native-webview';
-import useOnMessage from '~hooks/useOnMessage';
-
 import {useColorScheme} from 'nativewind';
-import {useAppSelector} from '~store/hooks';
-import {feature} from '~store/appSlice';
-import WidgetFeature from '~components/widgets/WidgetFeature';
-import WidgetMapLeaflet from '~components/widgets/WidgetMapLeaflet';
+import React, {useCallback, useRef} from 'react';
+import {StatusBar, View} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import FocusStatusBar from '~components/FocusStatusBar';
+import MarkerStack from '~components/navigations/MarkerStack';
+import WidgetMapBottomSheet from '~components/widgets/WidgetMapBottomSheet';
 
-const MapArea = ({navigation}) => {
+// import WidgetFeature from '~components/widgets/WidgetFeature';
+import WidgetMapFromSite, {MapBottomSheetRefProps} from '~components/widgets/WidgetMapFromSite';
+import WidgetMapLeaflet from '~components/widgets/WidgetMapLeaflet';
+import colors from '~utils/colors';
+// import WidgetShortInfoMarker from '~components/widgets/WidgetShortInfoMarker';
+// import colors from '~utils/colors';
+
+const MapScreen = ({navigation}) => {
+    console.log('MapScreen');
+    const {colorScheme} = useColorScheme();
+
     // React.useEffect(() => {
     //     const unsubscribe = navigation.addListener('focus', () => {
     //         console.log('focus map');
@@ -21,7 +27,7 @@ const MapArea = ({navigation}) => {
     //     return unsubscribe;
     // }, [navigation]);
 
-    let webviewRef = useRef();
+    // let webviewRef = useRef();
 
     // const setJWT = async value => {
     //     try {
@@ -146,35 +152,18 @@ const MapArea = ({navigation}) => {
     //     // eslint-disable-next-line react-hooks/exhaustive-deps
     // }, []);
 
-    const {colorScheme} = useColorScheme();
-
-    React.useEffect(() => {
-        webviewRef.current?.injectJavaScript(
-            `(function() {
-        document.dispatchEvent(new MessageEvent('message',
-          ${JSON.stringify({
-              data: {
-                  event: 'dark',
-                  dark: colorScheme === 'dark',
-              },
-          })}));
-      })();
-      `,
-        );
-        return () => {};
-    }, [colorScheme]);
-
-    const {onMessage} = useOnMessage();
-    const featureData = useAppSelector(feature);
-    useEffect(() => {
-        console.log('Change feature', featureData?.id);
-        if (featureData) {
-            navigation.navigate('PointStack');
-        }
-    }, [featureData]);
+    const mapRef = useRef<MapBottomSheetRefProps>(null);
+    const onCloseSheet = useCallback(() => {
+        mapRef.current?.onCloseBottomSheet();
+    }, []);
 
     return (
-        <View tw="flex-1">
+        <View style={{flex: 1, paddingTop: 0}}>
+            <FocusStatusBar
+                barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'}
+                translucent
+                backgroundColor="transparent"
+            />
             {/* {featureData?.id && <WidgetFeature />} */}
             {/* <Text>
                 <Text>Current position: </Text>
@@ -187,37 +176,18 @@ const MapArea = ({navigation}) => {
                 <Button title="Watch Position" onPress={watchPosition} />
             )} */}
             {/* <Button title="Get Current Positions" onPress={requestGeoPermission} /> */}
-            {/* <WebView
-                ref={webviewRef}
-                sharedCookiesEnabled={true}
-                // geolocationEnabled={true}
-                // injectedJavaScript={}
-                originWhitelist={['*']}
-                source={{
-                    uri: 'http://localhost:1111/map',
-                    headers: {
-                        Cookie: 'dark=${true}',
-                    },
-                }}
-                onMessage={event => {
-                    // console.log('event', event);
+            {/* <WidgetMapLeaflet /> */}
+            <WidgetMapFromSite ref={mapRef} />
 
-                    // const data = JSON.parse(event.nativeEvent.data);
+            {/* <MarkerStack onClose={onCloseSheet} /> */}
+            {/* <WidgetMapBottomSheet onClose={onCloseSheet} /> */}
 
-                    // if (data.event === 'jwt') {
-                    //     setJWT(data.data);
-                    // }
-
-                    onMessage(event);
-                }}
-                // startInLoadingState={true}
-                javaScriptEnabled
-                domStorageEnabled
-                style={{height: '100%'}}
-            /> */}
-            <WidgetMapLeaflet />
+            {/* <WidgetShortInfoMarker navigation={navigation} /> */}
+            {/* <View tw="absolute bottom-0">
+                <Text>Feature</Text>
+            </View> */}
         </View>
     );
 };
 
-export default MapArea;
+export default MapScreen;

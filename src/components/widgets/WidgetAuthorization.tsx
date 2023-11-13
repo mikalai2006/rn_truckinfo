@@ -5,13 +5,14 @@ import UserInfo from '~components/UserInfo';
 import RButton from '~components/r/RButton';
 import {useTranslation} from 'react-i18next';
 import {useAppSelector} from '~store/hooks';
-import {tokens} from '~store/appSlice';
+import {tokens, user} from '~store/appSlice';
 import {useNavigation} from '@react-navigation/native';
 
 const WidgetAuthorization = () => {
     const navigation = useNavigation();
 
     const token = useAppSelector(tokens);
+    const userStore = useAppSelector(user);
     const [err, setErr] = useState({});
     const [loading, setLoading] = useState(true);
     const {onGetIam, onRefreshToken} = useAuth();
@@ -56,8 +57,9 @@ const WidgetAuthorization = () => {
     // }, []);
 
     const onRefreshTokens = async () => {
-        // await onRefreshToken();
-        navigation.navigate('AuthScreen');
+        await onRefreshToken();
+        await onGetIam();
+        // navigation.navigate('AuthScreen');
         setErr({});
     };
 
@@ -74,7 +76,7 @@ const WidgetAuthorization = () => {
                                 <View tw="p-4">
                                     <Text tw="text-red-400 text-lg">{err.code}</Text>
                                     <Text tw="text-red-400 text-lg">{err.message}</Text>
-                                    <RButton label="Продолжить оффлайн" onPress={() => setErr({})} />
+                                    <RButton text="Продолжить оффлайн" onPress={() => setErr({})} />
                                 </View>
                             </View>
                         ) : err.code === 401 ? (
@@ -87,7 +89,7 @@ const WidgetAuthorization = () => {
                                     <Text tw="text-lg pb-4 text-s-800 dark:text-s-300">
                                         Продолжим дальше с этим аккаунтом?
                                     </Text>
-                                    <RButton label="Продолжить" onPress={onRefreshTokens} />
+                                    <RButton text="Продолжить" onPress={onRefreshTokens} />
                                 </View>
                             </View>
                         ) : (

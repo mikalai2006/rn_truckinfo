@@ -1,5 +1,6 @@
 import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {RootState} from './store';
+import {IMarkerConfig} from '~utils/markerdata';
 export interface ITokens {
     access_token: string | null;
     refresh_token: string | null;
@@ -17,6 +18,7 @@ export interface IUser {
 export interface IFeature {
     type: string;
     id: string;
+    osmId: string;
     properties: Properties;
     geometry: Geometry;
 }
@@ -38,6 +40,194 @@ export interface IPoint {
     lon: string;
 }
 
+export interface ITagData {
+    id: string;
+    nodeId: string;
+    tagId: string;
+    tagoptId: string;
+    value: string;
+    tag: ITag;
+    updatedAt: string;
+    createdAt: string;
+}
+
+export interface ITag {
+    id: string;
+    userId: string;
+    key: string;
+    title: string;
+    type: string;
+    description: string;
+    props: {[key: string]: any};
+    options: ITagopt[];
+    multiopt: number;
+    isFilter: boolean;
+    // tagoptId: string[];
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export interface IAddressProps {
+    title: string;
+    subtitle: string;
+    name: string;
+    lat: string;
+    lon: string;
+    class: string;
+    addresstype: string;
+}
+
+export interface IAddress {
+    _id: string;
+    userId: string;
+    osmId: string;
+    dAddress: string;
+    props: IAddressProps;
+}
+
+export interface IReviewsInfo {
+    count: number;
+    value: number;
+    ratings: {
+        _id: number;
+        count: number;
+    }[];
+}
+
+export interface IReview {
+    _id: string;
+    userId: string;
+    osmId: string;
+    rate: number;
+    review: string;
+    updatedAt: string;
+    createdAt: string;
+}
+
+export interface ILike {
+    _id: string;
+    nodeId: string;
+    userId: string;
+    status: number;
+    updatedAt: string;
+    createdAt: string;
+}
+
+export interface ILikeNode {
+    like: number;
+    dlike: number;
+    ilike: ILike;
+}
+
+// export interface IActiveNode {
+//     _id: string;
+//     osmId: string;
+//     type: string;
+//     lat: number;
+//     lon: number;
+//     props: any;
+//     address: IAddress;
+//     data: ITagData[];
+//     reviews: IReview[];
+//     reviewsInfo: IReviewsInfo;
+//     like: ILikeNode;
+
+//     updatedAt: string;
+//     createdAt: string;
+// }
+export interface ITagopt {
+    id: string;
+    userId: string;
+    tagId: string;
+    // osmId: string;
+    // name: string;
+    value: any;
+    title: string;
+    description: string;
+    locale: {[key: string]: string};
+    props: {[key: string]: string};
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export type TTagoptInput = {
+    [Property in keyof ITagopt]?: ITagopt[Property];
+};
+
+export interface INodedata {
+    id: string;
+    userId: string;
+    nodeId: string;
+    tagId: string;
+    tagoptId: string;
+    value: string;
+    data: {
+        value?: any;
+    };
+    user: IUser;
+    title: string;
+    description: string;
+    options: ITagopt[];
+    locale: {[key: string]: string};
+    tag: ITag;
+    tagopt: ITagopt;
+    status: number;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export type TNodedataInput = {
+    [Property in keyof INodedata]?: INodedata[Property];
+};
+
+// export interface IReviewsInfo {
+//     count: number;
+//     value: number;
+// }
+
+export interface INode {
+    id: string;
+    userId: string;
+    user: IUser;
+    tags: string[];
+    data: INodedata[];
+    type: string;
+    name: string;
+    osmId: string;
+    reviews: IReview[];
+    reviewsInfo: IReviewsInfo;
+    address: IAddress;
+    props: any;
+    lon: number;
+    lat: number;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export type TNodeInput = {
+    [Property in keyof INode]?: INode[Property];
+};
+
+export interface IAmenity {
+    id: string;
+    userId: string;
+    key: string;
+    title: string;
+    description: string;
+    props: {[key: string]: string};
+    locale: {[key: string]: string};
+    type: string;
+    status: number;
+    tags: string[];
+
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export type TAmenityInput = {
+    [Property in keyof IAmenity]?: IAmenity[Property];
+};
+
 export interface AppState {
     dark: boolean;
     drawer: boolean;
@@ -45,6 +235,15 @@ export interface AppState {
     langCode: string;
     user: IUser | null;
     feature: IFeature | null;
+    positions: any[];
+    activeNode: INode | null;
+    markerConfig: IMarkerConfig | null;
+    amenities: {
+        [key: string]: IAmenity;
+    };
+    tags: {
+        [key: string]: ITag;
+    };
 }
 
 const initialState: AppState = {
@@ -58,6 +257,10 @@ const initialState: AppState = {
     user: null,
     feature: null,
     positions: [],
+    activeNode: null,
+    markerConfig: null,
+    amenities: {},
+    tags: {},
 };
 
 // Приведенная ниже функция называется thunk и позволяет нам выполнять асинхронную логику. Это
@@ -88,14 +291,26 @@ export const uiSlice = createSlice({
             console.log('setUser: ', JSON.stringify(action.payload));
             state.user = {...action.payload};
         },
-        setFeature: (state, action: PayloadAction<IFeature> | PayloadAction<null>) => {
-            console.log('setFeature: ', JSON.stringify(action?.payload));
+        setFeature: (state, action: PayloadAction<IFeature | null>) => {
+            console.log('setFeature: ', JSON.stringify(action?.payload?.osmId));
             state.feature = action.payload ? {...action.payload} : action.payload;
         },
         setDark: (state, action: PayloadAction<boolean>) => {
+            console.log('setDark: ', action.payload);
             state.dark = action.payload;
         },
+        setActiveNode: (state, action: PayloadAction<INode | null>) => {
+            console.log('setActiveNode', action.payload?.osmId);
+
+            state.activeNode = action.payload;
+        },
+        setActiveMarkerConfig: (state, action: PayloadAction<IMarkerConfig | null>) => {
+            console.log('setActiveMarkerConfig', action.payload?.type);
+
+            state.markerConfig = action.payload;
+        },
         setLangCode: (state, action: PayloadAction<string>) => {
+            console.log('setLangCode', action.payload);
             state.langCode = action.payload;
         },
         setDrawer: (state, action: PayloadAction<boolean>) => {
@@ -108,6 +323,18 @@ export const uiSlice = createSlice({
 
             state.positions = [...state.positions];
             state.positions.push(action.payload);
+        },
+        clearPositions: state => {
+            console.log('clearPositions');
+            state.positions = [];
+        },
+        setAmenities: (state, action: PayloadAction<IAmenity[]>) => {
+            console.log('setAmenities');
+            state.amenities = Object.fromEntries(action.payload.map(x => [x.type, x]));
+        },
+        setTags: (state, action: PayloadAction<ITag[]>) => {
+            console.log('setTags');
+            state.tags = Object.fromEntries(action.payload.map(x => [x.id, x]));
         },
     },
     // Поле `extraReducers` позволяет срезу обрабатывать действия, определенные в другом месте,
@@ -127,7 +354,20 @@ export const uiSlice = createSlice({
     // },
 });
 
-export const {setDark, setDrawer, setTokenAccess, setLangCode, setUser, setFeature, setPositions} = uiSlice.actions;
+export const {
+    setDark,
+    setDrawer,
+    setTokenAccess,
+    setActiveNode,
+    setActiveMarkerConfig,
+    setLangCode,
+    setUser,
+    setFeature,
+    setPositions,
+    clearPositions,
+    setAmenities,
+    setTags,
+} = uiSlice.actions;
 // Функция ниже называется селектором и позволяет нам выбрать значение из
 // штат. Селекторы также могут быть определены встроенными, где они используются вместо
 // в файле среза. Например: `useSelector((состояние: RootState) => состояние.счетчик.значение)`
@@ -137,6 +377,10 @@ export const tokens = (state: RootState) => state.ui.tokens;
 export const langCode = (state: RootState) => state.ui.langCode;
 export const user = (state: RootState) => state.ui.user;
 export const feature = (state: RootState) => state.ui.feature;
+export const activeNode = (state: RootState) => state.ui.activeNode;
 export const positions = (state: RootState) => state.ui.positions;
+export const markerConfig = (state: RootState) => state.ui.markerConfig;
+export const amenities = (state: RootState) => state.ui.amenities;
+export const tags = (state: RootState) => state.ui.tags;
 
 export default uiSlice.reducer;

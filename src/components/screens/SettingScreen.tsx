@@ -1,9 +1,20 @@
-import React from 'react';
-import {View, Text, Button, NativeModules, Platform} from 'react-native';
+import React, {useCallback, useRef} from 'react';
+import {View, Text, Button, NativeModules, Platform, RefreshControl, TouchableOpacity} from 'react-native';
+import {ScrollView} from 'react-native-gesture-handler';
 // import WebviewBlok from '../WebviewBlok';
 import PushNotification from 'react-native-push-notification';
+import RButton from '~components/r/RButton';
+import {SSkeleton} from '~components/ui/SSkeleton';
+import SBottomSheet, {BottomSheetRefProps} from '~components/ui/SBottomSheet';
+import {useColorScheme} from 'nativewind';
+import FocusStatusBar from '~components/FocusStatusBar';
+import WidgetHeaderApp from '~components/widgets/WidgetHeaderApp';
+import {iGlobe} from '~utils/icons';
+import SIcon from '~components/ui/SIcon';
 
-const SettingScreen = ({}) => {
+const SettingScreen = ({navigation}) => {
+    const {colorScheme} = useColorScheme();
+
     const testPush = () => {
         PushNotification.localNotification({
             channelId: 'test',
@@ -44,16 +55,68 @@ const SettingScreen = ({}) => {
               NativeModules.SettingsManager.settings.AppleLanguages[0] //iOS 13
             : NativeModules.I18nManager.localeIdentifier;
 
+    const ref = useRef<BottomSheetRefProps>(null);
+    const onPress = useCallback(() => {
+        const isActive = ref?.current?.isActive();
+        if (isActive) {
+            ref?.current?.scrollTo(0);
+        } else {
+            ref?.current?.scrollTo(-200);
+        }
+    }, []);
+
+    const [refreshing, setRefreshing] = React.useState(false);
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        setTimeout(() => {
+            setRefreshing(false);
+        }, 2000);
+    }, []);
+
     return (
-        <View className="h-full">
-            <Text>SettingScreen {deviceLanguage}</Text>
+        <View style={{flex: 1, paddingTop: 0}} tw="bg-s-100 dark:bg-s-900">
+            <FocusStatusBar
+                barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'}
+                translucent
+                backgroundColor="transparent"
+            />
+            <View tw="mt-10 mb-4">
+                <WidgetHeaderApp />
+            </View>
+            <View tw="p-4">
+                <View tw="bg-white dark:bg-s-800 rounded-lg p-4">
+                    <Text tw="text-black dark:text-white">Language</Text>
+                    <TouchableOpacity
+                        onPress={() => navigation.navigate('LanguageScreen')}
+                        activeOpacity={0.8}
+                        tw="flex flex-row p-3">
+                        <SIcon path={iGlobe} size={20} tw="text-black dark:text-white mr-2" />
+                        <Text tw="text-black dark:text-white">{deviceLanguage}</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
             <Button title="Test push" onPress={() => testPush()} />
             <Button title="Test shedule" onPress={() => testShedule()} />
             {/* <WebviewBlok
         source={{
-          uri: 'http://localhost:1111/setting',
+          uri: 'http://localhost:3000/setting',
         }}
       /> */}
+            <RButton text="Open sheet" onPress={onPress} />
+            <SBottomSheet ref={ref} snapPoints={[0, -300]}>
+                <Text>Awesome</Text>
+                <View tw="p-4">
+                    <SSkeleton classString="mb-2 h-6" width="100%" />
+                    <SSkeleton classString="h-12 w-12 rounded-full" />
+                </View>
+
+                <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+                    <View tw="h-[50vh] bg-s-300" />
+                    <View tw="h-screen bg-s-400" />
+                    <View tw="h-[20vh] bg-s-300" />
+                </ScrollView>
+            </SBottomSheet>
         </View>
     );
 };

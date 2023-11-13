@@ -5,7 +5,7 @@ import LocationEnabler from 'react-native-location-enabler';
 import useTrack from '~hooks/useTrack';
 import RButton from '~components/r/RButton';
 import {useAppDispatch, useAppSelector} from '~store/hooks';
-import {positions, setPositions} from '~store/appSlice';
+import {positions, setPositions, clearPositions} from '~store/appSlice';
 
 const {
     PRIORITIES: {HIGH_ACCURACY},
@@ -34,7 +34,7 @@ const WidgetLocation = () => {
 
     Geolocation.setRNConfiguration({
         skipPermissionRequests: true,
-        authorizationLevel: 'auto',
+        // authorizationLevel: 'auto',
         locationProvider: 'auto',
     });
 
@@ -74,10 +74,10 @@ const WidgetLocation = () => {
                 console.log('You can use the location');
                 const watchID = Geolocation.watchPosition(
                     position => {
-                        console.log('Change position', position.coords.latitude, ',', position.coords.longitude);
+                        console.log('Change position', position);
                         setPositionx(JSON.stringify(position));
                         console.log('positions=', positionx);
-                        dispatch(setPositions(position.coords));
+                        dispatch(setPositions(position));
                         // onAddPointToTrack({lat: position.coords.latitude, lon: position.coords.longitude});
                         // if (positionsAll.length > 10) {
                         //     onAddListPointToTrack({list: positionsAll});
@@ -86,11 +86,11 @@ const WidgetLocation = () => {
                     error => console.log('WatchPosition Error', JSON.stringify(error)),
                     {
                         enableHighAccuracy: true,
-                        interval: 10,
-                        distanceFilter: 1,
-                        // distanceFilter: 250, // 100 meters
-                        // maximumAge: 20000,
-                        // timeout: 120000,
+                        // interval: 5000,
+                        // distanceFilter: 10,
+                        // // distanceFilter: 250, // 100 meters
+                        maximumAge: 5000, // 1000,
+                        timeout: 5000, // 20000,
                         // useSignificantChanges: true
                     },
                 );
@@ -103,12 +103,20 @@ const WidgetLocation = () => {
         }
     };
 
+    const savePositions = () => {
+        onAddListPointToTrack({list: positionsAll});
+        // clearPositionsx();
+    };
+
     const clearWatch = () => {
         subscriptionId !== null && Geolocation.clearWatch(subscriptionId);
         setSubscriptionId(null);
         setPositionx(null);
     };
 
+    const clearPositionsx = () => {
+        dispatch(clearPositions());
+    };
     // useEffect(() => {
     //     return () => {
     //         clearWatch();
@@ -204,24 +212,30 @@ const WidgetLocation = () => {
     return (
         <View>
             {!enabledX ? (
-                <View tw="bg-s-100 dark:bg-s-800 m-4 rounded-lg p-4">
+                <View tw="bg-p-500 dark:bg-s-800 m-4 rounded-lg p-4">
                     <Text tw="text-s-800 dark:text-slate-100 pb-4 text-base">
                         Для лучшей отдачи приложения при поиске объектов на карте, включите GPS
                     </Text>
-                    <RButton onPress={requestResolution} label="Включить GPS" />
+                    <RButton onPress={requestResolution} text="Включить GPS" />
                 </View>
             ) : (
                 <View tw="bg-s-100 dark:bg-s-800 m-4 rounded-lg p-4">
                     <Text>{subscriptionId}</Text>
                     <Text tw="text-s-800 dark:text-slate-100 pb-4 text-base">Приложение работает в режиме радара</Text>
-                    {subscriptionId !== null ? (
-                        <Button title="Clear Watch" onPress={clearWatch} />
-                    ) : (
-                        <Button title="Watch Position" onPress={watchPosition} />
-                    )}
+                    <Button title="Clear All positions" onPress={clearPositionsx} />
+                    <View tw="my-4">
+                        {subscriptionId !== null ? (
+                            <Button title="Stop Watch" onPress={clearWatch} />
+                        ) : (
+                            <Button title="Watch Position" onPress={watchPosition} />
+                        )}
+                    </View>
+                    <Button title="Save positions" onPress={savePositions} />
+                    <Text tw="font-bold">Total: {positionsAll.length} items</Text>
                     {positionsAll.map((x, index) => (
                         <Text key={index}>
-                            {x.latitude},{x.longitude}
+                            {index + 1}. {x.coords?.latitude},{x.coords?.longitude} - {x.coords.accuracy}
+                            {/* ({x.timestamp}) */}
                         </Text>
                     ))}
                 </View>

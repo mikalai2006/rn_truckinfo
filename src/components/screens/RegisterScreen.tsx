@@ -170,7 +170,7 @@ const RegisterScreen = ({navigation}) => {
                         {err !== '' ? <Text tw="text-red-600 dark:text-red-400 text-lg">{err}</Text> : ''}
                     </View>
 
-                    <RButton label={'Register'} loading={loading} disabled={false} onPress={() => onSignUpForm()} />
+                    <RButton text={'Register'} loading={loading} disabled={false} onPress={() => onSignUpForm()} />
 
                     <View tw="flex flex-row items-stretch justify-stretch pt-4">
                         <Text tw="flex-none text-lg">{t('form:alreadyRegister')}</Text>

@@ -12,8 +12,10 @@ import {
     // ScrollView,
     View,
     StatusBar,
+    LogBox,
 } from 'react-native';
-import {StyledComponent, useColorScheme} from 'nativewind';
+LogBox.ignoreLogs(['new NativeEventEmitter']); // TODO
+import {useColorScheme} from 'nativewind';
 
 import {NavigationContainer} from '@react-navigation/native';
 
@@ -22,29 +24,32 @@ import {store, persistor} from './src/store/store';
 import {PersistGate} from 'redux-persist/integration/react';
 import colors from './src/utils/colors';
 import HelloScreen from '~components/screens/HelloScreen';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
 function App(): JSX.Element {
     const {colorScheme} = useColorScheme();
 
     const backgroundStyle = {
-        backgroundColor: colorScheme === 'dark' ? '#0f172a' : colors.s[100],
+        backgroundColor: colorScheme === 'dark' ? colors.s[800] : colors.s[100],
         flex: 1,
     };
 
     return (
         <Provider store={store}>
             <PersistGate loading={<ActivityIndicator />} persistor={persistor}>
-                <StyledComponent component={View} tw="flex-1 bg-s-100 dark:bg-s-800">
-                    <StatusBar
-                        barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'}
-                        backgroundColor={backgroundStyle.backgroundColor}
-                    />
-                    <NavigationContainer>
-                        <HelloScreen />
-                    </NavigationContainer>
-                    {/* <SafeAreaView style={backgroundStyle}> */}
-                    {/* <DrawerSimple /> */}
-                    {/* <Stack.Navigator>
+                <GestureHandlerRootView style={{flex: 1, paddingTop: 0}}>
+                    <View style={{flex: 1}}>
+                        {/* <StatusBar
+                            barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'}
+                            // backgroundColor={backgroundStyle.backgroundColor}
+                            backgroundColor="transparent"
+                        /> */}
+                        <NavigationContainer>
+                            <HelloScreen />
+                        </NavigationContainer>
+                        {/* <SafeAreaView style={backgroundStyle}> */}
+                        {/* <DrawerSimple /> */}
+                        {/* <Stack.Navigator>
         <Stack.Screen
           name="Home"
           options={{title: 'My home'}}
@@ -59,12 +64,12 @@ function App(): JSX.Element {
           component={DetailsScreen}
         />
       </Stack.Navigator> */}
-                    {/*<DrawerTest />
+                        {/*<DrawerTest />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}> */}
-                    {/* <Header /> */}
-                    {/* <View
+                        {/* <Header /> */}
+                        {/* <View
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
@@ -83,9 +88,10 @@ function App(): JSX.Element {
           </Section>
           <LearnMoreLinks />
         </View> */}
-                    {/* </ScrollView> */}
-                    {/* </SafeAreaView> */}
-                </StyledComponent>
+                        {/* </ScrollView> */}
+                        {/* </SafeAreaView> */}
+                    </View>
+                </GestureHandlerRootView>
             </PersistGate>
         </Provider>
     );

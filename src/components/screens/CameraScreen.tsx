@@ -1,176 +1,209 @@
-// import {useIsFocused} from '@react-navigation/native';
-// import React from 'react';
-// import Icon from 'react-native-vector-icons/MaterialIcons';
-// import {Pressable, View, ActivityIndicator, PermissionsAndroid, TouchableOpacity, Platform, Text} from 'react-native';
-// import {
-//     Camera,
-//     useCameraDevices,
-//     useCameraFormat,
-//     PhotoFile,
-//     TakePhotoOptions,
-//     TakeSnapshotOptions,
-// } from 'react-native-vision-camera';
+import {useIsFocused} from '@react-navigation/native';
+import React, {useEffect} from 'react';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import {
+    Pressable,
+    View,
+    ActivityIndicator,
+    PermissionsAndroid,
+    TouchableOpacity,
+    Platform,
+    Text,
+    StyleSheet,
+    BackHandler,
+} from 'react-native';
+import {
+    Camera,
+    useCameraDevices,
+    useCameraFormat,
+    PhotoFile,
+    TakePhotoOptions,
+    TakeSnapshotOptions,
+    useCameraDevice,
+} from 'react-native-vision-camera';
 
-// import {tokens, user} from '../../store/appSlice';
-// import {useAppSelector} from '../../store/hooks';
+import {tokens, user} from '../../store/appSlice';
+import {useAppSelector} from '../../store/hooks';
 
-// const CameraScreen = ({navigation}) => {
-//     const token = useAppSelector(tokens);
-//     const userData = useAppSelector(user);
-//     const camera = React.useRef<Camera>(null);
-//     const isFocused = useIsFocused();
+const CameraScreen = ({navigation}) => {
+    useEffect(() => {
+        const backAction = () => {
+            console.log('Hold on!', 'Are you sure you want to go back?', [
+                // {
+                //   text: 'Cancel',
+                //   onPress: () => null,
+                //   style: 'cancel',
+                // },
+                // {text: 'YES', onPress: () => BackHandler.exitApp()},
+            ]);
+            navigation.navigate('MapStack');
+            return true;
+        };
 
-//     const devices = useCameraDevices();
-//     const device = devices.back;
-//     const format = useCameraFormat(device);
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
 
-//     const [flash, setFlash] = React.useState<'off' | 'on'>('on');
-//     const takePhotoOptions = React.useMemo<TakePhotoOptions & TakeSnapshotOptions>(
-//         () => ({
-//             photoCodec: 'jpeg',
-//             qualityPrioritization: 'speed',
-//             flash: flash,
-//             quality: 90,
-//             skipMetadata: true,
-//         }),
-//         [flash],
-//     );
+        return () => backHandler.remove();
+    }, []);
 
-//     const createFormData = (photo: PhotoFile, body = {}) => {
-//         const data = new FormData();
+    const token = useAppSelector(tokens);
+    const userData = useAppSelector(user);
+    const camera = React.useRef<Camera>(null);
+    const isFocused = useIsFocused();
 
-//         data.append('images', {
-//             name: 'test.jpg',
-//             type: 'image/jpeg',
-//             uri: Platform.OS === 'ios' ? photo.path.replace('file://', '') : `file://${photo.path}`,
-//         });
+    // const devices = useCameraDevices();
+    //const device = devices.find(x => x.name == 'back');
+    const device = useCameraDevice('back');
+    // const format = useCameraFormat(device);
 
-//         Object.keys(body).forEach(key => {
-//             data.append(key, body[key]);
-//         });
+    const [flash, setFlash] = React.useState<'off' | 'on'>('on');
+    const takePhotoOptions = React.useMemo<TakePhotoOptions & TakeSnapshotOptions>(
+        () => ({
+            photoCodec: 'jpeg',
+            qualityPrioritization: 'speed',
+            flash: flash,
+            quality: 90,
+            skipMetadata: true,
+        }),
+        [flash],
+    );
 
-//         return data;
-//     };
+    const createFormData = (photo: PhotoFile, body = {}) => {
+        const data = new FormData();
 
-//     const handleUploadPhoto = async photo => {
-//         console.log('tokenAccess', token);
-//         // const imageResponse = await fetch(photo.path);
-//         // console.log('imageResponse', imageResponse);
-//         // const imageBlob = await imageResponse.blob();
-//         // console.log('imageBlob', imageBlob);
-//         if (!userData) {
-//             return;
-//         }
+        data.append('images', {
+            name: 'test.jpg',
+            type: 'image/jpeg',
+            uri: Platform.OS === 'ios' ? photo.path.replace('file://', '') : `file://${photo.path}`,
+        });
 
-//         fetch(`http://localhost:8000/api/v1/image`, {
-//             method: 'POST',
-//             headers: {
-//                 Authorization: `Bearer ${token.access_token}`,
-//                 'Access-Control-Allow-Origin-Type': '*',
-//             },
-//             body: createFormData(photo, {serviceId: userData.id, service: 'avatar', dir: 'dir'}),
-//         })
-//             .then(res => res.json())
-//             .then(response => {
-//                 console.log('response', response);
-//             })
-//             .catch(error => {
-//                 console.log('error', error);
-//             });
-//     };
+        Object.keys(body).forEach(key => {
+            data.append(key, body[key]);
+        });
 
-//     const onMediaCaptured = React.useCallback(
-//         (media: PhotoFile, type: 'photo') => {
-//             console.log(`Media captured! ${JSON.stringify(media)}`);
-//             navigation.navigate('MediaScreen', {
-//                 path: media.path,
-//                 type: type,
-//             });
-//         },
-//         [navigation],
-//     );
+        return data;
+    };
 
-//     const takePhoto = React.useCallback(async () => {
-//         try {
-//             if (camera.current == null) {
-//                 throw new Error('Camera ref is null!');
-//             }
+    const handleUploadPhoto = async photo => {
+        console.log('tokenAccess', token);
+        // const imageResponse = await fetch(photo.path);
+        // console.log('imageResponse', imageResponse);
+        // const imageBlob = await imageResponse.blob();
+        // console.log('imageBlob', imageBlob);
+        if (!userData) {
+            return;
+        }
 
-//             console.log('Taking photo...', token);
-//             const photo = await camera.current.takePhoto(takePhotoOptions);
-//             handleUploadPhoto(photo);
-//             onMediaCaptured(photo, 'photo');
-//             // fetch(`file://${photo.path}`)
-//             //   .then(res => {
-//             //     console.log(res._bodyBlob, 'test.jpg');
-//             //   })
-//             //   .catch(err => {
-//             //     console.log('err', err);
-//             //   });
-//         } catch (e) {
-//             console.error('Failed to take photo!', e);
-//         }
-//     }, [camera, onMediaCaptured, takePhotoOptions]);
+        fetch(`http://localhost:8000/api/v1/image`, {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${token.access_token}`,
+                'Access-Control-Allow-Origin-Type': '*',
+            },
+            body: createFormData(photo, {serviceId: userData.id, service: 'avatar', dir: 'dir'}),
+        })
+            .then(res => res.json())
+            .then(response => {
+                console.log('response', response);
+            })
+            .catch(error => {
+                console.log('error', error);
+            });
+    };
 
-//     const requestCameraPermission = async () => {
-//         try {
-//             const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA, {
-//                 title: 'Cool Photo App Camera Permission',
-//                 message: 'Cool Photo App needs access to your camera ' + 'so you can take awesome pictures.',
-//                 buttonNeutral: 'Ask Me Later',
-//                 buttonNegative: 'Cancel',
-//                 buttonPositive: 'OK',
-//             });
-//             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-//                 console.log('You can use the camera');
-//             } else {
-//                 console.log('Camera permission denied');
-//             }
-//         } catch (err) {
-//             console.warn(err);
-//         }
-//     };
+    const onMediaCaptured = React.useCallback(
+        (media: PhotoFile, type: 'photo') => {
+            console.log(`Media captured! ${JSON.stringify(media)}`);
+            navigation.navigate('MediaScreen', {
+                path: media.path,
+                type: type,
+            });
+        },
+        [navigation],
+    );
 
-//     const getPermission = async () => {
-//         await requestCameraPermission();
-//         const cameraPermission = await Camera.getCameraPermissionStatus();
-//         return cameraPermission === 'authorized';
-//     };
+    const takePhoto = React.useCallback(async () => {
+        try {
+            if (camera.current == null) {
+                throw new Error('Camera ref is null!');
+            }
 
-//     if (!getPermission()) {
-//         return <Text>Not access permission...</Text>;
-//     }
-//     if (device == null) {
-//         return <ActivityIndicator />;
-//     }
+            console.log('Taking photo...', token);
+            const photo = await camera.current.takePhoto(takePhotoOptions);
+            handleUploadPhoto(photo);
+            onMediaCaptured(photo, 'photo');
+            // fetch(`file://${photo.path}`)
+            //   .then(res => {
+            //     console.log(res._bodyBlob, 'test.jpg');
+            //   })
+            //   .catch(err => {
+            //     console.log('err', err);
+            //   });
+        } catch (e) {
+            console.error('Failed to take photo!', e);
+        }
+    }, [camera, onMediaCaptured, takePhotoOptions]);
 
-//     return (
-//         <View className={'h-full w-full'}>
-//             <View className="absolute bottom-0 w-full z-10 p-4 flex flex-col items-center">
-//                 <TouchableOpacity>
-//                     <Pressable
-//                         className="p-6 bg-black/20 rounded-full flex flex-col items-center justify-center"
-//                         onPress={takePhoto}>
-//                         <Icon name="photo-camera" size={70} color="white" />
-//                         <Text>{token.access_token}</Text>
-//                     </Pressable>
-//                 </TouchableOpacity>
-//             </View>
-//             {isFocused && (
-//                 <Camera
-//                     ref={camera}
-//                     device={device}
-//                     isActive={isFocused}
-//                     video={false}
-//                     format={format}
-//                     photo={true}
-//                     enableZoomGesture={true}
-//                     // orientation="landscapeLeft"
-//                     className="absolute h-full w-full z-0"
-//                 />
-//             )}
-//         </View>
-//     );
-// };
+    const requestCameraPermission = async () => {
+        try {
+            const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA, {
+                title: 'Cool Photo App Camera Permission',
+                message: 'Cool Photo App needs access to your camera ' + 'so you can take awesome pictures.',
+                buttonNeutral: 'Ask Me Later',
+                buttonNegative: 'Cancel',
+                buttonPositive: 'OK',
+            });
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                console.log('You can use the camera');
+            } else {
+                console.log('Camera permission denied');
+            }
+        } catch (err) {
+            console.warn(err);
+        }
+    };
 
-// export default CameraScreen;
+    const getPermission = async () => {
+        await requestCameraPermission();
+        const cameraPermission = await Camera.getCameraPermissionStatus();
+        return cameraPermission === 'authorized';
+    };
+
+    if (!getPermission()) {
+        return <Text>Not access permission...</Text>;
+    }
+    if (device == null) {
+        return <ActivityIndicator />;
+    }
+
+    return (
+        <View className={'h-full w-full'}>
+            <View className="absolute bottom-0 w-full z-10 p-4 flex flex-col items-center">
+                <TouchableOpacity>
+                    <Pressable
+                        className="p-6 bg-black/20 rounded-full flex flex-col items-center justify-center"
+                        onPress={takePhoto}>
+                        <Icon name="photo-camera" size={70} color="white" />
+                        <Text>{token.access_token}</Text>
+                    </Pressable>
+                </TouchableOpacity>
+            </View>
+            {isFocused && (
+                // <Camera device={device} isActive={true} />
+                <Camera
+                    ref={camera}
+                    device={device}
+                    isActive={isFocused}
+                    video={false}
+                    // format={format}
+                    photo={true}
+                    enableZoomGesture={true}
+                    // orientation="landscapeLeft"
+                    style={StyleSheet.absoluteFill}
+                    className="absolute h-full w-full z-0"
+                />
+            )}
+        </View>
+    );
+};
+
+export default CameraScreen;

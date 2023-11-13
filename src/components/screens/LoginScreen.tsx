@@ -87,7 +87,7 @@ const LoginScreen = ({navigation}) => {
                 <RButton
                     disabled={false}
                     loading={loading}
-                    label={t('form:button_login')}
+                    text={t('form:button_login')}
                     onPress={() => onLoginForm()}
                 />
 

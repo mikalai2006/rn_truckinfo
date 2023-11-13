@@ -1,4 +1,4 @@
-import {View, TouchableOpacity, Modal, Alert} from 'react-native';
+import {View, TouchableOpacity, Modal, Alert, ActivityIndicator, Platform} from 'react-native';
 import React, {useState} from 'react';
 
 import GoogleSVG from '../assets/misc/google.svg';
@@ -13,7 +13,11 @@ const SocialButtons = () => {
     const [modalVisible, setModalVisible] = useState(false);
     const [userAgent, setUserAgent] = useState('');
     DeviceInfo.getUserAgent().then(r => {
-        const userAgentText = r.replace('; wv', '');
+        const userAgentText =
+            Platform.OS === 'android'
+                ? 'Chrome/18.0.1025.133 Mobile Safari/535.19'
+                : 'AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75';
+        //r.replace('; wv', '');
         setUserAgent(userAgentText);
     });
 
@@ -32,9 +36,23 @@ const SocialButtons = () => {
                     <View tw="flex-1 rounded-lg overflow-hidden bg-s-50 dark:bg-s-800 p-0 m-0">
                         {userAgent && (
                             <WebView
+                                sharedCookiesEnabled={true}
+                                javaScriptEnabled={true}
+                                domStorageEnabled={true}
+                                startInLoadingState={true}
+                                allowFileAccess={true}
+                                allowUniversalAccessFromFileURLs={true}
+                                allowFileAccessFromFileURLs={true}
+                                originWhitelist={['*']}
+                                onLoadProgress={() => <ActivityIndicator size={50} />}
+                                setDomStorageEnabled={true}
                                 userAgent={userAgent}
                                 source={{
-                                    uri: 'https://storydata.ru/api/v1/oauth/google',
+                                    uri: 'http://localhost:3000/auth',
+                                }}
+                                onLoadStart={n => {
+                                    // const ur = new URLSearchParams(window.location.href);
+                                    console.log(n.nativeEvent.url);
                                 }}
                             />
                         )}
