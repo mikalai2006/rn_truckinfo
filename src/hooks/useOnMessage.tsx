@@ -1,38 +1,33 @@
-// import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
-import {setFeature, setDrawer, setTokenAccess} from '../store/appSlice';
+import {setTokenAccess} from '../store/appSlice';
 import {useAppDispatch} from '~store/hooks';
-import useAuth from './useAuth';
+import CookieManager from '@react-native-cookies/cookies';
+import {HOST} from '@env';
 
-// const setStatusOpenDraw = async (value: string) => {
-//     try {
-//         await AsyncStorage.setItem('opendraw', value);
-//     } catch (error) {
-//         console.log(error);
-//     }
-// };
 export default function useOnMessage() {
     const dispatch = useAppDispatch();
-    const {onGetIam, onRefreshToken} = useAuth();
     const navigation = useNavigation();
 
     const onMessage = event => {
-        console.log('event', event);
-
         const data = JSON.parse(event.nativeEvent.data);
+        console.log('onMessage event', data.event, ' : ', data.data);
 
-        if (data.event === 'opendraw') {
-            console.log('dark event::: opendraw');
-            // setStatusOpenDraw('true');
-            setDrawer(true);
-        } else if (data.event === 'marker') {
-            console.log('marker event::: ', data);
-            dispatch(setFeature(data.options.marker));
-            navigation.navigate('MarkerScreen');
+        if (data.event === 'marker') {
+            navigation.navigate('MarkerScreen', {marker: data.options.marker});
         } else if (data.event === 'jwt') {
-            dispatch(setTokenAccess(data.data));
-            onGetIam();
-            // navigation.navigate('PointStack');
+            const host = HOST.split(':')[0];
+            const domain = host.split('//')[1];
+            CookieManager.set(HOST, {
+                name: 'rt',
+                value: data.data.refresh_token,
+                domain: domain,
+                path: '/',
+                version: '1',
+                expires: '2023-11-18T23:59:00.00-05:00',
+            }).then(done => {
+                dispatch(setTokenAccess(data.data));
+                // console.log('CookieManager.set =>', done);
+            });
         }
     };
 

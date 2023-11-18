@@ -1,53 +1,26 @@
-import React from 'react';
-
+import React, {useEffect} from 'react';
 import {DrawerContentScrollView, DrawerItemList, createDrawerNavigator} from '@react-navigation/drawer';
 import {Text, TouchableOpacity, View, useWindowDimensions} from 'react-native';
 import {useColorScheme} from 'nativewind';
-
-import CameraScreen from '../screens/CameraScreen';
-import {MediaScreen} from '../screens/MediaScreen';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-
-import {
-    // setDark, setDrawer,
-    tokens,
-    isOpenDrawer,
-    isDark,
-} from '../../store/appSlice';
-import {
-    useAppSelector,
-    // useAppDispatch
-} from '../../store/hooks';
-import {useSelector} from 'react-redux';
-
+import {tokens, isDark, langCode} from '../../store/appSlice';
 import colors from '../../utils/colors';
-
 import UserInfo from '~components/UserInfo';
-import AuthScreen from '~components/screens/AuthScreen';
 import useAuth from '~hooks/useAuth';
-// import WidgetAuthorization from '~components/widgets/WidgetAuthorization';
 import MapStack from './MapStack';
 import {HomeScreen} from '~components/screens';
 import SettingStack from './SettingStack';
+import {useAppSelector} from '~store/hooks';
+import useLanguage from '~hooks/useLanguage';
 
 const Drawer = createDrawerNavigator();
 
 export function CustomDrawerContent(props) {
     const {onExit} = useAuth();
-    const {colorScheme, setColorScheme} = useColorScheme();
-    const dark = useSelector(isDark);
-    const token = useSelector(tokens);
+    const {colorScheme} = useColorScheme();
+    const token = useAppSelector(tokens);
 
-    const openDrawer = useAppSelector(isOpenDrawer);
-
-    console.log('Refresh', openDrawer);
-
-    React.useEffect(() => {
-        if (dark) {
-            setColorScheme(dark ? 'dark' : 'light');
-        }
-    }, [dark]);
+    // console.log('Render drawer');
 
     return (
         <DrawerContentScrollView
@@ -99,29 +72,40 @@ export function CustomDrawerContent(props) {
 
 export default function AppStack() {
     const dimensions = useWindowDimensions();
-    const {colorScheme} = useColorScheme();
-    const [dark, setDark] = React.useState<boolean>(false);
-    const token = useSelector(tokens);
-    console.log('Render AppStack');
+    const {colorScheme, setColorScheme} = useColorScheme();
+    // const [dark, setDark] = useState<boolean>(false);
+    const token = useAppSelector(tokens);
+    // console.log('Render AppStack');
 
-    React.useEffect(() => {
-        const getDark = async () => {
-            try {
-                const dark = await AsyncStorage.getItem('opendraw');
-                setDark(dark?.toLowerCase() === 'true');
-            } catch (error) {
-                console.log(error);
-            }
-        };
-        getDark();
-        console.log('Open draw');
+    const isDarkFromStore = useAppSelector(isDark);
 
-        return () => {};
+    useEffect(() => {
+        setColorScheme(isDarkFromStore ? 'dark' : 'light');
+    }, [isDarkFromStore, setColorScheme]);
+
+    const activeLangCode = useAppSelector(langCode);
+    const {chooseLanguage} = useLanguage();
+    useEffect(() => {
+        chooseLanguage(activeLangCode);
     }, []);
+
+    // React.useEffect(() => {
+    //     const getDark = async () => {
+    //         try {
+    //             const dark = await AsyncStorage.getItem('opendraw');
+    //             setDark(dark?.toLowerCase() === 'true');
+    //         } catch (error) {
+    //             console.log(error);
+    //         }
+    //     };
+    //     getDark();
+    //     console.log('Open draw');
+
+    //     return () => {};
+    // }, []);
 
     return (
         <>
-            {/* <WidgetAuthorization /> */}
             <Drawer.Navigator
                 drawerContent={props => <CustomDrawerContent {...props} />}
                 screenOptions={{
@@ -141,7 +125,7 @@ export default function AppStack() {
                     drawerActiveTintColor: colorScheme !== 'dark' ? '#4338ca' : '#a5b4fc',
                     drawerInactiveTintColor: colorScheme !== 'dark' ? '#0f172a' : '#fff',
                 }}
-                initialRouteName={token.access_token === '' ? 'AuthScreen' : 'HomeTabStack'}>
+                initialRouteName={'HomeScreen'}>
                 <Drawer.Screen name="HomeScreen" component={HomeScreen} />
                 <Drawer.Screen name="MapStack" component={MapStack} />
                 <Drawer.Screen
@@ -156,15 +140,6 @@ export default function AppStack() {
                         }
                     }
                 />
-                <Drawer.Screen
-                    name="AuthScreen"
-                    component={AuthScreen}
-                    options={{
-                        drawerItemStyle: {display: 'none'},
-                    }}
-                />
-                <Drawer.Screen name="CameraScreen" component={CameraScreen} />
-                <Drawer.Screen name="MediaScreen" component={MediaScreen} />
             </Drawer.Navigator>
         </>
     );

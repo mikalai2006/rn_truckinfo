@@ -3,7 +3,6 @@ import {View, FlatList, Animated} from 'react-native';
 
 import slides from '../utils/slides';
 import OnboardingItem from './OnboardingItem';
-import {StyledComponent} from 'nativewind';
 
 import OnboardingPagination from './OnboardingPagination';
 import OnboardingNextButton from './OnboardingNextButton';
@@ -27,7 +26,7 @@ export default function Onboarding() {
     };
 
     return (
-        <StyledComponent component={View} tw="min-h-full flex-1 bg-s-100 dark:bg-s-900">
+        <View tw="min-h-full flex-1 bg-s-100 dark:bg-s-900">
             <FlatList
                 data={slides}
                 horizontal
@@ -47,6 +46,6 @@ export default function Onboarding() {
             />
             <OnboardingPagination slides={slides} scrollX={scrollX} />
             <OnboardingNextButton scrollTo={scrollTo} percentage={(currentIndex + 1) * (100 / slides.length)} />
-        </StyledComponent>
+        </View>
     );
 }

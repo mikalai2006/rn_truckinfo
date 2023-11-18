@@ -1,10 +1,25 @@
 import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {RootState} from './store';
 import {IMarkerConfig} from '~utils/markerdata';
+export interface ILang {
+    id: string;
+    locale: string;
+    code: string;
+    name: string;
+    flag: string;
+    publish: boolean;
+    sortOrder: number;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
 export interface ITokens {
     access_token: string | null;
     refresh_token: string | null;
 }
+export type TTokenInput = {
+    [Property in keyof ITokens]?: ITokens[Property];
+};
 export interface IUser {
     id: string;
     userId: string;
@@ -13,6 +28,8 @@ export interface IUser {
     lang: string;
     avatar: string;
     roles: ['admin', 'user'];
+    md: number;
+    images: IImage[];
     online: boolean;
 }
 export interface IFeature {
@@ -184,6 +201,18 @@ export type TNodedataInput = {
 //     count: number;
 //     value: number;
 // }
+export interface IImage {
+    id: string;
+    userId: string;
+    service: string;
+    serviceId: string;
+    ext: string;
+    path: string;
+    dir: string;
+    user: IUser;
+    createdAt: string;
+    updatedAt: string;
+}
 
 export interface INode {
     id: string;
@@ -197,6 +226,7 @@ export interface INode {
     reviews: IReview[];
     reviewsInfo: IReviewsInfo;
     address: IAddress;
+    images: IImage[];
     props: any;
     lon: number;
     lat: number;
@@ -233,6 +263,8 @@ export interface AppState {
     drawer: boolean;
     tokens: ITokens;
     langCode: string;
+    activeLanguage: null | ILang;
+    languages: ILang[];
     user: IUser | null;
     feature: IFeature | null;
     positions: any[];
@@ -254,6 +286,8 @@ const initialState: AppState = {
         refresh_token: null,
     },
     langCode: 'en',
+    activeLanguage: null,
+    languages: [],
     user: null,
     feature: null,
     positions: [],
@@ -283,13 +317,13 @@ export const uiSlice = createSlice({
     // Поле `reducers` позволяет нам определять редьюсеры и генерировать связанные действия
     reducers: {
         // Используйте тип PayloadAction для объявления содержимого `action.payload`
-        setTokenAccess: (state, action: PayloadAction<ITokens>) => {
-            state.tokens = {...action.payload};
+        setTokenAccess: (state, action: PayloadAction<TTokenInput>) => {
+            state.tokens = Object.assign({}, state.tokens, action.payload);
             console.log('setTokenAccess:::', state.tokens);
         },
-        setUser: (state, action: PayloadAction<IUser>) => {
-            console.log('setUser: ', JSON.stringify(action.payload));
-            state.user = {...action.payload};
+        setUser: (state, action: PayloadAction<IUser | null>) => {
+            console.log('setUser: '); // JSON.stringify(action.payload)
+            state.user = action.payload ? {...action.payload} : null;
         },
         setFeature: (state, action: PayloadAction<IFeature | null>) => {
             console.log('setFeature: ', JSON.stringify(action?.payload?.osmId));
@@ -312,6 +346,15 @@ export const uiSlice = createSlice({
         setLangCode: (state, action: PayloadAction<string>) => {
             console.log('setLangCode', action.payload);
             state.langCode = action.payload;
+
+            const activeLanguage = state.languages.find(x => x.code === state.langCode);
+            if (activeLanguage) {
+                state.activeLanguage = activeLanguage;
+            }
+        },
+        setLanguages: (state, action: PayloadAction<ILang[]>) => {
+            console.log('setLanguages'); //action.payload
+            state.languages = action.payload;
         },
         setDrawer: (state, action: PayloadAction<boolean>) => {
             console.log('Set drawer: ', action.payload);
@@ -367,6 +410,7 @@ export const {
     clearPositions,
     setAmenities,
     setTags,
+    setLanguages,
 } = uiSlice.actions;
 // Функция ниже называется селектором и позволяет нам выбрать значение из
 // штат. Селекторы также могут быть определены встроенными, где они используются вместо
@@ -375,6 +419,8 @@ export const isOpenDrawer = (state: RootState) => state.ui.drawer;
 export const isDark = (state: RootState) => state.ui.dark;
 export const tokens = (state: RootState) => state.ui.tokens;
 export const langCode = (state: RootState) => state.ui.langCode;
+export const activeLanguage = (state: RootState) => state.ui.activeLanguage;
+export const languages = (state: RootState) => state.ui.languages;
 export const user = (state: RootState) => state.ui.user;
 export const feature = (state: RootState) => state.ui.feature;
 export const activeNode = (state: RootState) => state.ui.activeNode;

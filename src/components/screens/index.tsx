@@ -9,6 +9,9 @@ import ReviewScreen from '~components/screens/ReviewScreen';
 import PhotoScreen from '~components/screens/PhotoScreen';
 import LanguageScreen from '~components/screens/LanguageScreen';
 import AuthScreen from '~components/screens/AuthScreen';
+import UserFormScreen from '~components/screens/UserFormScreen';
+import UserFormAvatarScreen from '~components/screens/UserFormAvatarScreen';
+import TagScreen from '~components/screens/TagScreen';
 
 export {
     AuthScreen,
@@ -21,4 +24,7 @@ export {
     PointScreen,
     ReviewScreen,
     SettingScreen,
+    UserFormScreen,
+    UserFormAvatarScreen,
+    TagScreen,
 };

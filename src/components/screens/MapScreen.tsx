@@ -1,21 +1,9 @@
-import {useColorScheme} from 'nativewind';
 import React, {useCallback, useRef} from 'react';
-import {StatusBar, View} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import FocusStatusBar from '~components/FocusStatusBar';
-import MarkerStack from '~components/navigations/MarkerStack';
-import WidgetMapBottomSheet from '~components/widgets/WidgetMapBottomSheet';
-
-// import WidgetFeature from '~components/widgets/WidgetFeature';
+import {View} from 'react-native';
 import WidgetMapFromSite, {MapBottomSheetRefProps} from '~components/widgets/WidgetMapFromSite';
-import WidgetMapLeaflet from '~components/widgets/WidgetMapLeaflet';
-import colors from '~utils/colors';
-// import WidgetShortInfoMarker from '~components/widgets/WidgetShortInfoMarker';
-// import colors from '~utils/colors';
 
 const MapScreen = ({navigation}) => {
     console.log('MapScreen');
-    const {colorScheme} = useColorScheme();
 
     // React.useEffect(() => {
     //     const unsubscribe = navigation.addListener('focus', () => {
@@ -158,12 +146,12 @@ const MapScreen = ({navigation}) => {
     }, []);
 
     return (
-        <View style={{flex: 1, paddingTop: 0}}>
-            <FocusStatusBar
+        <View style={{paddingTop: 0}} tw="flex-1 bg-white dark:bg-s-900">
+            {/* <FocusStatusBar
                 barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'}
                 translucent
                 backgroundColor="transparent"
-            />
+            /> */}
             {/* {featureData?.id && <WidgetFeature />} */}
             {/* <Text>
                 <Text>Current position: </Text>

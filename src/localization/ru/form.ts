@@ -1,7 +1,8 @@
 export default {
-    login: 'Авторизация',
+    loginTitle: 'Авторизация',
     button_forgot: 'Забыли?',
     button_login: 'Войти',
+    button_save: 'Сохранить',
     alt_login: 'Или войдите с ...',
     email: 'Email',
     password: 'Пароль',
@@ -11,4 +12,11 @@ export default {
     alreadyRegister: 'Уже есть аккаунт?',
     fullName: 'Полное имя',
     confirmPassword: 'Повторите пароль',
+
+    login: 'Логин',
+    avatar: 'Аватар',
+    imageSelect: 'Выбрать из галереи',
+    imageTakeCamera: 'Получить с камеры',
+    formUserTitle: 'Основная информация',
+    formAvatarTitle: 'Аватар пользователя',
 };

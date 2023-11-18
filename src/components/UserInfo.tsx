@@ -1,13 +1,9 @@
-import {View, Text, ImageBackground, Modal, Alert, Platform, ActivityIndicator} from 'react-native';
-import React, {useCallback, useEffect, useState} from 'react';
+import {View, Text, Modal, Alert, Platform, ActivityIndicator} from 'react-native';
+import React, {useEffect, useState} from 'react';
 
 import {tokens, user} from '~store/appSlice';
 import {useAppSelector} from '~store/hooks';
 import RButton from './r/RButton';
-import {useNavigation} from '@react-navigation/native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import colors from '~utils/colors';
 import SwitchMode from './SwitchMode';
 import RImage from './r/RImage';
 import DeviceInfo from 'react-native-device-info';
@@ -15,7 +11,6 @@ import WebView from 'react-native-webview';
 import useOnMessage from '~hooks/useOnMessage';
 
 const UserInfo = () => {
-    const navigation = useNavigation();
     const userData = useAppSelector(user);
     const token = useAppSelector(tokens);
     const {onMessage} = useOnMessage();
@@ -38,9 +33,16 @@ const UserInfo = () => {
         setAgent();
     }, []);
 
+    // useEffect(() => {
+    //     if (token.access_token) {
+    //         setModalVisible(false);
+    //     }
+    // }, [token.access_token]);
+
     return (
         <>
-            {token.access_token !== '' ? (
+            {/* <Text tw="text-black">{JSON.stringify(token)}</Text> */}
+            {token.access_token ? (
                 // <ImageBackground source={require('../assets/images/menu-bg.jpeg')} tw="relative p-4">
                 // </ImageBackground>
                 <View tw="relative p-4 pt-8 bg-s-200 dark:bg-s-900">
@@ -62,7 +64,6 @@ const UserInfo = () => {
             ) : (
                 <View tw="bg-p-600 dark:bg-p-600 p-4">
                     <RButton disabled={false} text="Войти" onPress={() => setModalVisible(!modalVisible)} />
-                    {/* () => navigation.navigate('AuthScreen') */}
                     <View tw="mt-4">
                         <Text tw="text-white">Войдите в аккаунт, чтобы открыть все возможности приложения</Text>
                     </View>
@@ -98,7 +99,7 @@ const UserInfo = () => {
                                 }}
                                 onLoadEnd={() => {
                                     // const ur = new URLSearchParams(window.location.href);
-                                    console.log('hello'); // n.nativeEvent.url
+                                    //console.log('hello'); // n.nativeEvent.url
                                 }}
                                 onMessage={event => {
                                     onMessage(event);

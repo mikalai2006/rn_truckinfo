@@ -1,5 +1,6 @@
-import {tokens, setTokenAccess, setUser, ITokens, IUser} from '~store/appSlice';
+import {tokens, setTokenAccess, setUser, ITokens} from '~store/appSlice';
 import {useAppDispatch, useAppSelector} from '~store/hooks';
+import {HOST_API} from '@env';
 
 export interface ISign {
     email: string;
@@ -7,13 +8,11 @@ export interface ISign {
     login?: string;
 }
 
-const host = 'http://localhost:8000'; //'https://storydata.ru';
-
 export default function useAuth() {
     const dispatch = useAppDispatch();
 
     const onLogin = async ({email, password}: ISign) => {
-        const d = await fetch(host + '/api/v1/auth/sign-in', {
+        const d = await fetch(HOST_API + '/api/v1/auth/sign-in', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -41,7 +40,7 @@ export default function useAuth() {
     };
 
     const onSignUp = async ({email, password, login}: ISign): Promise<ITokens> => {
-        const d = await fetch(host + '/api/v1/auth/sign-up', {
+        const d = await fetch(HOST_API + '/api/v1/auth/sign-up', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -92,29 +91,11 @@ export default function useAuth() {
 
     const token = useAppSelector(tokens);
     const onGetIam = async () => {
-        // try {
-        //     let d: Promise<IUser> = new Promise();
-        console.log('onGetIam::: token.access_token=[', token.access_token, ']', token.access_token === '');
+        // console.log('onGetIam::: token.access_token=[', token.access_token, ']', token.access_token === '');
         if (token.access_token === '') {
             return;
         }
-        //     if (token.access_token === '') {
-        //         return;
-        //     }
-
-        // const response = await Promise.race([
-        //     fetch('http://localhost:8000/api/v1/auth/iam', {
-        //         method: 'GET',
-        //         headers: {
-        //             Accept: 'application/json',
-        //             'Content-Type': 'application/json',
-        //             Authorization: `Bearer ${token.access_token}`,
-        //         },
-        //         // body: JSON.stringify({}),
-        //     }),
-        //     new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout'), 10000))),
-        // ]);
-        return await fetch(host + '/api/v1/auth/iam', {
+        return await fetch(HOST_API + '/api/v1/auth/iam', {
             method: 'GET',
             headers: {
                 Accept: 'application/json',
@@ -125,67 +106,15 @@ export default function useAuth() {
         })
             .then(r => r.json())
             .then(response => {
-                console.log('response=', response);
-                console.log('message=', response.message);
+                // console.log('response=', response);
+                // console.log('message=', response.message);
                 if (!response.id) {
-                    dispatch(setTokenAccess({access_token: '', refresh_token: ''}));
+                    // dispatch(setTokenAccess({access_token: '', refresh_token: ''}));
                     throw response;
                 } else {
                     dispatch(setUser(response));
-                    console.log('user data: ', response);
+                    // console.log('user data: ', response);
 
-                    return response;
-                    // d = response
-                    //     .json()
-                    //     .then((data: IUser) => {
-                    //         dispatch(setUser(data));
-                    //         console.log('user data: ', data);
-
-                    //         return data;
-                    //     })
-                    //     .catch(e => {
-                    //         // Alert.alert('Error', JSON.stringify(e));
-                    //         console.log('user error', e);
-                    //         throw new Error(e);
-                    //     });
-                }
-            })
-            .catch(e => {
-                throw e;
-            });
-
-        // return d;
-        // } catch (e) {
-        //     if (e.message === 'Timeout' || e.message === 'Network request failed') {
-        //         console.log('retry', e);
-        //         // retry
-        //     } else {
-        //         // rethrow other unexpected errors
-        //     }
-        //     d.re e;
-        // }
-    };
-
-    const onRefreshToken = async () => {
-        return await fetch(host + '/api/v1/auth/refresh', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token.access_token}`,
-            },
-            body: JSON.stringify({
-                token: token.refresh_token,
-            }),
-        })
-            .then(r => r.json())
-            .then(response => {
-                if (!response.access_token) {
-                    console.log('onRefreshToken::: no token:::', response);
-                    throw response;
-                } else {
-                    dispatch(setTokenAccess(response));
-                    console.log('onRefreshToken::: ', response);
                     return response;
                 }
             })
@@ -193,17 +122,51 @@ export default function useAuth() {
                 throw e;
             });
     };
+
+    // const onRefreshToken = async () => {
+    //     // console.log('onRefreshToken>>>>>>>>>access_token=', token.access_token);
+    //     // console.log('onRefreshToken>>>>>>>>>refresh_token=', token.refresh_token);
+    //     if (!token.refresh_token) {
+    //         return;
+    //     }
+    //     return await fetch(host + '/api/v1/auth/refresh', {
+    //         method: 'POST',
+    //         headers: {
+    //             Accept: 'application/json',
+    //             'Content-Type': 'application/json',
+    //             Authorization: `Bearer ${token.access_token}`,
+    //         },
+    //         body: JSON.stringify({
+    //             token: token.refresh_token,
+    //         }),
+    //     })
+    //         .then(r => r.json())
+    //         .then(response => {
+    //             // console.log('onRefreshToken RESPONSE::: ', response);
+    //             if (!response.access_token) {
+    //                 onExit();
+    //                 console.log('onRefreshToken::: no token:::', response);
+    //                 throw response;
+    //             } else {
+    //                 dispatch(setTokenAccess(response));
+    //                 return response;
+    //             }
+    //         })
+    //         .catch(e => {
+    //             throw e;
+    //         });
+    // };
 
     const onExit = () => {
-        dispatch(setUser({}));
-        dispatch(setTokenAccess({access_token: '', refresh_token: ''}));
+        dispatch(setTokenAccess({access_token: null, refresh_token: null}));
+        dispatch(setUser(null));
     };
 
     return {
         onSignUp,
         onLogin,
         onGetIam,
-        onRefreshToken,
         onExit,
+        // onRefreshToken,
     };
 }

@@ -8,7 +8,7 @@ import HeaderUserInfo from '~components/HeaderUserInfo';
 const WidgetHeaderApp = () => {
     const navigation = useNavigation();
     return (
-        <View tw="mx-4 flex flex-row items-center justify-between bg-white dark:bg-s-800 rounded-full">
+        <View tw="mx-4 flex flex-row items-center justify-between bg-white dark:bg-s-800 rounded-lg">
             <TouchableOpacity onPress={() => navigation.toggleDrawer()} activeOpacity={0.8} tw="p-3">
                 <SIcon path={iList} size={20} tw="text-black dark:text-white" />
             </TouchableOpacity>

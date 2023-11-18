@@ -43,7 +43,6 @@ const HeaderUserInfo = () => {
             ) : (
                 <View tw="bg-p-600 dark:bg-p-600 p-4">
                     <RButton disabled={false} text="Войти" onPress={() => setModalVisible(!modalVisible)} />
-                    {/* () => navigation.navigate('AuthScreen') */}
                     <View tw="mt-4">
                         <Text tw="text-white">Войдите в аккаунт, чтобы открыть все возможности приложения</Text>
                     </View>

@@ -1,5 +1,5 @@
-import {useIsFocused} from '@react-navigation/native';
-import React, {useEffect} from 'react';
+import {NavigationProp, useIsFocused} from '@react-navigation/native';
+import React, {useEffect, useState} from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {
     Pressable,
@@ -20,35 +20,48 @@ import {
     TakePhotoOptions,
     TakeSnapshotOptions,
     useCameraDevice,
+    CameraPermissionStatus,
 } from 'react-native-vision-camera';
 
 import {tokens, user} from '../../store/appSlice';
 import {useAppSelector} from '../../store/hooks';
 
-const CameraScreen = ({navigation}) => {
-    useEffect(() => {
-        const backAction = () => {
-            console.log('Hold on!', 'Are you sure you want to go back?', [
-                // {
-                //   text: 'Cancel',
-                //   onPress: () => null,
-                //   style: 'cancel',
-                // },
-                // {text: 'YES', onPress: () => BackHandler.exitApp()},
-            ]);
-            navigation.navigate('MapStack');
-            return true;
-        };
+const CameraScreen = ({route, navigation}) => {
+    const {service, serviceId} = route?.params;
 
-        const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+    const isFocused = useIsFocused();
+    // const [isActive, setActive] = useState(true);
+    // useEffect(() => {
+    //     const unsubscribe = navigation.addListener('beforeRemove', () => {
+    //         setActive(false);
+    //     });
+    //     return unsubscribe;
+    //     // const backAction = () => {
+    //     //     console.log('Hold on!', 'Are you sure you want to go back?', [
+    //     //         // {
+    //     //         //   text: 'Cancel',
+    //     //         //   onPress: () => null,
+    //     //         //   style: 'cancel',
+    //     //         // },
+    //     //         // {text: 'YES', onPress: () => BackHandler.exitApp()},
+    //     //     ]);
+    //     //     // navigation.navigate('MapStack');
+    //     //     //navigation.goBack();
+    //     //     setActive(false);
+    //     //     setTimeout(() => {
+    //     //         navigation.goBack();
+    //     //     }, 1000);
+    //     //     return false;
+    //     // };
 
-        return () => backHandler.remove();
-    }, []);
+    //     // const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+
+    //     // return () => backHandler.remove();
+    // }, [navigation]);
 
     const token = useAppSelector(tokens);
     const userData = useAppSelector(user);
     const camera = React.useRef<Camera>(null);
-    const isFocused = useIsFocused();
 
     // const devices = useCameraDevices();
     //const device = devices.find(x => x.name == 'back');
@@ -92,6 +105,10 @@ const CameraScreen = ({navigation}) => {
         if (!userData) {
             return;
         }
+        if (!serviceId || !service) {
+            console.log('No service!');
+            return;
+        }
 
         fetch(`http://localhost:8000/api/v1/image`, {
             method: 'POST',
@@ -99,7 +116,7 @@ const CameraScreen = ({navigation}) => {
                 Authorization: `Bearer ${token.access_token}`,
                 'Access-Control-Allow-Origin-Type': '*',
             },
-            body: createFormData(photo, {serviceId: userData.id, service: 'avatar', dir: 'dir'}),
+            body: createFormData(photo, {serviceId, service, dir: 'dir'}),
         })
             .then(res => res.json())
             .then(response => {
@@ -143,52 +160,77 @@ const CameraScreen = ({navigation}) => {
         }
     }, [camera, onMediaCaptured, takePhotoOptions]);
 
-    const requestCameraPermission = async () => {
-        try {
-            const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA, {
-                title: 'Cool Photo App Camera Permission',
-                message: 'Cool Photo App needs access to your camera ' + 'so you can take awesome pictures.',
-                buttonNeutral: 'Ask Me Later',
-                buttonNegative: 'Cancel',
-                buttonPositive: 'OK',
-            });
-            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                console.log('You can use the camera');
-            } else {
-                console.log('Camera permission denied');
-            }
-        } catch (err) {
-            console.warn(err);
+    // const requestCameraPermission = async () => {
+    //     try {
+    //         const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA, {
+    //             title: 'Cool Photo App Camera Permission',
+    //             message: 'Cool Photo App needs access to your camera ' + 'so you can take awesome pictures.',
+    //             buttonNeutral: 'Ask Me Later',
+    //             buttonNegative: 'Cancel',
+    //             buttonPositive: 'OK',
+    //         });
+    //         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+    //             console.log('You can use the camera');
+    //         } else {
+    //             console.log('Camera permission denied');
+    //         }
+    //     } catch (err) {
+    //         console.warn(err);
+    //     }
+    // };
+
+    // const getPermission = async () => {
+    //     await requestCameraPermission();
+    //     const cameraPermission = await Camera.getCameraPermissionStatus();
+    //     return cameraPermission === 'authorized';
+    // };
+
+    // if (!getPermission()) {
+    //     return <Text>Not access permission...</Text>;
+    // }
+    // if (device == null) {
+    //     return <ActivityIndicator />;
+    // }
+    const [cameraPermission, setCameraPermission] = useState<CameraPermissionStatus>();
+    useEffect(() => {
+        Camera.getCameraPermissionStatus().then(setCameraPermission);
+    }, []);
+
+    console.log(`Re-rendering Navigator. Camera: ${cameraPermission}`);
+
+    useEffect(() => {
+        async function getPermission() {
+            const permission = await Camera.requestCameraPermission();
+            console.log(`Camera permission status: ${permission}`);
+            // if (permission === 'denied') await Linking.openSettings();
         }
-    };
+        getPermission();
+    }, []);
 
-    const getPermission = async () => {
-        await requestCameraPermission();
-        const cameraPermission = await Camera.getCameraPermissionStatus();
-        return cameraPermission === 'authorized';
-    };
-
-    if (!getPermission()) {
-        return <Text>Not access permission...</Text>;
+    if (cameraPermission == null) {
+        // still loading
+        return null;
     }
+
+    const showPermissionsPage = cameraPermission === 'granted';
+
     if (device == null) {
-        return <ActivityIndicator />;
+        return null;
     }
 
     return (
-        <View className={'h-full w-full'}>
-            <View className="absolute bottom-0 w-full z-10 p-4 flex flex-col items-center">
-                <TouchableOpacity>
-                    <Pressable
-                        className="p-6 bg-black/20 rounded-full flex flex-col items-center justify-center"
-                        onPress={takePhoto}>
-                        <Icon name="photo-camera" size={70} color="white" />
-                        <Text>{token.access_token}</Text>
-                    </Pressable>
-                </TouchableOpacity>
-            </View>
-            {isFocused && (
-                // <Camera device={device} isActive={true} />
+        showPermissionsPage && (
+            <View tw="flex-1">
+                <View tw="absolute bottom-0 w-full z-10 p-4 flex flex-col items-center">
+                    <TouchableOpacity>
+                        <Pressable
+                            tw="p-6 bg-black/20 rounded-full flex flex-col items-center justify-center"
+                            onPress={takePhoto}>
+                            <Icon name="photo-camera" size={70} color="white" />
+                            <Text>{token.access_token}</Text>
+                        </Pressable>
+                    </TouchableOpacity>
+                </View>
                 <Camera
                     ref={camera}
                     device={device}
@@ -199,10 +241,10 @@ const CameraScreen = ({navigation}) => {
                     enableZoomGesture={true}
                     // orientation="landscapeLeft"
                     style={StyleSheet.absoluteFill}
-                    className="absolute h-full w-full z-0"
+                    tw="absolute h-full w-full z-0"
                 />
-            )}
-        </View>
+            </View>
+        )
     );
 };
 

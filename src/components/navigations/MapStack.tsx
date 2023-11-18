@@ -3,8 +3,8 @@ import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import PointStack from './PointStack';
 import MapScreen from '~components/screens/MapScreen';
 import NodeStack from './NodeStack';
-import {ReviewScreen} from '~components/screens';
-import WidgetMapBottomSheet from '~components/widgets/WidgetMapBottomSheet';
+import {ReviewScreen, TagScreen} from '~components/screens';
+import MarkerScreen from '~components/screens/MarkerScreen';
 import {View} from 'react-native';
 import FocusStatusBar from '~components/FocusStatusBar';
 import {useColorScheme} from 'nativewind';
@@ -27,7 +27,7 @@ const MapStack = ({navigation}) => {
                 <Stack.Screen name="MapScreen" component={MapScreen} />
                 <Stack.Screen
                     name="MarkerScreen"
-                    component={WidgetMapBottomSheet}
+                    component={MarkerScreen}
                     options={{
                         // statusBarAnimation: 'none',
                         headerShown: false,
@@ -50,6 +50,15 @@ const MapStack = ({navigation}) => {
                     options={{
                         statusBarAnimation: 'none',
                         animation: 'slide_from_right',
+                    }}
+                />
+                <Stack.Screen
+                    name="TagScreen"
+                    component={TagScreen}
+                    options={{
+                        headerShown: false,
+                        presentation: 'transparentModal',
+                        animation: 'none',
                     }}
                 />
             </Stack.Navigator>

@@ -20,7 +20,7 @@ let snapPointsY = [0, -300, MAX_TRANSLATE_Y];
 
 type BottomSheetProps = {
     children?: React.ReactNode;
-    topheader?: React.ReactNode;
+    topheader?: React.ReactNode | null;
     onClose?: () => void;
     snapPoints: number[];
 };
@@ -184,7 +184,9 @@ const SBottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
                                     {topheader}
                                 </Animated.View>
                             )}
-                            <Animated.View tw="flex-1 mx-2 bg-white dark:bg-s-800 rounded-xl" style={[rTopMargin]}>
+                            <Animated.View
+                                tw="flex-1 mx-2 bg-white dark:bg-s-800 rounded-xl"
+                                style={[topheader ? rTopMargin : {}]}>
                                 {children}
                             </Animated.View>
                         </View>

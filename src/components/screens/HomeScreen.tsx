@@ -1,23 +1,15 @@
 import React, {useState} from 'react';
-import {ScrollView, Text, View} from 'react-native';
-// import WebviewBlok from '../WebviewBlok';
-import {useAppSelector} from '../../store/hooks';
-import {tokens} from '../../store/appSlice';
+import {Button, ScrollView, View} from 'react-native';
 import WidgetAuth from '../widgets/WidgetAuth';
 import Onboarding from '../Onboarding';
-import {StyledComponent, useColorScheme} from 'nativewind';
-// import {SafeAreaView} from 'react-native-safe-area-context';
+import {useColorScheme} from 'nativewind';
 
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import WidgetLocation from '~components/widgets/WidgetLocation';
 import FocusStatusBar from '~components/FocusStatusBar';
 import WidgetHeaderApp from '~components/widgets/WidgetHeaderApp';
 // import HomeTabStack from '../navigations/HomeTabStack';
 
-const Stack = createNativeStackNavigator();
-
-const HomeScreen = ({}) => {
-    const token = useAppSelector(tokens);
+const HomeScreen = ({navigation}) => {
     const [helloScreen] = useState(false);
     const {colorScheme} = useColorScheme();
 
@@ -30,8 +22,14 @@ const HomeScreen = ({}) => {
             />
             <View tw="mt-10 mb-4">
                 <WidgetHeaderApp />
+                <Button
+                    onPress={() => {
+                        navigation.navigate('AuthScreen');
+                    }}
+                    title="auth"
+                />
             </View>
-            <StyledComponent component={View} tw="flex-1 flex bg-s-100 dark:bg-s-900">
+            <View tw="flex-1 flex bg-s-100 dark:bg-s-900">
                 {helloScreen ? (
                     <Onboarding />
                 ) : (
@@ -53,16 +51,7 @@ const HomeScreen = ({}) => {
                         </ScrollView>
                     </ScrollView>
                 )}
-                {/* <Text className="font-bold">{token.refresh_token}</Text> */}
-                {/* <WebviewBlok
-        source={{
-          uri: 'http://localhost:3000/',
-          // headers: {
-          //   Cookie: `jwt-handmade=${token.refresh_token};`,
-          // },
-        }}
-      /> */}
-            </StyledComponent>
+            </View>
         </View>
     );
 };

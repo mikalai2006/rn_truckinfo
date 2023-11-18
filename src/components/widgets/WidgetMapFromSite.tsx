@@ -1,9 +1,12 @@
-import {View, ActivityIndicator} from 'react-native';
-import React, {useCallback, useImperativeHandle, useRef} from 'react';
+import {View, ActivityIndicator, Text} from 'react-native';
+import React, {useCallback, useEffect, useImperativeHandle, useRef, useState} from 'react';
 import WebView from 'react-native-webview';
 import {useColorScheme} from 'nativewind';
 import useOnMessage from '~hooks/useOnMessage';
 import WidgetHeaderApp from './WidgetHeaderApp';
+import {useAppSelector} from '~store/hooks';
+import {activeLanguage} from '~store/appSlice';
+import colors from '~utils/colors';
 // import {useAppDispatch, useAppSelector} from '~store/hooks';
 // import {activeNode, feature, setActiveNode, setFeature} from '~store/appSlice';
 // // import PointStack from '~components/navigations/PointStack';
@@ -27,12 +30,13 @@ const WidgetMapFromSite = React.forwardRef<MapBottomSheetRefProps, MapBottomShee
     // const [result, setResult] = useState<string | null>(null);
     // const dispatch = useAppDispatch();
     console.log('WidgetMapFromSite');
+    const activeLanguageFromStore = useAppSelector(activeLanguage);
     const {onMessage} = useOnMessage();
 
     let webviewRef = useRef<WebView>();
 
     const {colorScheme} = useColorScheme();
-    React.useEffect(() => {
+    const initDark = useCallback(() => {
         webviewRef.current?.injectJavaScript(
             `(function() {
         document.dispatchEvent(new MessageEvent('message',
@@ -45,8 +49,12 @@ const WidgetMapFromSite = React.forwardRef<MapBottomSheetRefProps, MapBottomShee
       })();
       `,
         );
-        return () => {};
     }, [colorScheme]);
+
+    useEffect(() => {
+        initDark();
+        return () => {};
+    }, [initDark]);
 
     const onCloseBottomSheet = useCallback(() => {
         webviewRef.current?.injectJavaScript(
@@ -114,7 +122,7 @@ const WidgetMapFromSite = React.forwardRef<MapBottomSheetRefProps, MapBottomShee
     // };
 
     return (
-        <View tw="flex-1 relative">
+        <View tw="flex-1 relative bg-white dark:bg-s-900">
             <View tw="absolute top-8 left-0 z-10 bg-transparent">
                 <WidgetHeaderApp />
             </View>
@@ -123,25 +131,31 @@ const WidgetMapFromSite = React.forwardRef<MapBottomSheetRefProps, MapBottomShee
                 sharedCookiesEnabled={true}
                 javaScriptEnabled={true}
                 domStorageEnabled={true}
-                startInLoadingState={true}
                 allowFileAccess={true}
                 allowUniversalAccessFromFileURLs={true}
                 allowFileAccessFromFileURLs={true}
                 originWhitelist={['*']}
-                onLoadProgress={() => <ActivityIndicator size={50} />}
+                // onLoadProgress={() => {}}
+                startInLoadingState={true}
+                renderLoading={() => (
+                    <View tw="flex-1">
+                        <ActivityIndicator size={30} />
+                    </View>
+                )}
+                style={{flex: 1, backgroundColor: colorScheme === 'dark' ? colors.s[900] : colors.w}}
+                containerStyle={{flex: 1, backgroundColor: colorScheme === 'dark' ? colors.s[900] : colors.w}}
                 setDomStorageEnabled={true}
                 source={{
-                    uri: 'http://localhost:3000/ru/mapmobile',
-                    headers: {
-                        Cookie: 'dark=${true}',
-                    },
+                    uri: `http://localhost:3000/${activeLanguageFromStore?.code || 'ru'}/mapmobile`,
                 }}
                 onMessage={event => {
                     onMessage(event);
                 }}
-                tw="flex-1"
+                onLoadEnd={() => {
+                    colorScheme === 'dark' && setTimeout(initDark, 10);
+                }}
             />
-            <View tw="absolute right-0 top-0 p-2"></View>
+            <View tw="absolute right-0 top-24 p-2 z-50"></View>
         </View>
     );
 });

@@ -25,6 +25,7 @@ module.exports = {
         900: '#0c4a6e',
         950: '#082f49',
     },
+    w: '#ffffff',
     // p: colors.sky,
     // ss: colors.yellow,
 };
