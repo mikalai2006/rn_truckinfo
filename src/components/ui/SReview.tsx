@@ -3,29 +3,36 @@ import React from 'react';
 import {IReview} from '~store/appSlice';
 import SRateStar from './SRateStar';
 import RImage from '~components/r/RImage';
+import dayjs from 'dayjs';
+import {useTranslation} from 'react-i18next';
 
 export interface IReviewProps {
     review: IReview;
 }
 
 export default function SReview({review}: IReviewProps) {
-    console.log('SReview');
+    const {t} = useTranslation();
+
     return (
-        <View>
-            <View tw="flex flex-row items-center">
-                <RImage
-                    uri="https://i.etsystatic.com/44411218/r/il/17530f/5202775231/il_300x300.5202775231_jm0p.jpg"
-                    classString="h-8 w-8 rounded-full mr-2"
-                />
-                <View tw="self-start">
-                    <Text tw="text-lg text-s-400">Mikalai Parakhnevich</Text>
-                    <View tw="flex flex-row items-center space-x-4">
-                        <SRateStar value={review.rate} />
-                        <Text tw="text-lg text-s-400">3 day before</Text>
-                    </View>
-                </View>
+        <View tw="px-4 pb-6 flex flex-row">
+            <View tw="pr-1">
+                <RImage image={review?.user?.images[0]} classString="h-12 w-12 rounded-full mr-2" />
             </View>
-            <Text tw="text-base text-s-900 dark:text-s-200 leading-5">{review.review}</Text>
+            <View tw="flex-auto">
+                <View tw="flex-auto bg-white dark:bg-s-800 p-3 rounded-xl relative">
+                    <View tw="rotate-[45deg] transform absolute top-2 -left-1 w-4 h-4 bg-white dark:bg-s-800" />
+                    <View tw="self-start">
+                        {/* <Text tw="text-lg text-s-400">{review?.user?.name || t('general:iam')}</Text> */}
+                        <View tw="flex flex-row items-center space-x-4">
+                            <SRateStar value={review.rate} />
+                        </View>
+                    </View>
+                    <Text tw="text-base text-s-900 dark:text-s-200 leading-5">{review.review}</Text>
+                </View>
+                {review.updatedAt && (
+                    <Text tw="text-right text-sm text-s-400">{dayjs(review.updatedAt).fromNow()}</Text>
+                )}
+            </View>
         </View>
     );
 }

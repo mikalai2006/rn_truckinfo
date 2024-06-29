@@ -1,6 +1,6 @@
 import {createAsyncThunk, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {RootState} from './store';
-import {IMarkerConfig} from '~utils/markerdata';
+// import {IMarkerConfig} from '~utils/markerdata';
 export interface ILang {
     id: string;
     locale: string;
@@ -10,12 +10,27 @@ export interface ILang {
     publish: boolean;
     sortOrder: number;
     createdAt: Date;
-    updatedAt: Date;
+    updatedAt: string;
+}
+
+export interface ICurrency {
+    id: string;
+    status: boolean;
+    title: string;
+    code: string;
+    symbolLeft: string;
+    symbolRight: string;
+    decimalPlaces: number;
+    value: number;
+    sortOrder: number;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export interface ITokens {
     access_token: string | null;
     refresh_token: string | null;
+    expires_in: number;
 }
 export type TTokenInput = {
     [Property in keyof ITokens]?: ITokens[Property];
@@ -81,7 +96,7 @@ export interface ITag {
     isFilter: boolean;
     // tagoptId: string[];
     createdAt: Date;
-    updatedAt: Date;
+    updatedAt: string;
 }
 
 export interface IAddressProps {
@@ -112,14 +127,18 @@ export interface IReviewsInfo {
 }
 
 export interface IReview {
-    _id: string;
+    id: string;
     userId: string;
-    osmId: string;
+    nodeId: string;
     rate: number;
     review: string;
+    user: IUser;
     updatedAt: string;
     createdAt: string;
 }
+export type TReviewInput = {
+    [Property in keyof IReview]?: IReview[Property];
+};
 
 export interface ILike {
     _id: string;
@@ -164,11 +183,48 @@ export interface ITagopt {
     locale: {[key: string]: string};
     props: {[key: string]: string};
     createdAt: Date;
-    updatedAt: Date;
+    updatedAt: string;
 }
 
 export type TTagoptInput = {
     [Property in keyof ITagopt]?: ITagopt[Property];
+};
+
+export interface INodedataVote {
+    id: string;
+    userId: string;
+    nodedataId: string;
+    value: number;
+    createdAt: string;
+    updatedAt: string;
+}
+export type TNodedataVoteInput = {
+    [Property in keyof INodedataVote]?: INodedataVote[Property];
+};
+
+export interface ICountryStat {
+    idCountry: string;
+    code: string;
+    count: number;
+    size: number;
+    lastUpdatedAt: string;
+}
+
+export interface ICountry {
+    id: string;
+    code: string;
+    name: string;
+    flag: string;
+    image: string;
+    publish: boolean;
+    sortOrder: number;
+    stat: ICountryStat;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export type TCountryInput = {
+    [Property in keyof ICountry]?: ICountry[Property];
 };
 
 export interface INodedata {
@@ -178,6 +234,9 @@ export interface INodedata {
     tagId: string;
     tagoptId: string;
     value: string;
+    like: number;
+    dlike: number;
+    votes: INodedataVote[];
     data: {
         value?: any;
     };
@@ -189,8 +248,8 @@ export interface INodedata {
     tag: ITag;
     tagopt: ITagopt;
     status: number;
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export type TNodedataInput = {
@@ -214,6 +273,15 @@ export interface IImage {
     updatedAt: string;
 }
 
+export interface INodeAudit {
+    id: string;
+    userId: string;
+    user: IUser;
+    message: string;
+    status: number;
+    props: any;
+}
+
 export interface INode {
     id: string;
     userId: string;
@@ -223,15 +291,17 @@ export interface INode {
     type: string;
     name: string;
     osmId: string;
+    ccode: string;
     reviews: IReview[];
     reviewsInfo: IReviewsInfo;
     address: IAddress;
     images: IImage[];
+    audits: INodeAudit[];
     props: any;
     lon: number;
     lat: number;
     createdAt: Date;
-    updatedAt: Date;
+    updatedAt: string;
 }
 
 export type TNodeInput = {
@@ -251,50 +321,107 @@ export interface IAmenity {
     tags: string[];
 
     createdAt: Date;
-    updatedAt: Date;
+    updatedAt: string;
+}
+
+export interface ILatLng {
+    lat: number;
+    lng: number;
 }
 
 export type TAmenityInput = {
     [Property in keyof IAmenity]?: IAmenity[Property];
 };
 
+export type IBounds = {
+    _northEast: ILatLng;
+    _southWest: ILatLng;
+};
+
+export type IFilter = {
+    [key: string]: {
+        tags: {
+            [key: string]: any[];
+        };
+        show: boolean;
+    };
+};
+
+export interface IAppState {}
+export type TAppStateInput = {
+    [Property in keyof IAppState]?: IAppState[Property];
+};
+
+export interface IHistoryQuery {
+    query: string;
+    createdAt: string;
+}
+
 export interface AppState {
+    appState: IAppState | null;
     dark: boolean;
     drawer: boolean;
-    tokens: ITokens;
+    tokens: ITokens | null;
     langCode: string;
+    countryStat: ICountryStat[];
     activeLanguage: null | ILang;
     languages: ILang[];
+    currencies: ICurrency[];
+    countries: ICountry[];
     user: IUser | null;
-    feature: IFeature | null;
+    // feature: IFeature | null;
     positions: any[];
     activeNode: INode | null;
-    markerConfig: IMarkerConfig | null;
+    maxDistance: number;
+    // markerConfig: IMarkerConfig | null;
+    bounds: IBounds;
+    zoom: number;
+    center: ILatLng;
+    filter: IFilter;
     amenities: {
         [key: string]: IAmenity;
     };
     tags: {
         [key: string]: ITag;
     };
+    nodes: INode[];
+    historyQuery: IHistoryQuery[];
 }
 
 const initialState: AppState = {
+    appState: null,
+    countryStat: [],
     dark: false,
     drawer: false,
-    tokens: {
-        access_token: null,
-        refresh_token: null,
-    },
-    langCode: 'en',
+    tokens: null,
+    langCode: '',
     activeLanguage: null,
     languages: [],
+    countries: [],
+    currencies: [],
     user: null,
-    feature: null,
+    maxDistance: 1,
+    bounds: {
+        _northEast: {
+            lat: 0,
+            lng: 0,
+        },
+        _southWest: {
+            lng: 0,
+            lat: 0,
+        },
+    },
+    zoom: 8,
+    center: {lat: 50, lng: 30},
+    // feature: null,
     positions: [],
     activeNode: null,
-    markerConfig: null,
+    // markerConfig: null,
+    filter: {},
     amenities: {},
     tags: {},
+    nodes: [],
+    historyQuery: [],
 };
 
 // Приведенная ниже функция называется thunk и позволяет нам выполнять асинхронную логику. Это
@@ -317,44 +444,101 @@ export const uiSlice = createSlice({
     // Поле `reducers` позволяет нам определять редьюсеры и генерировать связанные действия
     reducers: {
         // Используйте тип PayloadAction для объявления содержимого `action.payload`
-        setTokenAccess: (state, action: PayloadAction<TTokenInput>) => {
-            state.tokens = Object.assign({}, state.tokens, action.payload);
-            console.log('setTokenAccess:::', state.tokens);
+        setTokens: (state, action: PayloadAction<TTokenInput | null>) => {
+            if (action.payload) {
+                state.tokens = Object.assign({}, state.tokens, action.payload);
+            } else {
+                state.tokens = null;
+            }
+            // if (!state.tokens.access_token || state.tokens.access_token === '') {
+            //     state.tokens.expires_in =
+            // }
+            // console.log('setTokens:::', state.tokens);
+        },
+        setCountryStat: (state, action: PayloadAction<ICountryStat[]>) => {
+            state.countryStat = action.payload;
+        },
+        setHistoryQuery: (state, action: PayloadAction<IHistoryQuery[]>) => {
+            state.historyQuery = action.payload?.length ? action.payload : [];
+        },
+        setAppState: (state, action: PayloadAction<TAppStateInput | null>) => {
+            if (action.payload) {
+                state.appState = Object.assign({}, state.appState, action.payload);
+            } else {
+                state.appState = null;
+            }
+            console.log('setAppState:::', state.appState, action.payload);
         },
         setUser: (state, action: PayloadAction<IUser | null>) => {
-            console.log('setUser: '); // JSON.stringify(action.payload)
+            // console.log('setUser: ', JSON.stringify(action.payload)); // JSON.stringify(action.payload)
             state.user = action.payload ? {...action.payload} : null;
+            if (state.user?.md !== undefined) {
+                state.maxDistance = state.user?.md || 1;
+            }
         },
-        setFeature: (state, action: PayloadAction<IFeature | null>) => {
-            console.log('setFeature: ', JSON.stringify(action?.payload?.osmId));
-            state.feature = action.payload ? {...action.payload} : action.payload;
+        setMaxDistance: (state, action: PayloadAction<number>) => {
+            state.maxDistance = action.payload || 1;
         },
+        // setFeature: (state, action: PayloadAction<IFeature | null>) => {
+        //     console.log('setFeature: ', JSON.stringify(action?.payload?.osmId));
+        //     state.feature = action.payload ? {...action.payload} : action.payload;
+        // },
         setDark: (state, action: PayloadAction<boolean>) => {
             console.log('setDark: ', action.payload);
             state.dark = action.payload;
         },
+        setBounds: (state, action: PayloadAction<IBounds>) => {
+            state.bounds = action.payload;
+        },
+        setZoom: (state, action: PayloadAction<number>) => {
+            state.zoom = action.payload;
+        },
+        setCenter: (state, action: PayloadAction<ILatLng>) => {
+            state.center = action.payload;
+        },
+        setFilter: (state, action: PayloadAction<IFilter>) => {
+            state.filter = action.payload;
+        },
+        setNodes: (state, action: PayloadAction<INode[]>) => {
+            state.nodes = JSON.parse(JSON.stringify(action.payload));
+        },
         setActiveNode: (state, action: PayloadAction<INode | null>) => {
-            console.log('setActiveNode', action.payload?.osmId);
+            // console.log('setActiveNode', action.payload?.osmId);
 
             state.activeNode = action.payload;
         },
-        setActiveMarkerConfig: (state, action: PayloadAction<IMarkerConfig | null>) => {
-            console.log('setActiveMarkerConfig', action.payload?.type);
+        // setActiveMarkerConfig: (state, action: PayloadAction<IMarkerConfig | null>) => {
+        //     console.log('setActiveMarkerConfig', action.payload?.type);
 
-            state.markerConfig = action.payload;
-        },
+        //     state.markerConfig = action.payload;
+        // },
         setLangCode: (state, action: PayloadAction<string>) => {
-            console.log('setLangCode', action.payload);
-            state.langCode = action.payload;
+            // console.log('setLangCode:::::', state.langCode, action.payload);
+            let activeLanguage = state.languages.find(x => x.code === action.payload);
+            if (!activeLanguage) {
+                activeLanguage = state.languages.find(x => x.code === 'en');
+                state.langCode = 'en';
+            } else {
+                state.langCode = action.payload;
+            }
 
-            const activeLanguage = state.languages.find(x => x.code === state.langCode);
             if (activeLanguage) {
                 state.activeLanguage = activeLanguage;
             }
+
+            // console.log('activeLanguage', state.activeLanguage);
         },
         setLanguages: (state, action: PayloadAction<ILang[]>) => {
-            console.log('setLanguages'); //action.payload
+            // console.log('setLanguages:::::::::::::::::::::', action.payload); //action.payload
             state.languages = action.payload;
+        },
+        setCurrencies: (state, action: PayloadAction<ICurrency[]>) => {
+            // console.log('setCurrencies:::::::::::::::::::::', action.payload);
+            state.currencies = action.payload;
+        },
+        setCountries: (state, action: PayloadAction<ICountry[]>) => {
+            // console.log('setCountries: ', action.payload.length); //action.payload
+            state.countries = action.payload;
         },
         setDrawer: (state, action: PayloadAction<boolean>) => {
             console.log('Set drawer: ', action.payload);
@@ -372,11 +556,11 @@ export const uiSlice = createSlice({
             state.positions = [];
         },
         setAmenities: (state, action: PayloadAction<IAmenity[]>) => {
-            console.log('setAmenities');
+            // console.log('setAmenities');
             state.amenities = Object.fromEntries(action.payload.map(x => [x.type, x]));
         },
         setTags: (state, action: PayloadAction<ITag[]>) => {
-            console.log('setTags');
+            // console.log('setTags');
             state.tags = Object.fromEntries(action.payload.map(x => [x.id, x]));
         },
     },
@@ -398,35 +582,55 @@ export const uiSlice = createSlice({
 });
 
 export const {
+    setAppState,
+    setCountryStat,
     setDark,
     setDrawer,
-    setTokenAccess,
+    setTokens,
     setActiveNode,
-    setActiveMarkerConfig,
+    setCurrencies,
     setLangCode,
     setUser,
-    setFeature,
+    // setFeature,
+    setMaxDistance,
     setPositions,
     clearPositions,
     setAmenities,
     setTags,
+    setBounds,
+    setZoom,
+    setCenter,
     setLanguages,
+    setCountries,
+    setFilter,
+    setNodes,
+    setHistoryQuery,
 } = uiSlice.actions;
 // Функция ниже называется селектором и позволяет нам выбрать значение из
 // штат. Селекторы также могут быть определены встроенными, где они используются вместо
 // в файле среза. Например: `useSelector((состояние: RootState) => состояние.счетчик.значение)`
+export const appState = (state: RootState) => state.ui.appState;
 export const isOpenDrawer = (state: RootState) => state.ui.drawer;
+export const countryStat = (state: RootState) => state.ui.countryStat;
 export const isDark = (state: RootState) => state.ui.dark;
+export const maxDistance = (state: RootState) => state.ui.maxDistance;
 export const tokens = (state: RootState) => state.ui.tokens;
 export const langCode = (state: RootState) => state.ui.langCode;
 export const activeLanguage = (state: RootState) => state.ui.activeLanguage;
 export const languages = (state: RootState) => state.ui.languages;
 export const user = (state: RootState) => state.ui.user;
-export const feature = (state: RootState) => state.ui.feature;
+// export const feature = (state: RootState) => state.ui.feature;
 export const activeNode = (state: RootState) => state.ui.activeNode;
 export const positions = (state: RootState) => state.ui.positions;
-export const markerConfig = (state: RootState) => state.ui.markerConfig;
+export const currencies = (state: RootState) => state.ui.currencies;
 export const amenities = (state: RootState) => state.ui.amenities;
 export const tags = (state: RootState) => state.ui.tags;
+export const bounds = (state: RootState) => state.ui.bounds;
+export const zoom = (state: RootState) => state.ui.zoom;
+export const center = (state: RootState) => state.ui.center;
+export const filter = (state: RootState) => state.ui.filter;
+export const countries = (state: RootState) => state.ui.countries;
+export const nodes = (state: RootState) => state.ui.nodes;
+export const historyQuery = (state: RootState) => state.ui.historyQuery;
 
 export default uiSlice.reducer;

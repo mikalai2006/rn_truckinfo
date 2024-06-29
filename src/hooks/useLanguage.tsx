@@ -5,22 +5,22 @@ import dayjs from '~utils/dayjs';
 
 export default function useLanguage() {
     const {i18n} = useTranslation();
+    // console.log('i18n.languages=', i18n.options.resources);
+
     // const activeLang = useAppSelector(langCode);
     const dispatch = useAppDispatch();
-    // const navigation = useNavigation();
 
     const onChangeLocale = (lang: string) => {
         i18n.changeLanguage(lang);
         dayjs.locale(lang);
     };
 
-    const chooseLanguage = (lang: string) => {
-        onChangeLocale(lang);
+    const onChooseLanguage = (lang: string) => {
         dispatch(setLangCode(lang));
-        // navigation.navigate('');
+        onChangeLocale(lang);
     };
     return {
-        chooseLanguage,
+        onChooseLanguage,
         onChangeLocale,
     };
 }

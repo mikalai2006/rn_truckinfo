@@ -27,7 +27,9 @@ export default function InputField({
                 {inputType === 'password' ? (
                     <TextInput
                         value={value}
-                        onChangeText={newText => setValue(newText)}
+                        onChangeText={newText => {
+                            setValue && setValue(newText);
+                        }}
                         placeholder={label}
                         keyboardType={keyboardType}
                         tw="flex-1 p-0 text-lg text-s-500 dark:text-s-300"
@@ -37,7 +39,9 @@ export default function InputField({
                 ) : (
                     <TextInput
                         value={value}
-                        onChangeText={newText => setValue(newText)}
+                        onChangeText={newText => {
+                            setValue && setValue(newText);
+                        }}
                         placeholder={label}
                         keyboardType={keyboardType}
                         tw="flex-1 p-0 text-lg text-s-500 dark:text-s-300"

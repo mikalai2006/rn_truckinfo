@@ -4,7 +4,7 @@ import {iStar, iStarFill} from '~utils/icons';
 import SIcon from './SIcon';
 
 const SRateStar = props => {
-    console.log('------------SRateStar');
+    // console.log('------------SRateStar');
     const {value} = props;
     const width = (value * 100) / 5;
 

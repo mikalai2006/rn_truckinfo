@@ -11,6 +11,7 @@ import {iCamera, iImage} from '~utils/icons';
 import RImage from '~components/r/RImage';
 import RImagePicker from '~components/r/RImagePicker';
 import {ImagePickerResponse} from 'react-native-image-picker/lib/typescript/types';
+import {HOST_API} from '@env';
 
 const UserFormAvatarScreen = ({navigation}: {navigation: NavigationProp<any>}) => {
     const {t} = useTranslation();
@@ -37,7 +38,7 @@ const UserFormAvatarScreen = ({navigation}: {navigation: NavigationProp<any>}) =
         data.append('service', 'user');
         data.append('serviceId', userFromStore.id);
 
-        fetch(`http://localhost:8000/api/v1/image`, {
+        fetch(`${HOST_API}/api/v1/image`, {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${token.access_token}`,

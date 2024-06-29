@@ -1,12 +1,14 @@
-import {Animated} from 'react-native';
+import {Animated, Text} from 'react-native';
 import React, {useEffect, useRef} from 'react';
 
 interface SkeletonProps {
     width?: string | number | null | undefined;
-    classString: string;
+    classString?: string;
+    text?: string;
+    textClassString?: string;
 }
 
-export const SSkeleton: React.FC<SkeletonProps> = ({width, classString}) => {
+export const SSkeleton: React.FC<SkeletonProps> = ({width, classString, text, textClassString}) => {
     const opacity = useRef(new Animated.Value(0.3));
 
     useEffect(() => {
@@ -26,7 +28,12 @@ export const SSkeleton: React.FC<SkeletonProps> = ({width, classString}) => {
         ).start();
     }, [opacity]);
 
-    const styleTw = `bg-s-300 dark:bg-s-700 rounded-lg ${classString}`;
+    const styleTw = `flex items-center justify-center bg-s-200 dark:bg-s-800 rounded-lg ${classString}`;
+    const styleText = `text-s-400 dark:text-s-500 ${textClassString}`;
 
-    return <Animated.View style={{opacity: opacity.current, width}} tw={styleTw} />;
+    return (
+        <Animated.View style={{opacity: opacity.current, width}} tw={styleTw}>
+            {text && <Text tw={styleText}>{text} ...</Text>}
+        </Animated.View>
+    );
 };

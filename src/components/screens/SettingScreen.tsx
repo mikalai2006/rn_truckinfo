@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, ScrollView} from 'react-native';
 import {useTranslation} from 'react-i18next';
 import WidgetHeaderApp from '~components/widgets/WidgetHeaderApp';
 import {useAppSelector} from '~store/hooks';
@@ -18,7 +18,7 @@ const SettingScreen = ({navigation}) => {
             <View tw="mt-10 mb-4">
                 <WidgetHeaderApp />
             </View>
-            <View tw="p-4">
+            <ScrollView tw="p-4">
                 <View tw="bg-white dark:bg-s-800 rounded-lg p-4">
                     <TouchableOpacity
                         onPress={() => navigation.navigate('UserFormAvatarScreen')}
@@ -65,12 +65,11 @@ const SettingScreen = ({navigation}) => {
                         <View tw="">
                             <Text tw="text-s-500">{t('general:md')}: </Text>
                             <Text tw="text-black dark:text-white text-lg">{userFromStore?.md} км.</Text>
-                            <Text tw="text-s-500">{t('general:md_description')} </Text>
                             <Text tw="mt-2 p-2 rounded-lg bg-p-500/20 text-p-500">{t('general:md_notify')} </Text>
                         </View>
                     </TouchableOpacity>
                 </View>
-            </View>
+            </ScrollView>
         </View>
     );
 };

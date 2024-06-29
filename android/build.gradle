@@ -3,7 +3,7 @@
 buildscript {
     ext {
         buildToolsVersion = "33.0.0"
-        kotlinVersion = "1.7.22"
+        kotlinVersion = "1.8.10" //"1.7.22"
         minSdkVersion = 21
         compileSdkVersion = 33
         targetSdkVersion = 33
@@ -22,15 +22,18 @@ buildscript {
     }
 }
 
-// allprojects {
-//     configurations.all {
-//         resolutionStrategy.dependencySubstitution {
-//             substitute(project(":ReactAndroid"))
-//                 .using(module("com.facebook.react:react-android:0.71.0"))
-//                 .because("On New Architecture we're building React Native no longer builds from source")
-//             substitute(project(":ReactAndroid:hermes-engine"))
-//                 .using(module("com.facebook.react:hermes-android:0.71.0"))
-//                 .because("On New Architecture we're building Hermes no longer builds from source")
-//         }
-//     }
-// }
+allprojects {
+    configurations.all {
+        resolutionStrategy{
+            force "com.google.android.gms:play-services-location:21.0.1"
+        }
+        // resolutionStrategy.dependencySubstitution {
+        //     substitute(project(":ReactAndroid"))
+        //         .using(module("com.facebook.react:react-android:0.71.0"))
+        //         .because("On New Architecture we're building React Native no longer builds from source")
+        //     substitute(project(":ReactAndroid:hermes-engine"))
+        //         .using(module("com.facebook.react:hermes-android:0.71.0"))
+        //         .because("On New Architecture we're building Hermes no longer builds from source")
+        // }
+    }
+}

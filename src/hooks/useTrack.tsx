@@ -1,12 +1,11 @@
 import {tokens} from '~store/appSlice';
 import {useAppSelector} from '~store/hooks';
-
-const host = 'http://localhost:8000';
+import {HOST_API} from '@env';
 
 export default function useTrack() {
     const token = useAppSelector(tokens);
     const onAddPointToTrack = async ({lat, lon}) => {
-        return await fetch(host + '/api/v1/track/', {
+        return await fetch(HOST_API + '/track/', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -48,7 +47,7 @@ export default function useTrack() {
             .sort((a, b) => a.timestamp > b.timestamp);
         console.log(JSON.stringify(body));
 
-        return await fetch(host + '/api/v1/track/list/', {
+        return await fetch(HOST_API + '/track/list/', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',

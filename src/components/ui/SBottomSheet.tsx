@@ -2,6 +2,7 @@ import {View, Dimensions, StyleSheet, Text} from 'react-native';
 import React, {useCallback, useEffect, useImperativeHandle} from 'react';
 import {Gesture, GestureDetector} from 'react-native-gesture-handler';
 import Animated, {
+    Easing,
     Extrapolate,
     interpolate,
     runOnJS,
@@ -11,18 +12,20 @@ import Animated, {
     withSpring,
     withTiming,
 } from 'react-native-reanimated';
-import {useColorScheme} from 'nativewind';
+// import {useColorScheme} from 'nativewind';
 import {snapPoint} from '~utils/redash';
 
-const {height: SCREEN_HEIGHT} = Dimensions.get('window');
+const {height: SCREEN_HEIGHT} = Dimensions.get('screen');
 const MAX_TRANSLATE_Y = -SCREEN_HEIGHT;
 let snapPointsY = [0, -300, MAX_TRANSLATE_Y];
 
 type BottomSheetProps = {
     children?: React.ReactNode;
     topheader?: React.ReactNode | null;
+    isDisableBackClose?: boolean;
     onClose?: () => void;
     snapPoints: number[];
+    headerPoints: number[];
 };
 export type BottomSheetRefProps = {
     scrollTo: (destination: number) => void;
@@ -31,9 +34,9 @@ export type BottomSheetRefProps = {
 };
 
 const SBottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
-    ({snapPoints, children, topheader, onClose}, ref) => {
-        const colorSheme = useColorScheme();
-        const translateY = useSharedValue(35);
+    ({snapPoints, headerPoints, children, topheader, onClose, isDisableBackClose}, ref) => {
+        // const colorSheme = useColorScheme();
+        const translateY = useSharedValue(0);
         const active = useSharedValue(false);
         const activeIndex = useSharedValue(0);
 
@@ -42,8 +45,12 @@ const SBottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
         //     onClose && onClose();
         // }, []);
 
+        let headerPointsY = headerPoints || [200, 170, 160];
         useEffect(() => {
             if (snapPoints && snapPoints.length > 0) {
+                snapPointsY = snapPoints;
+                snapPointsY.push(MAX_TRANSLATE_Y);
+            } else {
                 snapPointsY = snapPoints;
                 snapPointsY.push(MAX_TRANSLATE_Y);
             }
@@ -55,7 +62,10 @@ const SBottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
             active.value = destination !== 0;
             // console.log('destination: ', destination);
 
-            translateY.value = withSpring(destination, {damping: 50});
+            translateY.value = withTiming(destination, {
+                easing: Easing.linear,
+                duration: 300,
+            }); // withSpring(destination, {damping: 150, duration: 500});
 
             if (destination === 0 && onClose) {
                 onClose && runOnJS(onClose)();
@@ -98,12 +108,12 @@ const SBottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
         const rBottomSheetStyle = useAnimatedStyle(() => {
             const borderRadius = interpolate(
                 translateY.value,
-                [MAX_TRANSLATE_Y + 100, MAX_TRANSLATE_Y],
-                [15, 0],
+                [MAX_TRANSLATE_Y, MAX_TRANSLATE_Y + 100],
+                [0, 15],
                 Extrapolate.CLAMP,
             );
             return {
-                transform: [{translateY: translateY.value + (translateY.value >= 0 ? 35 : 0)}],
+                transform: [{translateY: translateY.value + (translateY.value >= 0 ? 0 : 0)}],
                 borderRadius,
             };
         });
@@ -111,10 +121,11 @@ const SBottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
         const rTopHeader = useAnimatedStyle(() => {
             const height = interpolate(
                 translateY.value,
-                [0, 300, MAX_TRANSLATE_Y / 2, MAX_TRANSLATE_Y - 35],
-                [0, 150, 170, 200],
+                [MAX_TRANSLATE_Y, -600, -300],
+                headerPointsY,
                 Extrapolate.CLAMP,
             );
+
             return {
                 height,
             };
@@ -123,8 +134,8 @@ const SBottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
         const rTopMargin = useAnimatedStyle(() => {
             const marginTop = interpolate(
                 translateY.value,
-                [0, MAX_TRANSLATE_Y / 2, MAX_TRANSLATE_Y - 35],
-                [-100, -60, 6],
+                [MAX_TRANSLATE_Y, -300, 0],
+                [0, -60, -100],
                 Extrapolate.CLAMP,
             );
             return {
@@ -132,12 +143,7 @@ const SBottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
             };
         });
         const rTouchElement = useAnimatedStyle(() => {
-            const top = interpolate(
-                translateY.value,
-                [0, MAX_TRANSLATE_Y + 100, MAX_TRANSLATE_Y - 35],
-                [0, 10, 30],
-                Extrapolate.CLAMP,
-            );
+            const top = interpolate(translateY.value, [MAX_TRANSLATE_Y, -300, 0], [20, 10, 0], Extrapolate.CLAMP);
             return {
                 top,
             };
@@ -160,7 +166,9 @@ const SBottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
                 <Animated.View
                     animatedProps={rBackdropProps}
                     onTouchStart={() => {
-                        scrollTo(0);
+                        if (!isDisableBackClose) {
+                            scrollTo(0);
+                        }
                     }}
                     style={[
                         {
@@ -169,24 +177,20 @@ const SBottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
                         },
                         rBackdropStyle,
                     ]}
-                    tw="bg-black/20 dark:bg-black/40"
+                    tw="bg-black/30 dark:bg-black/40"
                 />
                 <GestureDetector gesture={gesture}>
                     <Animated.View
-                        tw="absolute top-0 bg-white dark:bg-s-800 w-full h-screen overflow-hidden"
+                        tw="absolute top-0 bg-s-100 dark:bg-s-950 w-full"
                         style={[styles.widgetBottomSheetContainer, rBottomSheetStyle]}>
-                        <View style={{flex: 1}} tw="relative">
-                            <Animated.View tw="absolute left-0 right-0 z-10 w-full" style={[rTouchElement]}>
-                                <View tw="w-16 h-1.5 bg-black/20 dark:bg-white/20 rounded-md my-2 mx-auto" />
+                        <View tw="relative flex-1">
+                            <Animated.View tw="absolute left-0 right-0 z-20 w-full" style={[rTouchElement]}>
+                                <View tw="w-16 h-1.5 bg-black/50 rounded-md my-2 mx-auto" />
                             </Animated.View>
-                            {topheader && (
-                                <Animated.View tw="bg-s-200 dark:bg-s-700" style={[rTopHeader]}>
-                                    {topheader}
-                                </Animated.View>
-                            )}
+                            {topheader && <Animated.View style={[rTopHeader]}>{topheader}</Animated.View>}
                             <Animated.View
-                                tw="flex-1 mx-2 bg-white dark:bg-s-800 rounded-xl"
-                                style={[topheader ? rTopMargin : {}]}>
+                                tw="flex-1"
+                                style={[topheader ? rTopMargin : {}, topheader ? {height: SCREEN_HEIGHT - 200} : {}]}>
                                 {children}
                             </Animated.View>
                         </View>
@@ -199,7 +203,7 @@ const SBottomSheet = React.forwardRef<BottomSheetRefProps, BottomSheetProps>(
 
 const styles = StyleSheet.create({
     widgetBottomSheetContainer: {
-        height: SCREEN_HEIGHT + 35,
+        height: SCREEN_HEIGHT,
         top: SCREEN_HEIGHT,
         borderRadius: 15,
     },

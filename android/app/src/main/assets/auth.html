@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script>
+            document.addEventListener('message', e => {
+                alert(JSON.stringify(e.data));
+                //   switch (e.data.event) {
+                //     case "dark":
+                //       uiStore.onSetDark(e.data.dark);
+                //       // alert(`${JSON.stringify(e.data)}::: ===> ${route.name}`);
+                //       break;
+                //     case "logout":
+                //       // alert("logout");
+                //       authStore.logout();
+                //       // alert(`${JSON.stringify(e.data)}::: ===> ${route.name}`);
+                //       break;
+                //     case "refresh_token":
+                //       // alert("refresh_token");
+                //       authStore.initAuth();
+                //       break;
+                //     default:
+                //       // alert("No event");
+                //       break;
+                //   }
+            });
+
+            document.onselectstart = event => {
+                event.preventDefault();
+            };
+
+            document.onload = () => {
+                if (window && window.ReactNativeWebView) {
+                    window.ReactNativeWebView.postMessage(
+                        JSON.stringify({
+                            event: 'center',
+                            options: {marker: center.value},
+                        }),
+                    );
+                }
+            };
+        </script>
+        <style></style>
+    </head>
+    <body>
+        Hello Auth1
+
+        <a href="http://localhost:8000/api/v1/oauth/google">Goggle</a>
+    </body>
+</html>

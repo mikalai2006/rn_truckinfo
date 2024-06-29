@@ -5,14 +5,13 @@ import {useTranslation} from 'react-i18next';
 import {activeLanguage, langCode} from '~store/appSlice';
 import {useAppSelector} from '~store/hooks';
 import RTitle from '~components/r/RTitle';
-import RButton from '~components/r/RButton';
 import {NavigationProp} from '@react-navigation/native';
-import RButtonBorder from '~components/r/RButtonBorder';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import colors from '~utils/colors';
 
 import languages from '~localization/languages';
 import useLanguage from '~hooks/useLanguage';
+import SIcon from '~components/ui/SIcon';
+import {iCheck} from '~utils/icons';
+import UIButton from '~components/ui/UIButton';
 
 const LanguageScreen = ({navigation}: {navigation: NavigationProp<any>}) => {
     const {t} = useTranslation();
@@ -20,7 +19,7 @@ const LanguageScreen = ({navigation}: {navigation: NavigationProp<any>}) => {
     const activeLanguageFromStore = useAppSelector(activeLanguage);
     // const navigation = useNavigation();
 
-    const {chooseLanguage} = useLanguage();
+    const {onChooseLanguage} = useLanguage();
     const allLanguages = Object.keys(languages);
     // if (activeLangCode === '') {
     //     chooseLanguage(allLanguages[0]);
@@ -35,33 +34,29 @@ const LanguageScreen = ({navigation}: {navigation: NavigationProp<any>}) => {
                 <ScrollView tw="flex-1 px-6">
                     {allLanguages.map(lang => {
                         return (
-                            <RButtonBorder disabled={false} key={lang} onPress={() => chooseLanguage(lang)}>
+                            <UIButton
+                                type={lang === activeLangCode ? 'primary' : 'default'}
+                                disabled={false}
+                                key={lang}
+                                twClass="mt-3"
+                                onPress={() => onChooseLanguage(lang)}>
                                 <View tw="flex-1 flex flex-row items-center">
                                     <View tw="flex-auto">
                                         <Text
                                             tw={`text-xl ${
-                                                lang === activeLangCode ? 'text-p-500' : 'text-black dark:text-white'
+                                                lang === activeLangCode ? 'text-white' : 'text-black dark:text-white'
                                             }`}>
                                             {languages[lang].name}
                                         </Text>
                                     </View>
                                     <View>
-                                        {lang === activeLangCode && (
-                                            <Icon name="check" size={22} color={colors.p[500]} />
-                                        )}
+                                        {lang === activeLangCode && <SIcon path={iCheck} size={22} tw="text-p-500" />}
                                     </View>
                                 </View>
-                            </RButtonBorder>
+                            </UIButton>
                         );
                     })}
                 </ScrollView>
-                <View tw="p-6">
-                    <RButton
-                        disabled={activeLangCode === ''}
-                        text={t('general:back')}
-                        onPress={() => navigation.goBack()}
-                    />
-                </View>
             </View>
         </View>
     );

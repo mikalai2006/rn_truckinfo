@@ -13,7 +13,7 @@ const SRate = props => {
                 <Text tw="px-2 text-s-500">{value}</Text>
             </View>
             <View tw="" style={{width: '70%'}}>
-                <View tw="bg-s-300 dark:bg-s-700 h-2 rounded-md" style={{width: `100%`}} />
+                <View tw="bg-s-200 dark:bg-s-700 h-2 rounded-md" style={{width: `100%`}} />
                 <View tw="absolute top-0 left-0 bg-yellow-500 h-2 rounded-md" style={{width: `${width}%`}} />
             </View>
             <View>

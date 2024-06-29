@@ -1,7 +1,8 @@
-import {Platform, PermissionsAndroid, TouchableOpacity, Text} from 'react-native';
+import {Platform, PermissionsAndroid, Text} from 'react-native';
 import React, {useCallback, useState} from 'react';
 
 import * as ImagePicker from 'react-native-image-picker';
+import UIButton from '~components/ui/UIButton';
 const includeExtra = true;
 
 export interface IImagePickerAction {
@@ -71,13 +72,15 @@ const RImagePicker = (props: IRImagePickerProps) => {
     }, []);
 
     return (
-        <TouchableOpacity
-            onPress={() => onButtonPress(props.action)}
-            activeOpacity={0.8}
-            tw={`flex flex-row items-center justify-between p-4 rounded-lg bg-white dark:bg-s-700 border border-s-200 dark:border-s-700 ${props.classString}`}>
+        <UIButton type="default" twClass={`w-full ${props.classString}`} onPress={() => onButtonPress(props.action)}>
             {children ? children : <Text tw="text-black dark:text-white">{props.action.title || 'Upload'}</Text>}
-            {/* <Text tw="text-black">{JSON.stringify(response, null, 2)}</Text> */}
-        </TouchableOpacity>
+        </UIButton>
+        // <TouchableOpacity
+        //     onPress={() => onButtonPress(props.action)}
+        //     activeOpacity={0.8}
+        //     tw={`flex flex-row items-center justify-between p-4 rounded-lg bg-white dark:bg-s-700 border border-s-200 dark:border-s-700 ${props.classString}`}>
+        //     {children ? children : <Text tw="text-black dark:text-white">{props.action.title || 'Upload'}</Text>}
+        // </TouchableOpacity>
         // <ScrollView>
         //     <View style={styles.buttonContainer}>
         //         <Button

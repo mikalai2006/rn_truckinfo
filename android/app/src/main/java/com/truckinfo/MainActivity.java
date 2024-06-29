@@ -1,9 +1,13 @@
 package com.truckinfo;
+// import expo.modules.ReactActivityDelegateWrapper;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactActivityDelegate;
+
+// https://reactnavigation.org/docs/getting-started/
+import android.os.Bundle;
 
 public class MainActivity extends ReactActivity {
 
@@ -22,11 +26,24 @@ public class MainActivity extends ReactActivity {
    * (aka React 18) with two boolean flags.
    */
   @Override
+  // protected ReactActivityDelegate createReactActivityDelegate() {
+  //   return new ReactActivityDelegateWrapper(this, BuildConfig.IS_NEW_ARCHITECTURE_ENABLED, new DefaultReactActivityDelegate(
+  //       this,
+  //       getMainComponentName(),
+  //       // If you opted-in for the New Architecture, we enable the Fabric Renderer.
+  //       DefaultNewArchitectureEntryPoint.getFabricEnabled()));
+  // }
   protected ReactActivityDelegate createReactActivityDelegate() {
     return new DefaultReactActivityDelegate(
         this,
         getMainComponentName(),
         // If you opted-in for the New Architecture, we enable the Fabric Renderer.
         DefaultNewArchitectureEntryPoint.getFabricEnabled());
+  }
+
+  // https://reactnavigation.org/docs/getting-started/
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(null);
   }
 }

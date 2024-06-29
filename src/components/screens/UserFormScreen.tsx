@@ -2,14 +2,14 @@ import {View} from 'react-native';
 import React, {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 
-import {setTokenAccess, tokens, user} from '~store/appSlice';
+import {setTokens, tokens, user} from '~store/appSlice';
 import {useAppDispatch, useAppSelector} from '~store/hooks';
 import RTitle from '~components/r/RTitle';
 import RButton from '~components/r/RButton';
 import {NavigationProp} from '@react-navigation/native';
 import InputField from '~components/form/InputField';
 import useAuth from '~hooks/useAuth';
-const host = 'http://localhost:8000';
+import {HOST_API} from '@env';
 
 const UserFormScreen = ({navigation}: {navigation: NavigationProp<any>}) => {
     const {t} = useTranslation();
@@ -31,10 +31,13 @@ const UserFormScreen = ({navigation}: {navigation: NavigationProp<any>}) => {
     const dispatch = useAppDispatch();
 
     const [loading, setLoading] = useState(false);
-    const {onGetIam} = useAuth();
+    const {onGetIam, onSyncToken: onCheckAuth} = useAuth();
     const onPatchUser = async () => {
         setLoading(true);
-        return await fetch(host + `/api/v1/user/${userFromStore?.id}`, {
+
+        await onCheckAuth();
+
+        return await fetch(HOST_API + `/user/${userFromStore?.id}`, {
             method: 'PATCH',
             headers: {
                 'Access-Control-Allow-Origin-Type': '*',
@@ -45,7 +48,7 @@ const UserFormScreen = ({navigation}: {navigation: NavigationProp<any>}) => {
             .then(r => r.json())
             .then(response => {
                 if (response.message && response?.code === 401) {
-                    dispatch(setTokenAccess({access_token: 'refresh' + new Date().getTime()}));
+                    dispatch(setTokens({access_token: ''}));
                 }
 
                 if (response.id) {

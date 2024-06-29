@@ -1,9 +1,10 @@
 import React, {useRef, useEffect} from 'react';
 import {styled, useColorScheme} from 'nativewind';
-import {View, Animated, useWindowDimensions, TouchableOpacity} from 'react-native';
+import {View, Animated, TouchableOpacity} from 'react-native';
 import Svg, {G, Circle} from 'react-native-svg';
 import colors from '../utils/colors';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import SIcon from './ui/SIcon';
+import {iChevronLeft} from '~utils/icons';
 const StyledWrapper = styled(View);
 
 export default function OnboardingNextButton({percentage, scrollTo}) {
@@ -72,7 +73,7 @@ export default function OnboardingNextButton({percentage, scrollTo}) {
                 </G>
             </Svg>
             <TouchableOpacity activeOpacity={0.6} tw="absolute p-4 bg-p-500 rounded-full" onPress={scrollTo}>
-                <Icon name="arrow-forward" size={32} />
+                <SIcon path={iChevronLeft} size={32} />
             </TouchableOpacity>
         </StyledWrapper>
     );

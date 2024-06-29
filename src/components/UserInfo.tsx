@@ -1,4 +1,4 @@
-import {View, Text, Modal, Alert, Platform, ActivityIndicator} from 'react-native';
+import {View, Text, Modal, Alert, Platform, ActivityIndicator, TouchableOpacity} from 'react-native';
 import React, {useEffect, useState} from 'react';
 
 import {tokens, user} from '~store/appSlice';
@@ -6,32 +6,37 @@ import {useAppSelector} from '~store/hooks';
 import RButton from './r/RButton';
 import SwitchMode from './SwitchMode';
 import RImage from './r/RImage';
-import DeviceInfo from 'react-native-device-info';
-import WebView from 'react-native-webview';
-import useOnMessage from '~hooks/useOnMessage';
+// import DeviceInfo from 'react-native-device-info';
+// import WebView from 'react-native-webview';
+// import useOnMessage from '~hooks/useOnMessage';
+import {useNavigation} from '@react-navigation/native';
+import {ScreenKeys} from './screens';
+import {useTranslation} from 'react-i18next';
 
 const UserInfo = () => {
+    const {t} = useTranslation();
+    const navigation = useNavigation();
     const userData = useAppSelector(user);
-    const token = useAppSelector(tokens);
-    const {onMessage} = useOnMessage();
+    const tokensFromStore = useAppSelector(tokens);
+    // const {onMessage} = useOnMessage();
 
-    const [modalVisible, setModalVisible] = useState(false);
-    const [userAgent, setUserAgent] = useState('');
+    // const [modalVisible, setModalVisible] = useState(false);
+    // const [userAgent, setUserAgent] = useState('');
 
-    useEffect(() => {
-        const setAgent = () => {
-            console.log('setAgent');
-            DeviceInfo.getUserAgent().then(r => {
-                const userAgentText =
-                    Platform.OS === 'android'
-                        ? 'Chrome/18.0.1025.133 Mobile Safari/535.19'
-                        : 'AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75';
-                //r.replace('; wv', '');
-                setUserAgent(userAgentText);
-            });
-        };
-        setAgent();
-    }, []);
+    // useEffect(() => {
+    //     const setAgent = () => {
+    //         console.log('setAgent');
+    //         DeviceInfo.getUserAgent().then(r => {
+    //             const userAgentText =
+    //                 Platform.OS === 'android'
+    //                     ? 'Chrome/18.0.1025.133 Mobile Safari/535.19'
+    //                     : 'AppleWebKit/602.1.50 (KHTML, like Gecko) CriOS/56.0.2924.75';
+    //             //r.replace('; wv', '');
+    //             setUserAgent(userAgentText);
+    //         });
+    //     };
+    //     setAgent();
+    // }, []);
 
     // useEffect(() => {
     //     if (token.access_token) {
@@ -40,21 +45,21 @@ const UserInfo = () => {
     // }, [token.access_token]);
 
     return (
-        <>
+        <View tw="relative">
+            <View tw="absolute right-4 top-6 z-10">
+                <SwitchMode />
+            </View>
             {/* <Text tw="text-black">{JSON.stringify(token)}</Text> */}
-            {token.access_token ? (
+            {tokensFromStore?.access_token ? (
                 // <ImageBackground source={require('../assets/images/menu-bg.jpeg')} tw="relative p-4">
                 // </ImageBackground>
                 <View tw="relative p-4 pt-8 bg-s-200 dark:bg-s-900">
-                    <View tw="absolute right-2 top-6 z-10">
-                        <SwitchMode />
-                    </View>
                     <View>
                         {userData?.images ? <RImage image={userData.images[0]} /> : <Text>No</Text>}
                         <Text tw="text-black dark:text-white font-bold text-2xl">{userData?.login}</Text>
-                        <View>
+                        {/* <View>
                             <Text tw="text-black dark:text-white">{userData?.name || userData?.id}</Text>
-                        </View>
+                        </View> */}
                         <View>
                             <Text tw="text-black dark:text-white">{userData?.roles}</Text>
                             {/* <Text tw="text-white">{token.refresh_token}</Text> */}
@@ -62,15 +67,36 @@ const UserInfo = () => {
                     </View>
                 </View>
             ) : (
-                <View tw="bg-p-600 dark:bg-p-600 p-4">
-                    <RButton disabled={false} text="Войти" onPress={() => setModalVisible(!modalVisible)} />
-                    <View tw="mt-4">
-                        <Text tw="text-white">Войдите в аккаунт, чтобы открыть все возможности приложения</Text>
+                <View tw="relative pt-8 bg-s-200 dark:bg-s-900">
+                    <View tw="p-4">
+                        <Text tw="text-black dark:text-white font-bold text-2xl">{t('general:guest')}</Text>
+                    </View>
+
+                    <View tw="p-4">
+                        <RButton
+                            disabled={false}
+                            text={t('form:loginTitle')}
+                            onPress={() => {
+                                //setModalVisible(!modalVisible)
+                                navigation.navigate(ScreenKeys.AuthScreen);
+                            }}
+                        />
+                        {/* <View tw="mt-4">
+                            <Text tw="text-s-800 dark:text-s-200 text-base leading-5">{t('general:authInvite')}</Text>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    navigation.navigate('Onboarding');
+                                }}>
+                                <Text tw="underline text-base text-black dark:text-white">
+                                    {t('general:authBonuses')}
+                                </Text>
+                            </TouchableOpacity>
+                        </View> */}
                     </View>
                 </View>
             )}
 
-            <Modal
+            {/* <Modal
                 animationType="slide"
                 transparent={true}
                 statusBarTranslucent={true}
@@ -106,14 +132,10 @@ const UserInfo = () => {
                                 }}
                             />
                         )}
-                        {/* <Text tw="">Hello World!</Text>
-                        <Pressable tw="bg-s-500" onPress={() => setModalVisible(!modalVisible)}>
-                            <Text tw="">Hide Modal</Text>
-                        </Pressable> */}
                     </View>
                 </View>
-            </Modal>
-        </>
+            </Modal> */}
+        </View>
     );
 };
 
