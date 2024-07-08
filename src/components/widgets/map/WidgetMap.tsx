@@ -1,7 +1,7 @@
 import {Text, View, TouchableOpacity, DeviceEventEmitter} from 'react-native';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
-import {LatLng, LeafletView} from '@charlespalmerbf/react-native-leaflet-js';
+import {LatLng, OLView} from '../../map/module';
 import {useAppDispatch, useAppSelector} from '~store/hooks';
 import {
     ILatLng,
@@ -27,32 +27,42 @@ import WidgetHeaderApp from '../WidgetHeaderApp';
 import WidgetMapLocation from './WidgetMapLocation';
 import WidgetMapCreateNode, {WidgetMapCreateNodeNodeRefProps} from './WidgetMapCreateNode';
 import {NodeSchema} from '~schema/NodeSchema';
-import {useQuery} from '@realm/react';
-import {ScreenKeys} from '~components/screens';
+import {useQuery, useRealm} from '@realm/react';
 import {useTranslation} from 'react-i18next';
 import WidgetNotConnect from '../WidgetNotConnect';
 import UIButton from '~components/ui/UIButton';
-import WidgetMapHeading from './WidgetMapHeading';
 import {GeolocationResponse} from '@react-native-community/geolocation';
 import {PointSchema} from '~schema/PointSchema';
 import {replaceRegexByArray} from '~utils/utils';
+import {BSON} from 'realm';
 
 const DEFAULT_COORDINATE: LatLng = {
     lat: 52.039162780443,
     lng: 20.696011543274,
 };
 
-const WidgetMap = props => {
-    // console.log('Render WidgetMapLeaflet');
+type Props = {
+    source: any;
+    marker: NodeSchema | undefined;
+    initialCenter: ILatLng | undefined;
 
+    compass: any;
+    enableMagnet: boolean;
+    angle: number;
+};
+
+const WidgetMap = (props: Props) => {
+    const {source, initialCenter, marker} = props;
     const dispatch = useAppDispatch();
     const navigation = useNavigation();
     const {t} = useTranslation();
 
+    // const realm = useRealm();
+
     const {colorScheme} = useColorScheme();
 
     const centerFromStore = useAppSelector(center);
-    const centerFromStore2 = useMemo(() => centerFromStore, []);
+    const centerFromStore2 = useMemo(() => initialCenter || centerFromStore, [initialCenter]);
     const zoomFromStore = useAppSelector(zoom);
     const [zoomValue, setZoomValue] = useState(zoomFromStore);
     // const nodesFromStore = useAppSelector(nodes);
@@ -64,11 +74,8 @@ const WidgetMap = props => {
     const [showCross, setShowCross] = useState(false);
     const maxDistanceFromStore = useAppSelector(maxDistance);
     const allowDistance = useMemo(() => maxDistanceFromStore || 1, [maxDistanceFromStore]);
-    const [angle, setAngle] = useState(0);
-    const [enableMagnet, setEnableMagnet] = useState(false);
-    const textHeading = useMemo(() => angle, [angle]);
 
-    const [enabledLocation, setEnabledLocation] = useState(false);
+    // const [enabledLocation, setEnabledLocation] = useState(false);
 
     const [myPosition, setMyPosition] = useState<GeolocationResponse | null>(null);
     const onChangeMyPosition = (data: GeolocationResponse) => {
@@ -86,6 +93,14 @@ const WidgetMap = props => {
         }
     };
 
+    useEffect(() => {
+        if (marker) {
+            navigation.navigate('NodeShortScreen', {
+                marker: JSON.parse(JSON.stringify(marker)),
+            });
+        }
+    }, [marker]);
+
     // const boundsStore = useAppSelector(bounds);
 
     const [queryString, setQueryString] = useState('');
@@ -101,7 +116,7 @@ const WidgetMap = props => {
         };
     }, []);
 
-    const allNodes = useQuery(NodeSchema, nodes => nodes);
+    const allNodes = useQuery(NodeSchema);
     const nodesList = useQuery(
         NodeSchema,
         nodes => {
@@ -168,26 +183,11 @@ const WidgetMap = props => {
 
             // console.log('result2: ', result2.length);
             console.log('time query: ', window.performance.now() - testTime);
-            console.log('fullQuery=', fullQuery);
+            // console.log('fullQuery=', fullQuery);
             return result;
         },
         [filterFromStore, amenityFromStore, boundsFromStore, showCross, activeNodeFromStore, queryString],
     );
-    // const [initMarkers, setInitMarkers] = useState([]);
-    // useEffect(() => {
-    //     const result = allNodes
-    //         .map(x => {
-    //             return [x._id.toHexString(), x.lat, x.lon, x.type].join('^');
-    //         })
-    //         .join('|');
-
-    //     // const Buffer = require('buffer').Buffer;
-    //     // let encodedStr = new Buffer(result).toString('base64');
-    //     // console.log(encodedStr.length);
-    //     // console.log(result.length);
-
-    //     setInitMarkers(result);
-    // }, [allNodes]);
 
     const [markers, setMarkers] = useState<INode[] | number>([]);
 
@@ -347,7 +347,7 @@ const WidgetMap = props => {
     const [includeToArea, setIncludeToArea] = useState(false);
 
     const onMessageReceived = data => {
-        // console.log(JSON.stringify(data));
+        // console.log('onMessageReceived: ', JSON.stringify(data));
         if (!data.data) {
             return;
         }
@@ -363,18 +363,49 @@ const WidgetMap = props => {
                 // console.log('Change center', data.data.center);
                 data.data.center && dispatch(setCenter(data.data.center));
                 break;
+            case 'ON_CLICK':
+                // const [lon, lat] = data.data.center;
+                // const parseLat = parseFloat(lat.toFixed(3));
+                // const parseLon = parseFloat(lon.toFixed(3));
+                // const existAlsoPoints = localePoints.filtered('lat == $0 AND lon == $1', parseLat, parseLon);
+                // console.log(parseLat, parseLon, existAlsoPoints);
+
+                // if (existAlsoPoints.length === 0) {
+                //     realm.write(() => {
+                //         realm.create('PointSchema', {
+                //             _id: new BSON.ObjectId(),
+                //             lat: parseLat,
+                //             lon: parseLon,
+                //             accuracy: 100,
+                //             createdAt: new Date().toISOString(),
+                //             isLocal: true,
+                //         });
+                //     });
+                // } else {
+                //     console.log('Point exist');
+                // }
+                break;
             case 'ON_CHOOSE_MARKER':
                 // console.log('ON_CHOOSE_MARKER:::', data.data);
                 dispatch(setActiveNode(data.data));
 
-                navigation.navigate(ScreenKeys.NodeScreen, data.data);
+                const localMarker = allNodes.filtered('_id == $0', new BSON.ObjectId(data.data.marker._id));
+                if (localMarker.length > 0) {
+                    // console.log('localMarker', localMarker);
+
+                    navigation.navigate('NodeShortScreen', {
+                        marker: JSON.parse(JSON.stringify(localMarker[0])),
+                    });
+                }
                 break;
             // case 'ON_SET_TYPE_NEW_NODE':
             //     widgetLocalMapCreateNodeRef.current?.onSetNewNodeType(data.data);
             //     break;
             case 'STATUS_INCLUDE_NEWPOINT_TO_AREA':
                 // console.log('STATUS_INCLUDE_NEWPOINT_TO_AREA: ', data);
-                setIncludeToArea(data.data.includeToArea);
+                if (includeToArea !== data.data.includeToArea) {
+                    setIncludeToArea(data.data.includeToArea);
+                }
                 break;
             default:
                 break;
@@ -417,39 +448,41 @@ const WidgetMap = props => {
     // };
     const existFilters = useMemo(() => Object.keys(filterFromStore) || [], [filterFromStore]);
 
+    const mapComponent = () => (
+        <OLView
+            mapMarkers={markers}
+            pointsAllowArea={pointsAllowArea}
+            bgColor={bgColor}
+            theme={colorScheme}
+            amenity={amenityFromStore}
+            typeNewNode={typeNewNode}
+            showCross={showCross}
+            activeNode={activeNodeFromStore}
+            onMessageReceived={onMessageReceived}
+            myPosition={myPosition}
+            allowDistance={allowDistance}
+            mapCenterPosition={centerFromStore2 || DEFAULT_COORDINATE}
+            myPositionToCenter={myPositionToCenter}
+            zoom={zoomValue}
+            enableMagnet={props.enableMagnet}
+            gyroscope={props.angle}
+            // source={source}
+            source={{uri: 'file:///android_asset/map.html'}}
+            // startInLoadingState={true}
+            onError={er => {
+                console.log(er);
+            }}
+            doDebug={false}
+        />
+    );
+
     return (
         <View tw="flex-1 bg-white dark:bg-s-900">
             <View tw="flex-1">
-                <LeafletView
-                    mapMarkers={markers}
-                    pointsAllowArea={pointsAllowArea}
-                    // initMarkers={initMarkers}
-                    bgColor={bgColor}
-                    theme={colorScheme}
-                    amenity={amenityFromStore}
-                    typeNewNode={typeNewNode}
-                    showCross={showCross}
-                    gyroscope={360 - angle}
-                    activeNode={activeNodeFromStore}
-                    // mapCenterPosition={markers[0].position}
-                    onMessageReceived={onMessageReceived}
-                    myPosition={myPosition}
-                    allowDistance={allowDistance}
-                    mapCenterPosition={centerFromStore2 || DEFAULT_COORDINATE}
-                    myPositionToCenter={myPositionToCenter}
-                    zoom={zoomValue}
-                    enableMagnet={enableMagnet}
-                    source={props.source}
-                    // source={{uri: 'file:///android_asset/map.html'}}
-                    // startInLoadingState={true}
-                    onError={er => {
-                        console.log(er);
-                    }}
-                    doDebug={false}
-                />
+                {mapComponent()}
                 <WidgetNotConnect />
                 <View tw="absolute top-24 left-0 z-[999999]">
-                    <Text tw=" bg-s-500">{JSON.stringify(textHeading)}</Text>
+                    <Text tw=" bg-s-500">{JSON.stringify(props.angle)}</Text>
                 </View>
             </View>
             {typeof markers === 'number' ? (
@@ -519,7 +552,7 @@ const WidgetMap = props => {
                             <TouchableOpacity
                                 tw={`p-3 rounded-r-lg ${existFilters.length ? 'bg-p-500' : ''}`}
                                 onPress={async () => {
-                                    navigation.navigate('MapLocalFilterScreen');
+                                    navigation.navigate('MapFilterScreen');
                                 }}>
                                 <SIcon
                                     path={iFilterFill}
@@ -582,15 +615,13 @@ const WidgetMap = props => {
                 </UIButton>
             </View>
             <View tw="absolute right-3 bottom-1/3">
-                <View tw="mb-2">
-                    <WidgetMapHeading onSetAngle={setAngle} onSetEnableMagnet={setEnableMagnet} />
-                </View>
+                <View tw="mb-2">{props.compass}</View>
                 <View tw="mb-2">
                     <WidgetMapLocation
                         center={centerFromStore}
                         onSetCenterAsMyPosition={onSetCenterAsMyPosition}
                         onChangeMyPosition={onChangeMyPosition}
-                        onEnableLocation={setEnabledLocation}
+                        // onEnableLocation={setEnabledLocation}
                     />
                 </View>
                 {/* <TouchableOpacity tw="bg-white dark:bg-s-800 p-3 rounded-full shadow-md mb-2" onPress={async () => {}}>

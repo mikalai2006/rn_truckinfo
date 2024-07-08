@@ -26,12 +26,12 @@ const WidgetNodeHeader = ({lid}: {lid: string | undefined}) => {
     return (
         <View tw="">
             <View tw="pt-4 flex flex-row flex-nowrap items-center gap-x-4 relative">
-                {node?.ccode && (
+                {/* {node?.ccode && (
                     <View tw="absolute right-0 top-2 p-1 ">
                         <RCountry code={node?.ccode} />
                     </View>
-                )}
-                <View tw="w-12 h-12 relative">
+                )} */}
+                <View tw="w-12 relative">
                     <View
                         tw="p-2 rounded-lg"
                         style={{
@@ -45,6 +45,9 @@ const WidgetNodeHeader = ({lid}: {lid: string | undefined}) => {
                             path={amenityConfig?.props.icon}
                         />
                     </View>
+                    <View tw="self-center pt-2">
+                        <RCountry code={node?.ccode} />
+                    </View>
                 </View>
                 <View tw="flex-auto">
                     {node?.name && (
@@ -55,6 +58,12 @@ const WidgetNodeHeader = ({lid}: {lid: string | undefined}) => {
                     <>
                         <Text numberOfLines={1} tw="text-xl leading-6 font-bold text-s-900 dark:text-s-100">
                             {node?.name || amenityStore[node.type]?.title}
+                        </Text>
+                        {/* <Text numberOfLines={1} tw="text-xl leading-6 font-bold text-s-900 dark:text-s-100">
+                            {node?.lat}, {node?.lon}
+                        </Text> */}
+                        <Text tw="text-base leading-5 text-s-700 dark:text-s-400">
+                            {node?.lat}, {node?.lon}
                         </Text>
                         <Text numberOfLines={1} tw="text-xs leading-4 text-s-400 dark:text-s-100">
                             {t('general:added')} {dayjs(node?.createdAt).fromNow()}

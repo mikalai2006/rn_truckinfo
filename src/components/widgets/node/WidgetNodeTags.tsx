@@ -103,7 +103,7 @@ const WidgetNodeTags = (props: IWidgetNodeTagsProps) => {
             ) : null} */}
             <View tw="flex-1 flex flex-row flex-wrap">
                 {tagGroups.map(([key, el], i) => (
-                    <View key={i.toString()} tw="w-1/3 h-[130px]">
+                    <View key={i.toString()} tw="w-1/3 lg:w-1/5 h-[130px]">
                         <View tw="relative m-1">
                             <TouchableOpacity
                                 disabled={isRemovedNode}
@@ -117,11 +117,13 @@ const WidgetNodeTags = (props: IWidgetNodeTagsProps) => {
                                 <View tw="flex-auto self-stretch">
                                     <WidgetNodeTag tagId={key} nodedatas={el} />
                                 </View>
-                                <View tw="p-1 self-stretch">
+                                <View tw="self-stretch">
                                     {el.length > 1 ? (
-                                        <Text tw="text-sm text-center text-s-900 dark:text-s-200 underline">
-                                            {t('general:more')}...
-                                        </Text>
+                                        <View tw="p-1">
+                                            <Text tw="text-sm text-center text-s-900 dark:text-s-200 underline">
+                                                {t('general:more')}...
+                                            </Text>
+                                        </View>
                                     ) : (
                                         <WidgetNodeTagsVote
                                             tagId={el[0].tagId}

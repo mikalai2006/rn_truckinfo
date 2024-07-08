@@ -6,6 +6,7 @@ export class CountryStat extends Realm.Object<CountryStat> {
     code!: string;
     count?: number;
     lastUpdatedAt!: string;
+    createdAt!: string;
 
     static schema: ObjectSchema = {
         name: 'CountryStat',
@@ -15,6 +16,7 @@ export class CountryStat extends Realm.Object<CountryStat> {
             code: {type: 'string'},
             count: 'int?',
             lastUpdatedAt: {type: 'string', optional: true},
+            createdAt: {type: 'string', optional: true},
         },
         primaryKey: '_id',
     };

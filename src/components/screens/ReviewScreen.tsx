@@ -13,6 +13,7 @@ import UIButton from '~components/ui/UIButton';
 import {useTranslation} from 'react-i18next';
 import UIBottomSheet from '~components/ui/UIBottomSheet';
 import WidgetReviewList from '~components/widgets/review/WidgetReviewList';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 type Props = NativeStackScreenProps<MapLocalStackParamList, 'ReviewScreen'>;
 
@@ -53,8 +54,8 @@ const ReviewScreen = (props: Props) => {
     //     }>
 
     return (
-        <View tw="flex-1 pt-6 flex bg-s-100 dark:bg-s-950">
-            <View tw="px-6">
+        <SafeAreaView tw="flex-1 flex bg-s-100 dark:bg-s-950">
+            <View tw="px-6 -mt-2 pb-2">
                 <WidgetNodeHeader lid={lid} />
                 {/* <Text tw="text-xl font-bold text-s-800 dark:text-s-200">{t('general:tagCreateListTitle')}</Text>
                     <Text tw="mt-1 text-base leading-5 text-s-800 dark:text-s-200">
@@ -80,7 +81,7 @@ const ReviewScreen = (props: Props) => {
             <View tw="flex-auto">
                 <WidgetReviewList lid={lid} serverNode={serverNode} />
             </View>
-        </View>
+        </SafeAreaView>
     );
 };
 

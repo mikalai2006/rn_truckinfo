@@ -58,7 +58,7 @@ const NodedataCreatorScreen = (props: Props) => {
         const result: ITag[] = [];
         amenityConfig.tags.forEach(tagId => {
             const tag = tagStore[tagId];
-            if (!objExistNodedatas[tagId]) {
+            if (!objExistNodedatas[tagId] || ['price', 'number', 'string'].includes(tag.type)) {
                 result.push(tag);
             } else {
                 const isNotCreatedOptions = tag.options.filter(el => {

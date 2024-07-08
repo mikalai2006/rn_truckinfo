@@ -1,11 +1,11 @@
 import React, {useEffect, useMemo} from 'react';
+import {NativeModules, Platform, Text, View} from 'react-native';
 import {HOST_API} from '@env';
 
 import {activeLanguage, setLanguages, setCountries, langCode, languages, setCurrencies} from '../../../store/appSlice';
 import {useAppDispatch, useAppSelector} from '~store/hooks';
 import useFetch from '~hooks/useFetch';
 import useLanguage from '~hooks/useLanguage';
-import {NativeModules, Platform, Text, View} from 'react-native';
 // import {useNetInfo} from '@react-native-community/netinfo';
 
 export const WidgetInitApp = () => {
@@ -68,9 +68,9 @@ export const WidgetInitApp = () => {
                         .then(r => r.json())
                         .then(r => {
                             if (r.data?.length) {
+                                // console.log('r.data=', r.data);
                                 dispatch(setLanguages(r.data));
                             }
-                            // console.log('r.data=', r.data);
                         })
                         .catch(e => {
                             throw e;

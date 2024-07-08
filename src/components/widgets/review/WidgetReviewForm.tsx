@@ -246,7 +246,7 @@ const WidgetReviewForm = (props: Props) => {
                 />
             </View>
             <View tw="pt-3">
-                <UIButton type="default" onPress={() => onSaveReview()} text={t('form:button_save')} />
+                <UIButton type="default" onPress={() => onSaveReview()} text={t('general:save')} />
                 {/* <TouchableOpacity  tw="rounded-md">
                         <View tw="mt-2 p-3 justify-center flex flex-row items-center bg-white dark:bg-s-700 rounded-md">
                             <Text tw="text-black dark:text-s-200 text-xl">{t('general:save')}</Text>

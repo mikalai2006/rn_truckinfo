@@ -1,7 +1,7 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
-import {LanguageScreen, SettingScreen, UserFormAvatarScreen, UserFormScreen} from '~components/screens';
+import {SettingLangScreen, SettingScreen, SettingAvatarScreen, SettingFormScreen} from '~components/screens';
 import FocusStatusBar from '~components/FocusStatusBar';
 import {useColorScheme} from 'nativewind';
 import {View} from 'react-native';
@@ -32,24 +32,24 @@ const SettingStack = () => {
                     }}
                 />
                 <Stack.Screen
-                    name="LanguageScreen"
-                    component={LanguageScreen}
+                    name="SettingLangScreen"
+                    component={SettingLangScreen}
                     options={{
                         statusBarAnimation: 'none',
                         animation: 'slide_from_right',
                     }}
                 />
                 <Stack.Screen
-                    name="UserFormScreen"
-                    component={UserFormScreen}
+                    name="SettingFormScreen"
+                    component={SettingFormScreen}
                     options={{
                         statusBarAnimation: 'none',
                         animation: 'slide_from_right',
                     }}
                 />
                 <Stack.Screen
-                    name="UserFormAvatarScreen"
-                    component={UserFormAvatarScreen}
+                    name="SettingAvatarScreen"
+                    component={SettingAvatarScreen}
                     options={{
                         statusBarAnimation: 'none',
                         animation: 'slide_from_right',

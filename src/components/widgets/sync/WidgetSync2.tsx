@@ -80,20 +80,20 @@ export const WidgetSync2 = () => {
 
     // console.log('needSync: ', needSync.length);
 
-    const handleAddNodes = (data: INode[]) => {
+    const handleAddNodes = (data: any[]) => {
         realm.write(() => {
             try {
-                const ccode = data[0]?.ccode;
+                const ccode = data[0]?.[2];
                 if (!ccode) {
                     return;
                 }
                 console.log('Sync ccode=', ccode);
 
                 const localNodes = [...nodes].filter(x => x.ccode === ccode);
-                const serverNodesMap = new Map(data.map(s => [s.id, s]));
+                const serverNodesMap = new Map(data.map(s => [s[0], s]));
                 const localNodesMap = new Map(localNodes.map(s => [s.sid, s]));
 
-                const nodesNotExistLocal = data.filter(x => !localNodesMap.get(x.id));
+                const nodesNotExistLocal = data.filter(x => !localNodesMap.get(x[0]));
                 const nodesNotExistServer = localNodes.filter(x => !serverNodesMap.get(x.sid));
 
                 console.log('nodesNotExistLocal=', nodesNotExistLocal.length);
@@ -104,22 +104,36 @@ export const WidgetSync2 = () => {
                 let countAddNodes = 0;
                 let countUpdateNodes = 0;
                 for (let i = 0, total = data.length; i < total; i++) {
-                    const existLocalNode = localNodesMap.get(data[i].id);
-                    const nodeData = data[i].data.map(x => {
+                    const [_id, _type, _ccode, _lat, _lon, _name, _userId, _date, _data] = data[i];
+                    // console.log([_id, _type, _ccode, _lat, _lon, _name, _userId, _date, _data]);
+
+                    const existLocalNode = localNodesMap.get(_id);
+                    const nodeData = _data.map(x => {
+                        const [nodedata_id, nodedata_tagId, nodedata_tagoptId, nodedata_value] = x;
                         return {
-                            sid: x.id,
-                            tagoptId: getObjectId(x.tagoptId),
-                            tagId: x.tagId,
-                            value: x.data.value,
+                            sid: nodedata_id,
+                            tagoptId: getObjectId(nodedata_tagoptId),
+                            tagId: nodedata_tagId,
+                            value: nodedata_value,
                         };
                     });
                     const newItem = {
-                        ...data[i],
-                        data: nodeData,
+                        // ...data[i],
+                        // data: nodeData,
+                        // _id: existLocalNode?._id || new BSON.ObjectId(),
+                        // sid: data[i].id,
+                        // userId: data[i].userId,
+                        // my: data[i].userId === userFromStore?.id,
                         _id: existLocalNode?._id || new BSON.ObjectId(),
-                        sid: data[i].id,
-                        userId: data[i].userId,
-                        my: data[i].userId === userFromStore?.id,
+                        sid: _id,
+                        name: _name,
+                        type: _type,
+                        lat: _lat,
+                        lon: _lon,
+                        ccode: _ccode,
+                        my: _userId === userFromStore?.id,
+                        createdAt: new Date(_date).toISOString(),
+                        data: nodeData,
                     };
                     // console.log('newItem: ', newItem);
 
@@ -213,6 +227,7 @@ export const WidgetSync2 = () => {
                         newState = {
                             _id: element.stat._id,
                             lastUpdatedAt: currentCountry.stat.lastUpdatedAt,
+                            createdAt: new Date().toISOString(),
                         };
 
                         return res;

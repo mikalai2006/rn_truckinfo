@@ -1,12 +1,13 @@
 import React from 'react';
 
-import {TouchableOpacity, Text} from 'react-native';
+import {TouchableOpacity, Text, Platform} from 'react-native';
 import {styled, useColorScheme} from 'nativewind';
 
 import {setDark} from '../store/appSlice';
 import {useAppDispatch} from '../store/hooks';
 import SIcon from './ui/SIcon';
 import {iMoon, iSun} from '~utils/icons';
+import {setMode} from '~utils/mode';
 
 const StyledPressable = styled(TouchableOpacity);
 const StyledText = styled(Text);
@@ -18,6 +19,7 @@ export default function SwitchMode() {
 
     const onToggleDark = () => {
         toggleColorScheme();
+        setMode(colorScheme);
         dispatch(setDark(colorScheme !== 'dark'));
     };
 

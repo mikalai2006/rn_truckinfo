@@ -4,7 +4,7 @@ import React, {useMemo} from 'react';
 import {INode, INodedata} from '~store/appSlice';
 
 import SIcon from '~components/ui/SIcon';
-import {iWarningCircle} from '~utils/icons';
+import {iChevronDown, iHandThumbsDown, iHandThumbsUp, iWarningCircle} from '~utils/icons';
 import {SSkeleton} from '~components/ui/SSkeleton';
 import {useQuery} from '@realm/react';
 import {LikeSchema} from '~schema/LikeSchema';
@@ -173,7 +173,7 @@ const WidgetNodeTagsVote = (props: IWidgetNodeTagsVoteProps) => {
     return (
         <View>
             {!isLoading ? (
-                <View>
+                <View tw="p-1 bg-s-50 dark:bg-s-900 rounded-b-xl border-t border-s-100 dark:border-s-950">
                     {/* <Text tw="text-black">{JSON.stringify(likesValue)}</Text> */}
                     {/* {tagData.length > 5 ? (
                         <>
@@ -181,27 +181,45 @@ const WidgetNodeTagsVote = (props: IWidgetNodeTagsVoteProps) => {
                         </>
                     ) : (
                     )} */}
-                    <View tw="flex flex-row items-center justify-center">
-                        <View tw="flex-auto p-0.5">
-                            {likesValue.like > 0 && (
-                                <Text tw="text-base leading-4 text-green-500 font-bold">
-                                    +{formatNum(likesValue.like, 0)}
-                                </Text>
-                            )}
+                    <View tw="flex flex-row items-center justify-start px-1">
+                        <View tw="flex-auto flex flex-row items-center">
+                            <View tw="py-0.5 flex flex-row items-center justify-start">
+                                {likesValue.like > 0 && (
+                                    <>
+                                        <Text tw="text-base leading-4 text-green-500 font-bold">
+                                            +{formatNum(likesValue.like, 0)}
+                                        </Text>
+                                        {/* <SIcon path={iHandThumbsUp} tw="text-green-500" size={15} /> */}
+                                    </>
+                                )}
+                            </View>
+                            {likesValue.like > 0 && likesValue.dlike > 0 ? (
+                                <View>
+                                    <Text tw="text-base leading-3 text-s-500">/</Text>
+                                </View>
+                            ) : null}
+                            <View tw="py-0.5 flex flex-row items-center justify-center">
+                                {likesValue.dlike > 0 && (
+                                    <>
+                                        <Text tw="text-base leading-4 text-red-500 dark:text-red-400 font-bold">
+                                            -{formatNum(likesValue.dlike, 0)}
+                                        </Text>
+                                        {/* <SIcon path={iHandThumbsDown} tw="text-red-500" size={15} /> */}
+                                    </>
+                                )}
+                                {likesValue.dlike > 1 && (
+                                    <SIcon
+                                        path={iWarningCircle}
+                                        size={18}
+                                        tw="ml-0.5 -mt-1 text-red-500 dark:text-red-300"
+                                    />
+                                )}
+                            </View>
                         </View>
-                        <View tw="p-0.5 flex flex-row items-center justify-center">
-                            {likesValue.dlike > 0 && (
-                                <Text tw="text-base leading-4 text-red-500 dark:text-red-400 font-bold">
-                                    -{formatNum(likesValue.dlike, 0)}
-                                </Text>
-                            )}
-                            {likesValue.dlike > 0 && (
-                                <SIcon
-                                    path={iWarningCircle}
-                                    size={18}
-                                    tw="ml-0.5 -mt-1 text-red-500 dark:text-red-300"
-                                />
-                            )}
+                        <View tw="py-0.5">
+                            <View tw="flex items-center -rotate-90">
+                                <SIcon path={iChevronDown} size={15} tw="text-s-300 dark:text-s-500" />
+                            </View>
                         </View>
                         {/* <Text tw="flex-auto text-xs text-white">
                             {el

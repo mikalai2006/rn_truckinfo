@@ -173,16 +173,16 @@ const AuthScreen = () => {
             !isConnected
                 ? `
         window.hapi = "${HOST_API}"
-        document.getElementById('title').textContent = "${t('form:oauthTitleDisconnect')}";
-        document.getElementById('description').textContent = "${t('form:oauthTitleDisconnectDescription')}";
+        document.getElementById('title').textContent = "${t('general:oauthTitleDisconnect')}";
+        document.getElementById('description').textContent = "${t('general:oauthTitleDisconnectDescription')}";
         document.getElementById('buttons').style.display = 'none'
         true;
         
         `
                 : `
         window.hapi = "${HOST_API}"
-        document.getElementById('title').textContent = "${t('form:oauthTitle')}";
-        document.getElementById('description').textContent = "${t('form:oauthDescription')}";
+        document.getElementById('title').textContent = "${t('general:oauthTitle')}";
+        document.getElementById('description').textContent = "${t('general:oauthDescription')}";
         true; // note: this is required, or you'll sometimes get silent failures
     `,
         [isConnected],
@@ -239,10 +239,10 @@ const AuthScreen = () => {
                 ) : !isConnected ? (
                     <View tw="p-4 px-8">
                         <Text tw="text-xl mb-2 font-bold text-red-500 dark:text-red-300">
-                            {t('form:oauthTitleDisconnect')}
+                            {t('general:oauthTitleDisconnect')}
                         </Text>
                         <Text tw="text-base leading-5 text-s-900 dark:text-s-200">
-                            {t('form:oauthTitleDisconnectDescription')}
+                            {t('general:oauthTitleDisconnectDescription')}
                         </Text>
                     </View>
                 ) : null}

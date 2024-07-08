@@ -64,8 +64,8 @@ const WidgetMapCreateNode = React.forwardRef<WidgetMapCreateNodeNodeRefProps, Wi
                     throw new Error('Not found coordinates!');
                 }
 
-                const lat = Number(centerFromStore.lat.toFixed(7));
-                const lon = Number(centerFromStore.lng.toFixed(7));
+                const lat = Number(centerFromStore.lat.toFixed(6));
+                const lon = Number(centerFromStore.lng.toFixed(6));
                 const type = currentAmenity?.type;
                 let existNearbours = allNodes.filtered(
                     'lat > $0 && lat < $1 && lon > $2 && lon < $3',
@@ -127,9 +127,9 @@ const WidgetMapCreateNode = React.forwardRef<WidgetMapCreateNodeNodeRefProps, Wi
                 // props?.setMyMarkers(allmyPOI);
                 props?.setShowCross(false);
                 props?.onSetNewNodeType('');
-                navigation.navigate(ScreenKeys.NodeScreen, {marker: JSON.parse(JSON.stringify(newNodeData))});
+                navigation.navigate('NodeShortScreen', {marker: JSON.parse(JSON.stringify(newNodeData))});
             } catch (e) {
-                Alert.alert(t('error:title'), e?.message);
+                Alert.alert(t('general:errorTitle'), e?.message);
             }
         };
 
@@ -143,7 +143,7 @@ const WidgetMapCreateNode = React.forwardRef<WidgetMapCreateNodeNodeRefProps, Wi
         });
 
         useEffect(() => {
-            animationValue.value = {height: 200};
+            animationValue.value = {height: 210};
 
             return () => {
                 animationValue.value = {height: 0};
@@ -210,7 +210,7 @@ const WidgetMapCreateNode = React.forwardRef<WidgetMapCreateNodeNodeRefProps, Wi
                                                                 ? currentAmenity?.props.bgColor
                                                                 : colorScheme === 'dark'
                                                                 ? colors.s[800]
-                                                                : colors.s[200],
+                                                                : colors.w,
                                                     }}>
                                                     <SIcon
                                                         path={el.props?.icon}
@@ -240,10 +240,10 @@ const WidgetMapCreateNode = React.forwardRef<WidgetMapCreateNodeNodeRefProps, Wi
                             ) : (
                                 <View tw="p-4 px-8">
                                     <Text tw="text-xl text-center mb-2 font-bold text-red-300">
-                                        {t('form:amenityNullTitle')}
+                                        {t('general:amenityNullTitle')}
                                     </Text>
                                     <Text tw="text-base text-center leading-5 text-s-200">
-                                        {t('form:amenityNullDescription')}
+                                        {t('general:amenityNullDescription')}
                                     </Text>
                                 </View>
                             )}
@@ -284,12 +284,12 @@ const WidgetMapCreateNode = React.forwardRef<WidgetMapCreateNodeNodeRefProps, Wi
                                         //         size={20}
                                         //         tw={`mr-2 ${disabled ? 'text-s-400' : 'text-p-200'}`}
                                         //     />
-                                        //     <Text tw="text-white text-xl">{t('form:button_save')}</Text>
+                                        //     <Text tw="text-white text-xl">{t('general:save')}</Text>
                                         // </TouchableOpacity>
                                         <UIButton
                                             type="primary"
                                             disabled={false}
-                                            text={t('form:loginTitle')}
+                                            text={t('general:loginTitle')}
                                             onPress={() => {
                                                 //setModalVisible(!modalVisible)
                                                 navigation.navigate(ScreenKeys.AuthScreen);

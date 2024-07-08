@@ -10,6 +10,7 @@ import {useQuery} from '@realm/react';
 import {NodeDataSchema} from '~schema/NodeDataSchema';
 import {MapLocalStackParamList} from '~components/navigations/MapLocalStack';
 import WidgetNodeTagShort from './WidgetNodeTagShort';
+import {FlatList} from 'react-native-gesture-handler';
 
 export interface IWidgetNodeTagsShortProps {
     localNode: NodeSchema;
@@ -63,20 +64,23 @@ const WidgetNodeTagsShort = (props: IWidgetNodeTagsShortProps) => {
         return result;
     }, [nodedatas, tagsFromStore]);
 
+    const renderTag = ({item}: {item: [string, NodeDataSchema[]]}) => (
+        <WidgetNodeTagShort tagId={item[0]} nodedatas={item[1]} />
+    );
+
     return (
-        <View tw="flex-1">
-            <View tw="flex-1 flex flex-row flex-wrap items-center justify-center">
-                {tagGroups.map(([key, el], i) => (
-                    <WidgetNodeTagShort key={i.toString()} tagId={key} nodedatas={el} />
-                    // <View key={i.toString()} tw="p-1 rounded-full">
-                    //     <View tw="rounded-xl p-0 pt-3 bg-white dark:bg-s-900 border border-s-200 dark:border-s-900 flex-col items-center justify-end">
-                    //         <View tw="flex-auto self-stretch">
-                    //             <WidgetNodeTagShort tagId={key} nodedatas={el} />
-                    //         </View>
-                    //     </View>
-                    // </View>
-                ))}
-            </View>
+        <View tw="flex-1 flex flex-row flex-wrap items-center justify-start">
+            <FlatList horizontal initialNumToRender={5} renderItem={renderTag} data={tagGroups} />
+            {/* {tagGroups.map(([key, el], i) => (
+                <WidgetNodeTagShort key={i.toString()} tagId={key} nodedatas={el} />
+                // <View key={i.toString()} tw="p-1 rounded-full">
+                //     <View tw="rounded-xl p-0 pt-3 bg-white dark:bg-s-900 border border-s-200 dark:border-s-900 flex-col items-center justify-end">
+                //         <View tw="flex-auto self-stretch">
+                //             <WidgetNodeTagShort tagId={key} nodedatas={el} />
+                //         </View>
+                //     </View>
+                // </View>
+            ))} */}
         </View>
     );
 };

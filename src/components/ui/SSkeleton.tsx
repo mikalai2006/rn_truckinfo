@@ -32,7 +32,7 @@ export const SSkeleton: React.FC<SkeletonProps> = ({width, classString, text, te
     const styleText = `text-s-400 dark:text-s-500 ${textClassString}`;
 
     return (
-        <Animated.View style={{opacity: opacity.current, width}} tw={styleTw}>
+        <Animated.View style={{opacity: opacity.current}} tw={styleTw}>
             {text && <Text tw={styleText}>{text} ...</Text>}
         </Animated.View>
     );

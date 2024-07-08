@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {ActivityIndicator, View} from 'react-native';
+import i18n from 'i18next';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
 import {AuthScreen} from '~components/screens';
@@ -16,6 +17,7 @@ import useAuth from '~hooks/useAuth';
 import {WidgetInitAppWithAuth} from '~components/widgets/init/WidgetInitAppWithAuth';
 import {WidgetInitApp} from '~components/widgets/init/WidgetInitApp';
 import {WidgetSyncLocal} from '~components/widgets/sync/WidgetSyncLocal';
+import {setMode} from '~utils/mode';
 
 const Stack = createNativeStackNavigator();
 
@@ -39,6 +41,7 @@ const HelloStack = () => {
 
     useEffect(() => {
         setColorScheme(isDarkFromStore ? 'dark' : 'light');
+        setMode(isDarkFromStore ? 'dark' : 'light');
         setShowApp(true);
     }, [isDarkFromStore, setColorScheme]);
 
@@ -51,9 +54,13 @@ const HelloStack = () => {
 
     const languagesFromStore = useAppSelector(languages);
 
-    // useEffect(() => {
-    //     onChangeLocale(activeLangCode);
-    // }, []);
+    useEffect(() => {
+        if (languagesFromStore.length > 0) {
+            for (const lang of languagesFromStore) {
+                i18n.addResources(lang.code, 'general', lang.localization);
+            }
+        }
+    }, [languagesFromStore]);
 
     return (
         <View tw="flex-1 pt-0">

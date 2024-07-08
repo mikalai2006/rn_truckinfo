@@ -9,6 +9,8 @@ import com.facebook.react.defaults.DefaultReactActivityDelegate;
 // https://reactnavigation.org/docs/getting-started/
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatDelegate;
+
 public class MainActivity extends ReactActivity {
 
   /**
@@ -44,6 +46,8 @@ public class MainActivity extends ReactActivity {
   // https://reactnavigation.org/docs/getting-started/
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+    setTheme(R.style.AppTheme);
+    // AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
     super.onCreate(null);
   }
 }

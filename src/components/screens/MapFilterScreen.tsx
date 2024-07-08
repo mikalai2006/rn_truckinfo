@@ -3,19 +3,18 @@ import React, {useMemo, useState} from 'react';
 import {useAppDispatch, useAppSelector} from '~store/hooks';
 import {IAmenity, IFilter, ITag, activeLanguage, amenities, filter, setFilter, tags} from '~store/appSlice';
 
-import {FlatList, ScrollView} from 'react-native-gesture-handler';
+import {FlatList} from 'react-native-gesture-handler';
 import {Text, TouchableOpacity, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useTranslation} from 'react-i18next';
 import {SSkeleton} from '~components/ui/SSkeleton';
 import SIcon from '~components/ui/SIcon';
 import {iCheckLg, iChevronDown} from '~utils/icons';
-import RButton from '~components/r/RButton';
 import UIButton from '~components/ui/UIButton';
 import RImage from '~components/r/RImage';
 
-const MapLocalFilterScreen = () => {
-    console.log('Render MapLocalFilterScreen');
+const MapFilterScreen = () => {
+    console.log('Render MapFilterScreen');
 
     const {t} = useTranslation();
     const navigation = useNavigation();
@@ -312,7 +311,8 @@ const MapLocalFilterScreen = () => {
                 <View tw="flex-1">
                     <FlatList
                         initialNumToRender={2}
-                        maxToRenderPerBatch={10}
+                        maxToRenderPerBatch={2}
+                        windowSize={2}
                         tw="flex-1"
                         data={amenityWithTags}
                         renderItem={renderItem}
@@ -350,4 +350,4 @@ const MapLocalFilterScreen = () => {
     );
 };
 
-export default MapLocalFilterScreen;
+export default MapFilterScreen;

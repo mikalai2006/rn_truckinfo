@@ -1199,11 +1199,6 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@charlespalmerbf/react-native-leaflet-js@^1.3.4":
-  version "1.3.4"
-  resolved "https://registry.yarnpkg.com/@charlespalmerbf/react-native-leaflet-js/-/react-native-leaflet-js-1.3.4.tgz#58de130bd3a1f77a22386d1878b41e89f313078e"
-  integrity sha512-q/yOt/q0C8OgFC/mXYDImjhgTYV2epoqaDC23XA33Sbx5vgBk+4hsq/lrzkrF/Y6nqdEcqDnSld4hCHtP/AwkQ==
-
 "@egjs/hammerjs@^2.0.17":
   version "2.0.17"
   resolved "https://registry.yarnpkg.com/@egjs/hammerjs/-/hammerjs-2.0.17.tgz#5dc02af75a6a06e4c2db0202cae38c9263895124"
@@ -2243,6 +2238,15 @@
   integrity sha512-lTM8gSFHSfkJvQkxacGM6VJtBt61ip2XO54aNfswD+KMw6eeZ4oehl7m0me3CR9hnDE4+60iAZR8sAhvCiI3NA==
   dependencies:
     nanoid "^3.1.23"
+
+"@react-navigation/stack@^6.4.0":
+  version "6.4.0"
+  resolved "https://registry.yarnpkg.com/@react-navigation/stack/-/stack-6.4.0.tgz#46b9f690942a189b6542a3df71ab49e8ee781ec0"
+  integrity sha512-Jx7fm8x7zSUC6ggUb0VnvPuaIXkVPHckiY+e50mjrIRK4xAgnaLp6crHWYGmXjfi7ahaKL00o76ZgpgkwKw6zg==
+  dependencies:
+    "@react-navigation/elements" "^1.3.30"
+    color "^4.2.3"
+    warn-once "^0.1.0"
 
 "@realm/fetch@^0.1.1":
   version "0.1.1"
@@ -7586,6 +7590,11 @@ react-is@^17.0.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
+react-native-appearance-control@^0.3.4:
+  version "0.3.4"
+  resolved "https://registry.yarnpkg.com/react-native-appearance-control/-/react-native-appearance-control-0.3.4.tgz#d4f959a96ce8a082e87b1f8dc913c2890a980cc8"
+  integrity sha512-bo9HTAH7W8W4l1j3UgMLqQji8xGlRdQcCZ9Gb4tloaOt+I9nX1x0x8e+7KYYL/C9eECcWqUNoAlsKdO6cC9ssQ==
+
 react-native-device-info@^10.8.0:
   version "10.14.0"
   resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-10.14.0.tgz#3530ea7e09a0841d568fec987b8c6ae16deee763"
@@ -7615,6 +7624,11 @@ react-native-get-random-values@^1.11.0:
   dependencies:
     fast-base64-decode "^1.0.0"
 
+react-native-gzip@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-gzip/-/react-native-gzip-1.1.0.tgz#726396afddc348f60d5acc8bfaed89cc4066bacb"
+  integrity sha512-utgM5GNAIsOoMnQHK135tULfQGeEa40NTyybJ2vH87ay9A6XP4K1AZBBwnIHxtzBS+z0mO3dmql5662q5UUNSg==
+
 react-native-image-picker@^7.0.2:
   version "7.1.2"
   resolved "https://registry.yarnpkg.com/react-native-image-picker/-/react-native-image-picker-7.1.2.tgz#383849d1953caf4578874a1f5e5dd11c737bd5cd"
@@ -7624,6 +7638,11 @@ react-native-location-enabler@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/react-native-location-enabler/-/react-native-location-enabler-4.1.1.tgz#f9ba84db4dbd7ed011e60b8bf6c481249bf92387"
   integrity sha512-1gXJ+NzH5JKpaR23t1P8afEB7TKKfBkdXk2avhNUuTBlhBrqa2HrL4uDwYHoc4ZcwchsVC2P0Q7gP9L5Ot+KJw==
+
+react-native-orientation-locker@^1.7.0:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/react-native-orientation-locker/-/react-native-orientation-locker-1.7.0.tgz#47ef2b9c24618e40f0a521f184b51270e576b028"
+  integrity sha512-2PhG4UyRJktb3KCTISStuu8/q+Q3q3oPesGg9DhdY0b6Cu/ZzxkCvkbJte2TPWRYkS0JpClimvqVaonulGvDrA==
 
 react-native-reanimated@3.10.1:
   version "3.10.1"
@@ -7685,6 +7704,11 @@ react-native-svg@^13.14.0:
   dependencies:
     css-select "^5.1.0"
     css-tree "^1.1.3"
+
+react-native-system-navigation-bar@^2.6.4:
+  version "2.6.4"
+  resolved "https://registry.yarnpkg.com/react-native-system-navigation-bar/-/react-native-system-navigation-bar-2.6.4.tgz#34edee7051dea01531ff2be95dc14f9fa8a540b7"
+  integrity sha512-4pysgADW53PiuHv+2glzNLJnHSxqDszZvLoitLFI5os4D+gCDfxmR36VSET4EnXkzSf8X9mbeFkHYDypDHJyZA==
 
 react-native-webview@^13.3.1:
   version "13.10.4"

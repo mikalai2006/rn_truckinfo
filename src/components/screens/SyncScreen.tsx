@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import React, {useEffect, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {FlatList, Text, TouchableOpacity, View} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import {BSON} from 'realm';
 import RImage from '~components/r/RImage';
 import SIcon from '~components/ui/SIcon';
@@ -206,60 +207,70 @@ const SyncScreen = ({navigation}) => {
         // console.log('Time fitler: ', window.performance.now() - timeSet);
     }
 
-    const renderItem = ({item}) => (
-        <View tw="mx-2 mb-3  rounded-lg">
-            <View tw="flex flex-row items-center">
-                <TouchableOpacity
-                    onPress={() => {
-                        onChangeItem(item);
-                    }}
-                    tw={`flex-auto p-2 flex flex-row items-center space-x-3 rounded-lg ${
-                        filterIds.get(item.id) ? 'bg-p-500/30 dark:bg-white/20' : 'bg-s-500/5 dark:bg-black/10'
-                    }`}>
-                    <RImage uri={item.image} classString="ml-2 w-12 h-8" />
-                    <View tw="flex-auto">
-                        <Text
-                            tw={`text-xl font-bold ${
-                                filterIds.get(item.id) ? 'text-s-800 dark:text-s-100' : 'text-s-500 dark:text-s-300'
-                            }`}>
-                            {item.name}
-                        </Text>
-                        <View tw="flex flex-row">
-                            <Text tw={`text-sm leading-4 ${filterIds.get(item.id) ? 'text-s-400' : 'text-s-400'}`}>
-                                {item.stat.count} POI ~{Math.max(item.stat.size / 1024 / 1024, 0.01).toFixed(2)}Mb
-                            </Text>
-                        </View>
-                        {mapStats?.get(item.code)?.lastUpdatedAt ? (
-                            <Text tw={`text-sm leading-4 ${filterIds.get(item.id) ? 'text-s-400' : 'text-s-400'}`}>
-                                {t('general:updateAt')} {dayjs(mapStats?.get(item.code)?.lastUpdatedAt).fromNow()}
-                            </Text>
-                        ) : (
-                            ''
-                        )}
-                    </View>
-                    <View
-                        tw={`relative w-8 h-8 p-2 rounded-md border flex items-center justify-center ${
-                            filterIds.get(item.id)
-                                ? 'border-p-500/0 dark:border-s-500/0'
-                                : 'border-s-200 dark:border-s-700'
+    const renderItem = ({item}) => {
+        return (
+            <View tw="mx-2 mb-3  rounded-lg">
+                <View tw="flex flex-row items-center">
+                    <TouchableOpacity
+                        onPress={() => {
+                            onChangeItem(item);
+                        }}
+                        tw={`flex-auto p-2 flex flex-row items-center space-x-3 rounded-lg ${
+                            filterIds.get(item.id) ? 'bg-p-500/30 dark:bg-white/20' : 'bg-s-500/5 dark:bg-black/10'
                         }`}>
-                        {filterIds.get(item.id) && <SIcon path={iCheckLg} size={30} tw="text-p-500 dark:text-p-50" />}
-                    </View>
-                </TouchableOpacity>
+                        <RImage uri={item.image} classString="ml-2 w-12 h-8" />
+                        <View tw="flex-auto">
+                            <Text
+                                tw={`text-xl font-bold ${
+                                    filterIds.get(item.id) ? 'text-s-800 dark:text-s-100' : 'text-s-500 dark:text-s-300'
+                                }`}>
+                                {item.name}
+                            </Text>
+                            <View tw="flex flex-row">
+                                <Text tw={`text-sm leading-4 ${filterIds.get(item.id) ? 'text-s-400' : 'text-s-400'}`}>
+                                    {item.stat.count} POI ~{Math.max(item.stat.size / 1024 / 1024, 0.01).toFixed(2)}Mb
+                                </Text>
+                            </View>
+                            {mapStats?.get(item.code)?.lastUpdatedAt ? (
+                                <Text tw={`text-sm leading-4 ${filterIds.get(item.id) ? 'text-s-400' : 'text-s-400'}`}>
+                                    {t('general:updateAt')} {dayjs(mapStats?.get(item.code)?.createdAt).fromNow()}
+                                </Text>
+                            ) : (
+                                ''
+                            )}
+                        </View>
+                        <View
+                            tw={`relative w-8 h-8 p-2 rounded-md border flex items-center justify-center ${
+                                filterIds.get(item.id)
+                                    ? 'border-p-500/0 dark:border-s-500/0'
+                                    : 'border-s-200 dark:border-s-700'
+                            }`}>
+                            {filterIds.get(item.id) && (
+                                <SIcon path={iCheckLg} size={30} tw="text-p-500 dark:text-p-50" />
+                            )}
+                        </View>
+                    </TouchableOpacity>
+                </View>
             </View>
-        </View>
-    );
+        );
+    };
 
     return (
-        <View tw="flex-1 bg-s-100 dark:bg-s-950">
-            <View tw="mt-8 px-4">
+        <SafeAreaView tw="flex-1 bg-s-100 dark:bg-s-950 border-b border-s-200 dark:border-s-900">
+            <View tw="px-4">
                 <WidgetHeaderApp />
             </View>
             <View tw="px-6 py-2">
                 <Text tw="text-black dark:text-s-200 text-base leading-5">{t('general:setSyncPOI')}</Text>
             </View>
             <View tw="bg-white dark:bg-s-950 flex-auto px-2">
-                <FlatList data={countriesFromStore} windowSize={2} renderItem={renderItem} />
+                <FlatList
+                    data={countriesFromStore}
+                    initialNumToRender={10}
+                    maxToRenderPerBatch={2}
+                    // windowSize={2}
+                    renderItem={renderItem}
+                />
             </View>
             <View tw="px-4 py-4">
                 {!isConnected && (
@@ -273,7 +284,7 @@ const SyncScreen = ({navigation}) => {
                         type="primary"
                         // loading={loading}
                         // tw={`p-3 rounded-lg ${isNotChange ? 'bg-s-200 dark:bg-s-900' : 'bg-p-500'}`}
-                        text={t('form:button_save')}
+                        text={t('general:save')}
                         disabled={isNotChange}
                         onPress={save}
                     />
@@ -281,14 +292,14 @@ const SyncScreen = ({navigation}) => {
                 {!isAuth && (
                     <UIButton
                         type="primary"
-                        text={t('form:loginTitle')}
+                        text={t('general:loginTitle')}
                         onPress={() => {
                             navigation.navigate('AuthScreen');
                         }}
                     />
                 )}
             </View>
-        </View>
+        </SafeAreaView>
     );
 };
 

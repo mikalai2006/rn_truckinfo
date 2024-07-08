@@ -603,12 +603,45 @@ export const useSync = () => {
             //     realm.delete(removeNodedataObjectLikes);
             // });
 
+            // Save user nodedata
+            const needSaveTrackerPoints = points.filtered('isLocal == $0', true);
+            const pointsBody = needSaveTrackerPoints.map(x => {
+                return {
+                    lat: x.lat,
+                    lon: x.lon,
+                    createdAt: x.createdAt,
+                };
+            });
+            if (pointsBody.length > 0) {
+                onFetchWithAuth(HOST_API + '/track/list', {
+                    method: 'POST',
+                    headers: {
+                        'Access-Control-Allow-Origin-Type': '*',
+                    },
+                    body: JSON.stringify(pointsBody),
+                })
+                    .then(res => res.json())
+                    .then(response => {
+                        // console.log('response', response);
+                        if (response) {
+                            realm.write(() => {
+                                for (const point of needSaveTrackerPoints) {
+                                    point.isLocal = false;
+                                }
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.log('error', error);
+                    });
+            }
+
             console.log('All nodedatas: ', allNodedatas.length, JSON.stringify(allNodedatas));
             console.log('All images: ', images.length, JSON.stringify(images));
             console.log('All local likes: ', likes.length, JSON.stringify(likes));
             console.log('All nodes: ', allNodes.length, JSON.stringify(allNodes.length)); // , JSON.stringify(allNodes)
             console.log('All node audits: ', nodeAudits.length, JSON.stringify(nodeAudits));
-            console.log('All points: ', points.length, JSON.stringify(points));
+            console.log('All points: ', points.length); //, JSON.stringify(points)
         } catch (e) {
             console.log('Sync error: ', e);
         }

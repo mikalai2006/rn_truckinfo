@@ -101,6 +101,19 @@ const WidgetReviewList = (props: Props) => {
                                             login
                                             lastTime
                                             online
+                                            userStat {
+                                                node
+                                                nodeLike
+                                                nodeDLike
+                                                nodeAuthorLike
+                                                nodeAuthorDLike
+                                                nodedata
+                                                nodedataLike
+                                                nodedataDLike
+                                                nodedataAuthorLike
+                                                nodedataAuthorDLike
+                                                review
+                                            }
                                             images {
                                                 id
                                                 service
@@ -226,13 +239,11 @@ const WidgetReviewList = (props: Props) => {
 
         // const existReviewsIds = result.map(x => x.nodeId);
         // console.log('existReviewsIds=', existReviewsIds);
-        if (serverNode) {
-            const myReviewIndex = result.findIndex(x => x.userId === userFromStore?.id);
-            if (myReviewIndex !== -1) {
-                result[myReviewIndex].review = localReviews[0].review;
-                result[myReviewIndex].rate = localReviews[0].rate;
-                result[myReviewIndex].updatedAt = localReviews[0].updatedAt;
-            }
+        const myReviewIndex = result.findIndex(x => x.userId === userFromStore?.id);
+        if (serverNode && myReviewIndex !== -1) {
+            result[myReviewIndex].review = localReviews[0].review;
+            result[myReviewIndex].rate = localReviews[0].rate;
+            result[myReviewIndex].updatedAt = localReviews[0].updatedAt;
         } else {
             let localReviewsList: TReviewSchema[] = [...localReviews];
             if (userFromStore) {
@@ -254,13 +265,13 @@ const WidgetReviewList = (props: Props) => {
             {isLoading ? (
                 [1, 2, 3, 4, 5, 6, 7].map(x => (
                     <View key={x.toString()} tw="pb-6">
-                        <View tw="flex flex-row px-4">
-                            <View tw="w-16">
+                        <View tw="flex flex-row px-3">
+                            {/* <View tw="w-16">
                                 <SSkeleton classString="w-12 h-12 rounded-full mr-4" />
-                            </View>
+                            </View> */}
                             <View tw="flex-auto flex">
-                                <SSkeleton classString="h-12 rounded-xl" />
-                                <SSkeleton classString="self-end h-4 mt-2" width={'80%'} />
+                                <SSkeleton classString="h-24 rounded-xl" />
+                                <SSkeleton classString="self-end h-4 mt-2 w-[80%]" />
                             </View>
                         </View>
                     </View>

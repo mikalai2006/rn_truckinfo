@@ -7,7 +7,7 @@ import 'react-native-gesture-handler';
  */
 
 import React from 'react';
-import {ActivityIndicator, LogBox, View} from 'react-native';
+import {ActivityIndicator, LogBox, StatusBar, View} from 'react-native';
 LogBox.ignoreLogs(['new NativeEventEmitter']); // TODO
 
 import {NavigationContainer} from '@react-navigation/native';
@@ -30,6 +30,8 @@ import {LikeSchema} from '~schema/LikeSchema';
 import {ReviewSchema} from '~schema/ReviewSchema';
 import {NodeAuditSchema} from '~schema/NodeAuditSchema';
 import {PointSchema} from '~schema/PointSchema';
+import {NodeVoteSchema} from '~schema/NodeVoteSchema';
+import FocusStatusBar from '~components/FocusStatusBar';
 
 const schemas = [
     NodeSchema,
@@ -42,15 +44,24 @@ const schemas = [
     ReviewSchema,
     NodeAuditSchema,
     PointSchema,
+    NodeVoteSchema,
 ];
 
 function App(): JSX.Element {
     return (
         <Provider store={store}>
-            <PersistGate loading={<ActivityIndicator />} persistor={persistor}>
+            <PersistGate
+                loading={
+                    <>
+                        <StatusBar translucent backgroundColor="transparent" />
+                        <ActivityIndicator />
+                    </>
+                }
+                persistor={persistor}>
                 <GestureHandlerRootView style={styles.root}>
                     <View style={styles.view}>
                         <NavigationContainer>
+                            <FocusStatusBar translucent backgroundColor="transparent" />
                             <RealmProvider schema={schemas} deleteRealmIfMigrationNeeded={true}>
                                 <HelloStack />
                             </RealmProvider>

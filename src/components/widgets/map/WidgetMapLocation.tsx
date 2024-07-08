@@ -127,17 +127,18 @@ const WidgetMapLocation = (props: IWidgetMapLocation) => {
                         lon: parseLon,
                         accuracy: Math.round(position.coords.accuracy),
                         createdAt: new Date().toISOString(),
+                        isLocal: true,
                     });
                 });
             }
-            console.log('PointSchema: ', JSON.stringify(localPoints));
+            // console.log('PointSchema: ', JSON.stringify(localPoints));
         }
     };
 
     const getCurrentPosition = () => {
         Geolocation.getCurrentPosition(
             position => {
-                console.log('getCurrentPosition', position);
+                // console.log('getCurrentPosition', position);
                 onSetMyPosition(position);
             },
             error => {
@@ -183,7 +184,7 @@ const WidgetMapLocation = (props: IWidgetMapLocation) => {
                 console.log('You can use the location');
                 const watchID = Geolocation.watchPosition(
                     position => {
-                        console.log('Change position', position);
+                        // console.log('Change position', position);
                         // // setPositionx(JSON.stringify(position));
                         // // const newPos = {
                         // //     position: {lat: position.coords.latitude, lng: position.coords.longitude},

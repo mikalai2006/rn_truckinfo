@@ -19,7 +19,7 @@ export default function WidgetAppInfo() {
     return (
         <View>
             <Text tw="text-s-800 dark:text-s-200 text-3xl leading-10 font-extrabold">{t('general:appTitle')}</Text>
-            <Text tw="text-s-600 dark:text-s-400 text-lg leading-5">{t('general:appDescription')}</Text>
+            <Text tw="text-s-600 dark:text-s-400 text-base leading-5">{t('general:appDescription')}</Text>
             <TouchableOpacity
                 onPress={() => {
                     navigation.navigate('Onboarding');

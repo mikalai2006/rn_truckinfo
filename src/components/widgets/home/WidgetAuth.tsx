@@ -1,23 +1,12 @@
 import React from 'react';
-import {StyledComponent, styled, useColorScheme} from 'nativewind';
-import {Pressable, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {styled, useColorScheme} from 'nativewind';
+import {Text, TouchableOpacity, View} from 'react-native';
 
-import colors from '../../../utils/colors';
 import {useTranslation} from 'react-i18next';
 import {useNavigation} from '@react-navigation/native';
-import RButton from '~components/r/RButton';
-import {ScreenKeys} from '~components/screens';
+import UIButton from '~components/ui/UIButton';
 
 const StyledView = styled(View, 'flex p-4 rounded-md mr-4');
-// const StyledTextInput = styled(
-//   TextInput,
-//   'flex p-4 rounded-md bg-s-200 dark:bg-s-800',
-// );
-// const StyledLabel = styled(Text, 'text-s-500 dark:text-s-400 pb-1 text-lg');
-// const StyledInput = styled(
-//     TextInput,
-//     'self-stretch bg-s-100 dark:bg-s-700 text-s-500 dark:text-s-300 rounded-md py-2 px-4 text-lg',
-// );
 
 export default function WidgetAuth() {
     const {colorScheme} = useColorScheme();
@@ -27,7 +16,7 @@ export default function WidgetAuth() {
     return (
         <StyledView>
             <View>
-                <Text tw="text-s-700 dark:text-s-400 text-lg leading-6">{t('general:authInvite')}</Text>
+                <Text tw="text-s-700 dark:text-s-400 text-base leading-5">{t('general:authInvite')}</Text>
                 <TouchableOpacity
                     onPress={() => {
                         navigation.navigate('Onboarding');
@@ -35,12 +24,13 @@ export default function WidgetAuth() {
                     <Text tw="underline text-base text-black dark:text-white pt-2">{t('general:authBonuses')}</Text>
                 </TouchableOpacity>
                 <View tw="pt-6">
-                    <RButton
+                    <UIButton
+                        type="primary"
                         disabled={false}
-                        text={t('form:loginTitle')}
+                        text={t('general:loginTitle')}
                         onPress={() => {
                             //setModalVisible(!modalVisible)
-                            navigation.navigate(ScreenKeys.AuthScreen);
+                            navigation.navigate('AuthScreen');
                         }}
                     />
                 </View>

@@ -1,8 +1,7 @@
 import AuthScreen from '../auth/AuthScreen';
 import HomeScreen from '~components/screens/HomeScreen';
-import LanguageScreen from '~components/screens/LanguageScreen';
-import MapLocalFilterScreen from '~components/screens/MapLocalFilterScreen';
-import NodeScreen from '~components/screens/NodeScreen';
+import MapFilterScreen from '~components/screens/MapFilterScreen';
+import NodeShortScreen from '~components/screens/NodeShortScreen';
 import NodeAuditScreen from './NodeAuditScreen';
 import NodedataCreatorScreen from '~components/screens/NodedataCreatorScreen';
 import NodedataCreatorTagScreen from '~components/screens/NodedataCreatorTagScreen';
@@ -11,32 +10,40 @@ import ReviewFormScreen from '~components/screens/ReviewFormScreen';
 import ReviewScreen from '~components/screens/ReviewScreen';
 import SettingScreen from './SettingScreen';
 import SyncScreen from '~components/screens/SyncScreen';
-import UserFormAvatarScreen from '~components/screens/UserFormAvatarScreen';
-import UserFormScreen from '~components/screens/UserFormScreen';
+import SettingAvatarScreen from '~components/screens/SettingAvatarScreen';
+import SettingFormScreen from '~components/screens/SettingFormScreen';
+import SettingLangScreen from '~components/screens/SettingLangScreen';
 import MapFormSearchScreen from './MapFormSearchScreen';
+import NodeMoreScreen from './NodeMoreScreen';
+import UserScreen from './UserScreen';
+import NodedataVoteScreen from './NodedataVoteScreen';
+import HelpScreen from './HelpScreen';
 
 export {
     AuthScreen,
+    HelpScreen,
     HomeScreen,
-    LanguageScreen,
-    MapLocalFilterScreen,
+    MapFilterScreen,
     // MapScreen,
-    NodeScreen,
+    NodeShortScreen,
+    NodeMoreScreen,
     MapFormSearchScreen,
     NodeAuditScreen,
     NodedataCreatorScreen,
+    NodedataVoteScreen,
     NodedataCreatorTagScreen,
     NodedataScreen,
     ReviewFormScreen,
     ReviewScreen,
     SettingScreen,
     SyncScreen,
-    UserFormAvatarScreen,
-    UserFormScreen,
+    SettingAvatarScreen,
+    SettingFormScreen,
+    SettingLangScreen,
+    UserScreen,
 };
 
 export enum ScreenKeys {
-    NodeScreen = 'NodeScreen',
     NodedataScreen = 'NodedataScreen',
     AuthScreen = 'AuthScreen',
 }

@@ -27,160 +27,10 @@ const useNode = (props: IUseNodeProps) => {
 
     const localNode = useObject(NodeSchema, new BSON.ObjectId(localNodeId));
 
-    // const onGetNode = React.useCallback(
-    //     async () => (lang: string, markerData: any) => {
-    //         // console.log('onGetNode:::', markerData);
-    //         return await onFetchWithAuth(
-    //             HOST_API +
-    //                 '/gql/query?' +
-    //                 new URLSearchParams({
-    //                     lang: lang || 'en',
-    //                 }),
-    //             {
-    //                 method: 'POST',
-    //                 headers: {
-    //                     Accept: 'application/json',
-    //                     'Content-Type': 'application/json',
-    //                 },
-    //                 // node(id: "${featureFromStore?.id}") {
-    //                 body: JSON.stringify({
-    //                     query: `
-    //                             query findNodeInfo($lat: Float, $lon:Float) {
-    //                             node(lat: $lat, lon: $lon) {
-    //                                 id
-    //                                 osmId
-    //                                 type
-    //                                 lat
-    //                                 lon
-    //                                 ccode
-    //                                 props
-    //                                 name
-    //                                 user {
-    //                                     id
-    //                                     lang
-    //                                     name
-    //                                     login
-    //                                     lastTime
-    //                                     online
-    //                                     images {
-    //                                         id
-    //                                         service
-    //                                         serviceId
-    //                                         title
-    //                                         userId
-    //                                         path
-    //                                         dir
-    //                                         ext
-    //                                     }
-    //                                 }
-    //                                 images {
-    //                                     id
-    //                                     service
-    //                                     serviceId
-    //                                     title
-    //                                     userId
-    //                                     path
-    //                                     dir
-    //                                     ext
-    //                                     createdAt
-    //                                     user {
-    //                                         id
-    //                                         lang
-    //                                         name
-    //                                         login
-    //                                         lastTime
-    //                                         online
-    //                                         images {
-    //                                             id
-    //                                             service
-    //                                             serviceId
-    //                                             title
-    //                                             userId
-    //                                             path
-    //                                             dir
-    //                                             ext
-    //                                         }
-    //                                     }
-    //                                 }
-    //                                 createdAt
-    //                                 updatedAt
-    //                                 data{
-    //                                     id
-    //                                     value
-    //                                     status
-    //                                     like
-    //                                     dlike
-    //                                     tagId
-    //                                     tagoptId
-    //                                     nodeId
-    //                                     user {
-    //                                         id
-    //                                         lang
-    //                                         name
-    //                                         login
-    //                                         lastTime
-    //                                         online
-    //                                         images {
-    //                                             id
-    //                                             service
-    //                                             serviceId
-    //                                             title
-    //                                             userId
-    //                                             path
-    //                                             dir
-    //                                             ext
-    //                                         }
-    //                                     }
-    //                                     tag {
-    //                                         id
-    //                                         key
-    //                                         title
-    //                                         description
-    //                                         props
-    //                                     }
-    //                                     tagopt {
-    //                                         id
-    //                                         title
-    //                                         description
-    //                                         value
-    //                                     }
-    //                                     createdAt
-    //                                     updatedAt
-    //                                 }
-    //                                 reviewsInfo {
-    //                                 count
-    //                                 value
-    //                                 ratings
-    //                                 }
-    //                                 address {
-    //                                 dAddress
-    //                                 }
-    //                             }
-    //                             }
-    //                         `,
-    //                     variables: {
-    //                         lat: markerData?.lat,
-    //                         lon: markerData?.lon,
-    //                     },
-    //                 }),
-    //             },
-    //         )
-    //             .then(r => r.json())
-    //             .then(response => {
-    //                 // console.log('response: ', response);
-
-    //                 return response;
-    //             })
-    //             .catch(e => {
-    //                 throw e;
-    //             });
-    //     },
-    //     [],
-    // );
-
     const activeLanguageFromStore = useAppSelector(activeLanguage);
 
     const [isLoading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const [serverNode, setNodeFromServer] = useState<INode | null>(null);
     const [isServerNodeRemove, setIsServerNodeRemove] = React.useState(false);
 
@@ -204,16 +54,15 @@ const useNode = (props: IUseNodeProps) => {
                         // node(id: "${featureFromStore?.id}") {
                         body: JSON.stringify({
                             query: `
-                                    query findNodeInfo($lat: Float, $lon:Float, $id: ID) {
+                                query findNodeInfo($lat: Float, $lon: Float, $id: ID){
                                     node(lat: $lat, lon: $lon, id: $id) {
                                         id
                                         osmId
                                         type
                                         lat
                                         lon
-                                        ccode
-                                        props
                                         name
+                                        userId
                                         user {
                                             id
                                             lang
@@ -221,6 +70,19 @@ const useNode = (props: IUseNodeProps) => {
                                             login
                                             lastTime
                                             online
+                                            userStat {
+                                                node
+                                                nodeLike
+                                                nodeDLike
+                                                nodeAuthorLike
+                                                nodeAuthorDLike
+                                                nodedata
+                                                nodedataLike
+                                                nodedataDLike
+                                                nodedataAuthorLike
+                                                nodedataAuthorDLike
+                                                review
+                                            }
                                             images {
                                                 id
                                                 service
@@ -249,6 +111,19 @@ const useNode = (props: IUseNodeProps) => {
                                                 login
                                                 lastTime
                                                 online
+                                                userStat {
+                                                    node
+                                                    nodeLike
+                                                    nodeDLike
+                                                    nodeAuthorLike
+                                                    nodeAuthorDLike
+                                                    nodedata
+                                                    nodedataLike
+                                                    nodedataDLike
+                                                    nodedataAuthorLike
+                                                    nodedataAuthorDLike
+                                                    review
+                                                }
                                                 images {
                                                     id
                                                     service
@@ -261,17 +136,54 @@ const useNode = (props: IUseNodeProps) => {
                                                 }
                                             }
                                         }
-                                        createdAt
-                                        updatedAt
+                                        props
                                         data{
                                             id
-                                            value
-                                            status
-                                            like
-                                            dlike
+                                            nodeId
                                             tagId
                                             tagoptId
-                                            nodeId
+                                            value
+                                            title
+                                            description
+                                            like
+                                            dlike
+                                            audit {
+                                                id
+                                                nodedataId
+                                                value
+                                                props
+                                                user {
+                                                    id
+                                                    lang
+                                                    name
+                                                    login
+                                                    lastTime
+                                                    online
+                                                    userStat {
+                                                        node
+                                                        nodeLike
+                                                        nodeDLike
+                                                        nodeAuthorLike
+                                                        nodeAuthorDLike
+                                                        nodedata
+                                                        nodedataLike
+                                                        nodedataDLike
+                                                        nodedataAuthorLike
+                                                        nodedataAuthorDLike
+                                                        review
+                                                    }
+                                                    images {
+                                                        id
+                                                        service
+                                                        serviceId
+                                                        title
+                                                        userId
+                                                        path
+                                                        dir
+                                                        ext
+                                                    }
+                                                }
+                                            }
                                             user {
                                                 id
                                                 lang
@@ -279,6 +191,19 @@ const useNode = (props: IUseNodeProps) => {
                                                 login
                                                 lastTime
                                                 online
+                                                userStat {
+                                                    node
+                                                    nodeLike
+                                                    nodeDLike
+                                                    nodeAuthorLike
+                                                    nodeAuthorDLike
+                                                    nodedata
+                                                    nodedataLike
+                                                    nodedataDLike
+                                                    nodedataAuthorLike
+                                                    nodedataAuthorDLike
+                                                    review
+                                                }
                                                 images {
                                                     id
                                                     service
@@ -295,7 +220,9 @@ const useNode = (props: IUseNodeProps) => {
                                                 key
                                                 title
                                                 description
-                                                props
+                                                options {
+                                                    id
+                                                }
                                             }
                                             tagopt {
                                                 id
@@ -304,17 +231,23 @@ const useNode = (props: IUseNodeProps) => {
                                                 value
                                             }
                                             createdAt
-                                            updatedAt
                                         }
                                         reviewsInfo {
                                             count
                                             value
                                             ratings
                                         }
+                                        address {
+                                            id
+                                            userId
+                                            osmId
+                                            dAddress
+                                            address
+                                            props
+                                        }
                                         audits {
                                             message
                                             status
-                                            userId
                                             user {
                                                 id
                                                 lang
@@ -322,6 +255,19 @@ const useNode = (props: IUseNodeProps) => {
                                                 login
                                                 lastTime
                                                 online
+                                                userStat {
+                                                    node
+                                                    nodeLike
+                                                    nodeDLike
+                                                    nodeAuthorLike
+                                                    nodeAuthorDLike
+                                                    nodedata
+                                                    nodedataLike
+                                                    nodedataDLike
+                                                    nodedataAuthorLike
+                                                    nodedataAuthorDLike
+                                                    review
+                                                }
                                                 images {
                                                     id
                                                     service
@@ -334,11 +280,9 @@ const useNode = (props: IUseNodeProps) => {
                                                 }
                                             }
                                         }
-                                        address {
-                                            dAddress
-                                        }
+                                        createdAt
                                     }
-                                    }
+                                }
                                 `,
                             variables: {
                                 // lat: localNode?.lat,
@@ -357,8 +301,10 @@ const useNode = (props: IUseNodeProps) => {
                             if (!responseNode) {
                                 // dispatch(setActiveNode(null));
                                 setNodeFromServer(null);
-                                setLoading(false);
                                 setIsServerNodeRemove(true);
+                                setTimeout(() => {
+                                    setLoading(false);
+                                }, 300);
                                 return;
                             }
 
@@ -382,23 +328,38 @@ const useNode = (props: IUseNodeProps) => {
                                 // );
                                 realm.write(() => {
                                     //console.log('newData=', newData.length);
-                                    localNode.data = newData;
+                                    localNode.data = [...newData];
                                     localNode.createdAt = responseNode.createdAt;
                                     if (responseNode.userId && localNode?.userId === '') {
                                         localNode.userId = responseNode.userId;
                                     }
+                                    // realm.create(
+                                    //     'NodeSchema',
+                                    //     {
+                                    //         ...localNode,
+                                    //         data: [...newData],
+                                    //         _id: localNode?._id,
+                                    //         createdAt: responseNode.createdAt,
+                                    //         userId: responseNode.userId,
+                                    //     },
+                                    //     UpdateMode.Modified,
+                                    // );
                                 });
                             }
                             //console.log('onGetNodeInfo: ', localNode);
 
                             setNodeFromServer(responseNode);
-                            setLoading(false);
+                            setTimeout(() => {
+                                setLoading(false);
+                            }, 100);
                             // console.log('activeMarker=', response);
                             // dispatch(setActiveNode(responseNode));
                         }
                     })
                     .catch(e => {
-                        setLoading(false);
+                        setTimeout(() => {
+                            setLoading(false);
+                        }, 300);
                         throw e;
                     });
             } catch (e: any) {
@@ -407,11 +368,12 @@ const useNode = (props: IUseNodeProps) => {
                 //     ToastAndroid.LONG,
                 //     ToastAndroid.TOP,
                 // );
-                console.log('UseNode error: ', e?.message);
+                setError(e.message);
+                // console.log('UseNode error: ', e?.message);
             }
         };
 
-        if (localNode?.lat && localNode?.lon) {
+        if (localNode?.lat && localNode?.lon && !ignore) {
             // setTimeout(onGetNodeInfo, 100);
             onGetNodeInfo();
         }
@@ -425,6 +387,7 @@ const useNode = (props: IUseNodeProps) => {
         isLoading,
         serverNode,
         isServerNodeRemove,
+        error,
     };
 };
 

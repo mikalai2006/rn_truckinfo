@@ -1,22 +1,25 @@
+import {HOST_API} from '@env';
+
 import {Text, View} from 'react-native';
 import React, {useCallback} from 'react';
 import {useTranslation} from 'react-i18next';
 import RTitle from '~components/r/RTitle';
-import RButton from '~components/r/RButton';
 import {NavigationProp} from '@react-navigation/native';
-import {useAppSelector} from '~store/hooks';
-import {tokens, user} from '~store/appSlice';
+import {useAppDispatch, useAppSelector} from '~store/hooks';
+import {setUser, tokens, user} from '~store/appSlice';
 import SIcon from '~components/ui/SIcon';
 import {iCamera, iImage} from '~utils/icons';
 import RImage from '~components/r/RImage';
 import RImagePicker from '~components/r/RImagePicker';
 import {ImagePickerResponse} from 'react-native-image-picker/lib/typescript/types';
-import {HOST_API} from '@env';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import UIButton from '~components/ui/UIButton';
 
-const UserFormAvatarScreen = ({navigation}: {navigation: NavigationProp<any>}) => {
+const SettingAvatarScreen = ({navigation}: {navigation: NavigationProp<any>}) => {
     const {t} = useTranslation();
     const userFromStore = useAppSelector(user);
     const token = useAppSelector(tokens);
+    const dispatch = useAppDispatch();
 
     const handleUploadPhoto = useCallback(async (response: ImagePickerResponse) => {
         if (!userFromStore) {
@@ -38,7 +41,11 @@ const UserFormAvatarScreen = ({navigation}: {navigation: NavigationProp<any>}) =
         data.append('service', 'user');
         data.append('serviceId', userFromStore.id);
 
-        fetch(`${HOST_API}/api/v1/image`, {
+        if (!token) {
+            return;
+        }
+
+        fetch(`${HOST_API}/image`, {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${token.access_token}`,
@@ -49,6 +56,7 @@ const UserFormAvatarScreen = ({navigation}: {navigation: NavigationProp<any>}) =
             .then(res => res.json())
             .then(response => {
                 console.log('response', response);
+                dispatch(setUser({...userFromStore, images: [...response]}));
             })
             .catch(error => {
                 console.log('error', error);
@@ -64,9 +72,9 @@ const UserFormAvatarScreen = ({navigation}: {navigation: NavigationProp<any>}) =
     );
 
     return (
-        <View tw="flex-1 bg-s-100 dark:bg-s-900">
-            <View tw="px-6 pt-12 pb-0">
-                <RTitle text={t('form:formAvatarTitle')} />
+        <SafeAreaView tw="flex-1 bg-s-100 dark:bg-s-950 border-b border-s-200 dark:border-s-900">
+            <View tw="px-6 pt-4">
+                <RTitle text={t('general:avatar')} />
             </View>
             <View tw="mt-2 mx-auto">
                 {userFromStore?.images ? <RImage image={userFromStore.images[0]} /> : <Text>No</Text>}
@@ -87,7 +95,7 @@ const UserFormAvatarScreen = ({navigation}: {navigation: NavigationProp<any>}) =
                         <SIcon path={iImage} size={30} tw="text-s-400" />
                     </View>
                     <View tw="flex-auto pl-4">
-                        <Text tw="text-lg text-black dark:text-white">{t('form:imageSelect')}</Text>
+                        <Text tw="text-base text-s-900 dark:text-s-100">{t('general:imageSelect')}</Text>
                     </View>
                 </RImagePicker>
                 <RImagePicker
@@ -106,15 +114,15 @@ const UserFormAvatarScreen = ({navigation}: {navigation: NavigationProp<any>}) =
                         <SIcon path={iCamera} size={30} tw="text-s-400" />
                     </View>
                     <View tw="flex-auto pl-4">
-                        <Text tw="text-lg text-black dark:text-white">{t('form:imageTakeCamera')}</Text>
+                        <Text tw="text-base text-s-900 dark:text-s-100">{t('general:imageTakeCamera')}</Text>
                     </View>
                 </RImagePicker>
             </View>
             <View tw="p-6">
-                <RButton text={t('general:back')} onPress={() => navigation.goBack()} />
+                <UIButton type="default" text={t('general:back')} onPress={() => navigation.goBack()} />
             </View>
-        </View>
+        </SafeAreaView>
     );
 };
 
-export default UserFormAvatarScreen;
+export default SettingAvatarScreen;

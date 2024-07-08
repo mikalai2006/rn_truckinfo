@@ -10,7 +10,7 @@ import {useAppSelector} from '~store/hooks';
 import {CustomDrawer} from './CustomDrawer';
 import MapLocalStack from './MapLocalStack';
 import {useTranslation} from 'react-i18next';
-import {HomeScreen, SyncScreen} from '~components/screens';
+import {HelpScreen, HomeScreen, SyncScreen} from '~components/screens';
 
 const Drawer = createDrawerNavigator();
 
@@ -32,27 +32,42 @@ export default function AppStack() {
                     drawerPosition: 'left',
                     // header: () => {},
                     headerShown: false,
+                    // overlayColor: 'transparent',
+                    headerShadowVisible: false,
+                    drawerStyle: {
+                        borderColor: colorScheme === 'dark' ? colors.s[900] : colors.s[200],
+                        shadowColor: colorScheme === 'dark' ? colors.s[900] : colors.s[200],
+                        backgroundColor: colorScheme === 'dark' ? colors.s[900] : colors.s[200],
+                    },
                     drawerType: dimensions.width >= 768 ? 'permanent' : 'front',
                     headerStyle: {
-                        backgroundColor: colorScheme === 'dark' ? '#0f172a' : colors.s[100],
+                        backgroundColor: colorScheme === 'dark' ? '#0f172a' : colors.p[500],
                     },
-                    headerTintColor: colorScheme !== 'dark' ? '#0f172a' : colors.s[100],
+                    headerTintColor: colorScheme !== 'dark' ? colors.p[100] : colors.p[500],
                     headerTitleStyle: {
-                        color: colorScheme !== 'dark' ? '#0f172a' : colors.s[100],
+                        color: colorScheme !== 'dark' ? '#0f172a' : colors.p[500],
                     },
                     drawerItemStyle: {},
-                    drawerActiveTintColor: colorScheme !== 'dark' ? '#4338ca' : '#a5b4fc',
-                    drawerInactiveTintColor: colorScheme !== 'dark' ? '#0f172a' : '#fff',
+                    drawerActiveTintColor: colorScheme !== 'dark' ? colors.p[500] : colors.p[100],
+                    drawerInactiveTintColor: colorScheme !== 'dark' ? colors.s[900] : colors.s[100],
                 }}
-                initialRouteName={'HomeScreen'}>
+                initialRouteName={'MapLocalStack'}>
                 {/* <Drawer.Screen name="MapStack" component={MapStack} /> */}
-                <Drawer.Screen name="HomeScreen" component={HomeScreen} options={{title: t('general:homeScreen')}} />
+                {/* <Drawer.Screen
+                    name="HomeScreen"
+                    component={HelpScreen}
+                    options={{title: t('general:screenHomeTitle')}}
+                /> */}
                 <Drawer.Screen
                     name="MapLocalStack"
                     component={MapLocalStack}
-                    options={{title: t('general:mapScreen')}}
+                    options={{title: t('general:screenMapTitle')}}
                 />
-                <Drawer.Screen name="SyncScreen" component={SyncScreen} />
+                <Drawer.Screen
+                    name="SyncScreen"
+                    component={SyncScreen}
+                    options={{title: t('general:screenSyncTitle')}}
+                />
                 {tokensFromStore?.access_token ? (
                     <>
                         <Drawer.Screen
@@ -63,11 +78,19 @@ export default function AppStack() {
                                 // drawerIcon: ({focused, size}) => (
                                 //     <Icon name="cog" size={24} color={colorScheme === 'dark' ? colors.s[100] : colors.s[500]} />
                                 // ),
-                                title: t('general:settingsScreen'),
+                                title: t('general:screenSettingTitle'),
+                                // drawerItemStyle: {
+                                //     display: 'none',
+                                // },
                             }}
                         />
                     </>
                 ) : null}
+                <Drawer.Screen
+                    name="HelpScreen"
+                    component={HelpScreen}
+                    options={{title: t('general:screenHelpTitle')}}
+                />
             </Drawer.Navigator>
         </>
     );

@@ -14,5 +14,10 @@ interface TestModuleInterface extends NativeModule {
     stopUpdates(): void;
     setUpdateInterval(timeMs: number): void;
     setUpdateAlpha(newAlpha: number): void;
+    startAzimut(): void;
+    stopAzimut(): void;
+    setDark(): void;
+    setLight(): void;
+    setSystem(): void;
 }
 export default TestModule as TestModuleInterface;

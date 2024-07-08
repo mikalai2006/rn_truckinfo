@@ -42,6 +42,8 @@ public class TestModule extends ReactContextBaseJavaModule implements SensorEven
     private  static  ReactApplicationContext reactContext;
     private DeviceEventManagerModule.RCTDeviceEventEmitter mEmitter = null;
 
+    private Compass compass;
+
     @ReactMethod
     public void setUpdateInterval(int newInterval) {
         this.interval = newInterval;
@@ -56,6 +58,32 @@ public class TestModule extends ReactContextBaseJavaModule implements SensorEven
         reactContext = context;
 
         this.sensorManager = (SensorManager)reactContext.getSystemService(reactContext.SENSOR_SERVICE);
+
+        compass = new Compass(reactContext);
+        Compass.CompassListener cl = getCompassListener();
+        compass.setListener(cl);
+    }
+
+    @ReactMethod
+    public void startAzimut() {
+        compass.start();
+    }
+    @ReactMethod
+    public void stopAzimut() {
+        compass.stop();
+    }
+
+    private Compass.CompassListener getCompassListener() {
+        return new Compass.CompassListener() {
+            @Override
+            public void onNewAzimuth(final float azimuth) {
+                WritableMap params = Arguments.createMap();
+                params.putDouble("angle", azimuth);
+                sendEvent("azimut_data", params);
+                //System.out.println("azimuth: ");
+                //System.out.println(azimuth);
+            }
+        };
     }
 
     @ReactMethod
@@ -249,7 +277,11 @@ public class TestModule extends ReactContextBaseJavaModule implements SensorEven
         if ( output == null ) return input;
 
         for ( int i=0; i<input.length; i++ ) {
-            output[i] = output[i] + ALPHA * (input[i] - output[i]);
+            if (ALPHA == 0f) {
+                output[i] = input[i];
+            } else {
+                output[i] = output[i] + ALPHA * (input[i] - output[i]);
+            }
         }
         return output;
     }

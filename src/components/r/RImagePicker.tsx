@@ -72,8 +72,15 @@ const RImagePicker = (props: IRImagePickerProps) => {
     }, []);
 
     return (
-        <UIButton type="default" twClass={`w-full ${props.classString}`} onPress={() => onButtonPress(props.action)}>
-            {children ? children : <Text tw="text-black dark:text-white">{props.action.title || 'Upload'}</Text>}
+        <UIButton
+            type="default"
+            twClass={`w-full flex flex-row items-center ${props.classString}`}
+            onPress={() => onButtonPress(props.action)}>
+            {children ? (
+                children
+            ) : (
+                <Text tw="text-base text-black dark:text-white">{props.action.title || 'Upload'}</Text>
+            )}
         </UIButton>
         // <TouchableOpacity
         //     onPress={() => onButtonPress(props.action)}

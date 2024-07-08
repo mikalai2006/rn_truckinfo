@@ -1,4 +1,4 @@
-import {View} from 'react-native';
+import {View, useWindowDimensions} from 'react-native';
 import React, {useCallback} from 'react';
 import BottomSheet, {
     BottomSheetBackdrop,
@@ -21,6 +21,7 @@ export type Ref = BottomSheet;
 const UIBottomSheetScrollView = React.forwardRef<Ref, UIBottomSheetProps>(
     ({snapPoints, children, header, onClose, ...rest}, ref) => {
         const {colorScheme} = useColorScheme();
+        const dimensions = useWindowDimensions();
 
         if (!snapPoints) {
             snapPoints = ['25%', '50%', '75%', '100%'];
@@ -63,7 +64,10 @@ const UIBottomSheetScrollView = React.forwardRef<Ref, UIBottomSheetProps>(
                 // index={0}
                 enablePanDownToClose={true}
                 // enableContentPanningGesture={true}
-                backgroundStyle={{backgroundColor: colorScheme === 'dark' ? colors.s[950] : colors.s[100]}}
+                backgroundStyle={{
+                    backgroundColor: colorScheme === 'dark' ? colors.s[950] : colors.s[100],
+                    borderRadius: dimensions.width >= 768 ? 0 : 30,
+                }}
                 backdropComponent={renderBackdrop}
                 {...rest}>
                 {header && <View>{header}</View>}

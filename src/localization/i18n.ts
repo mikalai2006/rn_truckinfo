@@ -1,19 +1,7 @@
 import i18n from 'i18next';
 import {initReactI18next} from 'react-i18next';
-import en from './en';
-import ru from './ru';
-const resources = {
-    // list of languages
-    en,
-    ru,
-    fr: {},
-    de: {},
-    ro: {},
-    by: {},
-    ce: {},
-    fe: {},
-    fg: {},
-};
+
+const resources = {};
 i18n.use(initReactI18next) // passes i18n down to react-i18next
     .init({
         compatibilityJSON: 'v3', //To make it work for Android devices, add this line.

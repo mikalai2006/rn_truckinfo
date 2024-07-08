@@ -1,12 +1,12 @@
 import React, {useMemo, useRef, useState} from 'react';
 
-import {Text, TouchableOpacity, View} from 'react-native';
+import {Alert, Text, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useTranslation} from 'react-i18next';
 import {ITagopt, TTagoptInput} from '~store/appSlice';
-import {useObject, useRealm} from '@realm/react';
+import {useObject, useQuery, useRealm} from '@realm/react';
 import {NodeSchema} from '~schema/NodeSchema';
-import {BSON} from 'realm';
+import {BSON, UpdateMode} from 'realm';
 import {NodeDataSchema} from '~schema/NodeDataSchema';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {MapLocalStackParamList} from '~components/navigations/MapLocalStack';
@@ -14,9 +14,10 @@ import BottomSheet from '@gorhom/bottom-sheet';
 import UIBottomSheetScrollView from '~components/ui/UIBottomSheetScrollView';
 import SIcon from '~components/ui/SIcon';
 import UIButton from '~components/ui/UIButton';
-import InputField from '~components/form/InputField';
 import WidgetNodedataPrice from '~components/widgets/nodedata/WidgetNodedataPrice';
 import WidgetNodedataNumber from '~components/widgets/nodedata/WidgetNodedataNumber';
+import RImage from '~components/r/RImage';
+import {LikeSchema, TLikeSchema} from '~schema/LikeSchema';
 
 type Props = NativeStackScreenProps<MapLocalStackParamList, 'NodedataCreatorTagScreen'>;
 
@@ -29,6 +30,8 @@ const NodedataCreatorTagScreen = (props: Props) => {
     const localNode = useObject(NodeSchema, new BSON.ObjectId(lid));
 
     const realm = useRealm();
+
+    const localLikes = useQuery(LikeSchema);
 
     const allowTagopts = useMemo(() => {
         const result: TTagoptInput[] = [];
@@ -52,6 +55,11 @@ const NodedataCreatorTagScreen = (props: Props) => {
             return;
         }
 
+        const existNodedata = localNode.data.find(x => x.tagId === tag.id && x.value === value);
+        if (existNodedata) {
+            Alert.alert(t('general:info'), t('general:infoExistNodedataValue'));
+            return;
+        }
         // console.log('node=>', localNode);
 
         const newData: NodeDataSchema = {
@@ -72,6 +80,7 @@ const NodedataCreatorTagScreen = (props: Props) => {
 
         realm.write(() => {
             realm.create('NodeDataSchema', newData);
+            addLikeTag(newData._id.toHexString());
         });
         // console.log('new NodeDataSchema: ', newData);
 
@@ -126,6 +135,34 @@ const NodedataCreatorTagScreen = (props: Props) => {
         //     });
     };
 
+    const addLikeTag = (localNodedataId: string) => {
+        const newData: TLikeSchema = {
+            localNodedataId: localNodedataId,
+            serverNodedataId: '',
+            value: 1,
+            oldValue: 0,
+            ccode: localNode?.ccode,
+            nlid: localNode?._id.toHexString(),
+            isLocal: true,
+        };
+
+        // realm.write(() => {
+        const existLike = localLikes.filter(like => like.localNodedataId === localNodedataId);
+        // console.log('existLike=', existLike);
+
+        realm.create(
+            LikeSchema,
+            {
+                ...newData,
+                oldValue: existLike[0]?.oldValue || 0,
+                _id: existLike[0]?._id || new BSON.ObjectId(),
+            },
+            UpdateMode.Modified,
+        );
+        // console.log('localLikes=', localLikes);
+        // });
+    };
+
     const [listOptions, setListOptions] = useState<NodeDataSchema[]>([]);
     const onAddTagoptToList = async (tagopt: ITagopt | null, value: any) => {
         if (!localNode) {
@@ -133,7 +170,7 @@ const NodedataCreatorTagScreen = (props: Props) => {
         }
 
         const existIndex = listOptions.findIndex(x => x.tagoptId === tagopt?.id);
-        console.log(existIndex, listOptions, tagopt);
+        // console.log(existIndex, listOptions, tagopt);
 
         if (existIndex === -1) {
             const newData: NodeDataSchema = {
@@ -163,12 +200,22 @@ const NodedataCreatorTagScreen = (props: Props) => {
         realm.write(() => {
             for (const item of listOptions) {
                 realm.create('NodeDataSchema', item);
+                addLikeTag(item._id.toHexString());
             }
         });
+        navigation.goBack();
+    };
+
+    const onGetTitle = (title: string) => {
+        let result = title;
+        if (title?.toLowerCase() === 'yes') {
+            result = t('general:tagoptYes');
+        }
+        return result;
     };
 
     const ref = useRef<BottomSheet>(null);
-    const snapPoints = useMemo(() => ['50%', '100%'], []);
+    const snapPoints = useMemo(() => ['50%', '95%'], []);
     const closeSheet = () => {
         navigation && navigation.goBack();
     };
@@ -187,10 +234,12 @@ const NodedataCreatorTagScreen = (props: Props) => {
             index={activeIndex.current}
             enablePanDownToClose={true}
             header={
-                <View tw="flex flex-row px-6 pt-6">
-                    <View tw="pr-4">
-                        {tag.props?.icon && <SIcon path={tag.props.icon} tw="text-s-800 dark:text-s-300" size={50} />}
-                    </View>
+                <View tw="flex flex-row pt-3 px-6 items-start">
+                    {tag.props?.icon && (
+                        <View tw="bg-s-200 dark:bg-s-900 p-3 mr-3 rounded-full">
+                            <SIcon path={tag.props.icon} tw="text-s-800 dark:text-s-300" size={40} />
+                        </View>
+                    )}
                     <View tw="flex-auto">
                         <Text tw="text-xl leading-6 font-bold text-black dark:text-s-300">
                             {t('general:tagCreateTitle')} - {tag?.title}
@@ -202,7 +251,7 @@ const NodedataCreatorTagScreen = (props: Props) => {
             <View tw="flex-1 px-6 mt-4">
                 <View>
                     <Text tw="mt-1 text-base leading-5 text-s-800 dark:text-s-200">
-                        {t('general:tagCreateDescription')}
+                        {t(`general:tagCreate.${tag.type}`)}
                     </Text>
                     {/* <Text tw="text-black dark:text-white text-lg">{tag?.title}</Text>
                     <Text tw="text-black">{tag?.description}</Text>
@@ -212,13 +261,32 @@ const NodedataCreatorTagScreen = (props: Props) => {
                     ? allowTagopts?.map((el, i) => (
                           <View key={i.toString()} tw="py-2">
                               <UIButton type="default" onPress={() => onAddTagopt(el, null)}>
-                                  <View tw="px-3">
-                                      <Text tw="text-lg font-bold text-s-800 dark:text-s-200">{el?.title}</Text>
-                                      {el?.description && (
-                                          <Text tw="text-base leading-5 text-s-800 dark:text-s-200">
-                                              {el.description}
+                                  <View tw="px-3 flex flex-row items-center">
+                                      <View tw="pr-3">
+                                          {el.props?.icon ? (
+                                              <SIcon path={el.props.icon} tw="text-s-800 dark:text-s-300" size={35} />
+                                          ) : el.props?.image ? (
+                                              <RImage
+                                                  uri={el.props?.image}
+                                                  classString="h-10"
+                                                  style={{
+                                                      width: undefined,
+                                                      aspectRatio: 1,
+                                                      resizeMode: 'contain',
+                                                  }}
+                                              />
+                                          ) : null}
+                                      </View>
+                                      <View tw="flex-auto">
+                                          <Text tw="text-lg font-bold text-s-800 dark:text-s-200">
+                                              {onGetTitle(el?.title)}
                                           </Text>
-                                      )}
+                                          {el?.description && (
+                                              <Text tw="text-base leading-5 text-s-800 dark:text-s-200">
+                                                  {el.description}
+                                              </Text>
+                                          )}
+                                      </View>
                                   </View>
                               </UIButton>
                           </View>
@@ -233,34 +301,59 @@ const NodedataCreatorTagScreen = (props: Props) => {
                                     <UIButton
                                         type={exist ? 'primary' : 'default'}
                                         onPress={() => onAddTagoptToList(el, null)}>
-                                        <View tw="px-3">
-                                            <Text
-                                                tw={`text-lg font-bold ${
-                                                    exist ? 'text-white dark:text-white' : 'text-s-800 dark:text-s-200'
-                                                }`}>
-                                                {el?.title}
-                                            </Text>
-                                            {el?.description && (
+                                        <View tw="px-3 flex flex-row">
+                                            <View tw="pr-2">
+                                                {el.props?.icon ? (
+                                                    <SIcon
+                                                        path={el.props.icon}
+                                                        tw="text-s-800 dark:text-s-300"
+                                                        size={35}
+                                                    />
+                                                ) : el.props?.image ? (
+                                                    <RImage
+                                                        uri={el.props?.image}
+                                                        classString="h-10"
+                                                        style={{
+                                                            width: undefined,
+                                                            aspectRatio: 1,
+                                                            resizeMode: 'contain',
+                                                        }}
+                                                    />
+                                                ) : null}
+                                            </View>
+                                            <View>
                                                 <Text
-                                                    tw={`text-base leading-5 ${
+                                                    tw={`text-lg font-bold ${
                                                         exist
                                                             ? 'text-white dark:text-white'
                                                             : 'text-s-800 dark:text-s-200'
                                                     }`}>
-                                                    {el.description}
+                                                    {el?.title}
                                                 </Text>
-                                            )}
+                                                {el?.description && (
+                                                    <Text
+                                                        tw={`text-base leading-5 ${
+                                                            exist
+                                                                ? 'text-white dark:text-white'
+                                                                : 'text-s-800 dark:text-s-200'
+                                                        }`}>
+                                                        {el.description}
+                                                    </Text>
+                                                )}
+                                            </View>
                                         </View>
                                     </UIButton>
                                 </View>
                             );
                         })}
-                        <UIButton
-                            type="default"
-                            disabled={listOptions.length === 0}
-                            onPress={onSave}
-                            text={t('general:save')}
-                        />
+                        <View tw="mt-3">
+                            <UIButton
+                                type="default"
+                                disabled={listOptions.length === 0}
+                                onPress={onSave}
+                                text={t('general:save')}
+                            />
+                        </View>
                     </View>
                 ) : null}
                 {tag.type === 'price' ? (
@@ -269,7 +362,7 @@ const NodedataCreatorTagScreen = (props: Props) => {
                 {tag.type === 'number' ? (
                     <WidgetNodedataNumber tag={tag} onSave={value => onAddTagopt(null, value)} />
                 ) : null}
-                <Text tw="text-black">{tag.type}</Text>
+                {/* <Text tw="text-black">{tag.type}</Text> */}
             </View>
         </UIBottomSheetScrollView>
     );

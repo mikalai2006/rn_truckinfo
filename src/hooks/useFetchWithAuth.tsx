@@ -9,15 +9,14 @@ export const useFetchWithAuth = () => {
     const onFetchWithAuth = async (input: RequestInfo, init?: RequestInit | undefined): Promise<Response> => {
         const tokens = await onSyncToken();
         if (!tokens) {
-            console.log('tokens: ', tokens);
-
-            throw new Error(t('general:notFoundToken'));
+            // console.log('tokens: ', tokens);
+            throw new Error(t('general:httpError.notFoundToken'));
         }
         const stateNet = await NetInfo.fetch();
         // console.log('onFetch:::::', stateNet);
 
         if (!stateNet.isConnected) {
-            throw new Error('Not connect');
+            throw new Error(t('general:httpError.notConnect'));
         }
 
         if (init) {

@@ -11,7 +11,7 @@ export default function useLanguage() {
     const dispatch = useAppDispatch();
 
     const onChangeLocale = (lang: string) => {
-        i18n.changeLanguage(lang);
+        i18n.changeLanguage && i18n.changeLanguage(lang);
         dayjs.locale(lang);
     };
 

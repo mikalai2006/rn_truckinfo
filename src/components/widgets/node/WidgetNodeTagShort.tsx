@@ -37,12 +37,12 @@ const WidgetNodeTagShort = (props: IWidgetNodeTagShortProps) => {
         return result[0];
     }, [nodedatas, tagsFromStore]);
 
-    console.log('nodedatas:', nodedatas);
+    // console.log('nodedatas:', nodedatas);
 
     return (
         <View tw="flex justify-center items-center relative p-2 mr-1.5 mb-1.5 bg-white dark:bg-s-900 rounded-full">
             {nodedatas[0].tag.props?.icon ? (
-                <SIcon path={nodedatas[0].tag.props.icon} tw="text-s-800 dark:text-s-300" size={25} />
+                <SIcon path={nodedatas[0].tag.props.icon} tw="text-s-800 dark:text-s-300" size={30} />
             ) : image ? (
                 <RImage
                     uri={image}

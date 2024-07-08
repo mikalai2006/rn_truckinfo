@@ -16,13 +16,13 @@
 //         console.log('onMessage event', data);
 
 //         if (data.event === 'marker') {
-//             navigation.navigate(ScreenKeys.NodeScreen, {marker: data.options.marker});
+//             navigation.navigate(ScreenKeys.NodeShortScreen, {marker: data.options.marker});
 //         } else if (data.event === 'iam') {
 //             // navigation.navigate('MarkerScreen', {marker: data.options.marker});
 //             dispatch(setUser(data.iam));
 //             console.log('IAM:', data.iam);
 //         } else if (data.event === 'newNode') {
-//             navigation.navigate(ScreenKeys.NodeScreen, {marker: data.options.marker});
+//             navigation.navigate(ScreenKeys.NodeShortScreen, {marker: data.options.marker});
 //         } else if (data.event === 'jwt') {
 //             console.log('jwt:', data.data);
 //             dispatch(setTokenAccess(data.data));

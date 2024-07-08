@@ -1,12 +1,10 @@
 import React from 'react';
-import {StyledComponent, styled, useColorScheme} from 'nativewind';
-import {Pressable, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {useColorScheme} from 'nativewind';
+import {Text, TouchableOpacity, View} from 'react-native';
 
-import colors from '../../../utils/colors';
 import {useTranslation} from 'react-i18next';
 import {useNavigation} from '@react-navigation/native';
-import RButton from '~components/r/RButton';
-import {ScreenKeys} from '~components/screens';
+import UIButton from '~components/ui/UIButton';
 
 export default function WidgetHomeSync() {
     const {colorScheme} = useColorScheme();
@@ -14,9 +12,9 @@ export default function WidgetHomeSync() {
     const navigation = useNavigation();
 
     return (
-        <View tw="p-6 flex-1 flex-col items-justify">
+        <View tw="flex-col items-justify">
             <View tw="flex-auto">
-                <Text tw="text-s-700 dark:text-s-400 text-lg leading-6">{t('general:authSync')}</Text>
+                <Text tw="text-s-700 dark:text-s-400 text-base leading-5">{t('general:authSync')}</Text>
                 <TouchableOpacity
                     onPress={() => {
                         navigation.navigate('Onboarding');
@@ -25,7 +23,8 @@ export default function WidgetHomeSync() {
                 </TouchableOpacity>
             </View>
             <View tw="pt-6">
-                <RButton
+                <UIButton
+                    type="primary"
                     disabled={false}
                     text={t('general:syncButton')}
                     onPress={() => {

@@ -6,6 +6,7 @@ export class PointSchema extends Realm.Object<PointSchema> {
     lon!: number;
     accuracy!: number;
     createdAt!: string;
+    isLocal?: boolean;
 
     static schema: ObjectSchema = {
         name: 'PointSchema',
@@ -15,6 +16,7 @@ export class PointSchema extends Realm.Object<PointSchema> {
             lon: 'double',
             accuracy: 'double',
             createdAt: {type: 'string', optional: true},
+            isLocal: 'bool?',
         },
         primaryKey: '_id',
     };

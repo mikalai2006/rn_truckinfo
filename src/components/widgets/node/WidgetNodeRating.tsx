@@ -6,6 +6,7 @@ import {INode} from '~store/appSlice';
 import {useTranslation} from 'react-i18next';
 import {ReviewSchema} from '~schema/ReviewSchema';
 import {useQuery} from '@realm/react';
+import {formatNum} from '~utils/utils';
 
 const arrayIndex = [1, 2, 3, 4, 5];
 
@@ -77,9 +78,9 @@ const WidgetNodeRating = (props: Props) => {
                     <View tw="mx-auto">
                         <SRateStar value={rate} />
                     </View>
-                    <Text tw="pt-2 text-5xl text-center text-s-800 dark:text-s-300 font-bold">{rate}</Text>
-                    <Text tw="text-lg leading-5 text-center text-s-800 dark:text-s-300">
-                        ({t('general:reviewTotal')}: {count})
+                    <Text tw="pt-2 text-4xl text-center text-s-800 dark:text-s-300 font-bold">{rate}</Text>
+                    <Text tw="text-base leading-5 text-center text-s-800 dark:text-s-300">
+                        ({t('general:reviewTotal')}: {formatNum(count)})
                     </Text>
                 </View>
                 <View tw="w-7/12">

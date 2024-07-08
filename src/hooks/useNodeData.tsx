@@ -8,7 +8,6 @@ import {useEffect, useState} from 'react';
 import {LikeSchema, TLikeSchema} from '~schema/LikeSchema';
 import {useQuery, useRealm} from '@realm/react';
 import {BSON} from 'realm';
-import {ToastAndroid} from 'react-native';
 
 export interface IUseNodeDataProps {
     localNode: TNodeSchema | null;
@@ -30,6 +29,7 @@ export const useNodedata = (props: IUseNodeDataProps) => {
 
     const activeLanguageFromStore = useAppSelector(activeLanguage);
 
+    const [error, setError] = useState(null);
     const [isLoading, setLoading] = useState(true);
     const [nodeData, setNodeData] = useState<INodedata[]>([]);
 
@@ -93,6 +93,37 @@ export const useNodedata = (props: IUseNodeDataProps) => {
                                     nodedataId
                                     value
                                     updatedAt
+                                    user {
+                                        id
+                                        lang
+                                        name
+                                        login
+                                        lastTime
+                                        online
+                                        userStat {
+                                            node
+                                            nodeLike
+                                            nodeDLike
+                                            nodeAuthorLike
+                                            nodeAuthorDLike
+                                            nodedata
+                                            nodedataLike
+                                            nodedataDLike
+                                            nodedataAuthorLike
+                                            nodedataAuthorDLike
+                                            review
+                                        }
+                                        images {
+                                            id
+                                            service
+                                            serviceId
+                                            title
+                                            userId
+                                            path
+                                            dir
+                                            ext
+                                        }
+                                    }
                                 }
                                 user {
                                     id
@@ -101,6 +132,19 @@ export const useNodedata = (props: IUseNodeDataProps) => {
                                     login
                                     lastTime
                                     online
+                                    userStat {
+                                        node
+                                        nodeLike
+                                        nodeDLike
+                                        nodeAuthorLike
+                                        nodeAuthorDLike
+                                        nodedata
+                                        nodedataLike
+                                        nodedataDLike
+                                        nodedataAuthorLike
+                                        nodedataAuthorDLike
+                                        review
+                                    }
                                     images {
                                         id
                                         service
@@ -138,6 +182,8 @@ export const useNodedata = (props: IUseNodeDataProps) => {
                                                 localNodedataId: '',
                                                 serverNodedataId: y.nodedataId,
                                                 value: y.value,
+                                                nlid: localNode?._id?.toHexString(),
+                                                ccode: localNode?.ccode,
                                                 oldValue: y.value,
                                                 isLocal: false,
                                             };
@@ -179,11 +225,13 @@ export const useNodedata = (props: IUseNodeDataProps) => {
                     });
             } catch (e) {
                 // console.log('UseNodedata error: ', e?.message);
-                ToastAndroid.showWithGravity(e?.message, ToastAndroid.LONG, ToastAndroid.TOP);
+                setError(e?.message);
+                // ToastAndroid.showWithGravity(e?.message, ToastAndroid.LONG, ToastAndroid.TOP);
             }
         };
-
-        onGetNodedata();
+        setTimeout(() => {
+            onGetNodedata();
+        }, 500);
 
         return () => {
             ignore = true;
@@ -193,5 +241,6 @@ export const useNodedata = (props: IUseNodeDataProps) => {
     return {
         isLoading,
         nodeData,
+        error,
     };
 };

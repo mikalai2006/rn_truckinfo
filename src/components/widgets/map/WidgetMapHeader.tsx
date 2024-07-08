@@ -31,7 +31,7 @@ const WidgetMapHeader = props => {
                     <TouchableOpacity
                         tw="p-3 rounded-full"
                         onPress={async () => {
-                            navigation.navigate('MapLocalFilterScreen');
+                            navigation.navigate('MapFilterScreen');
                         }}>
                         <SIcon path={iFilterFill} size={25} tw="text-black dark:text-s-200" />
                     </TouchableOpacity>

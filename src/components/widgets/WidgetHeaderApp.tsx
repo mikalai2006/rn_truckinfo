@@ -8,7 +8,7 @@ import {iList} from '~utils/icons';
 const WidgetHeaderApp = () => {
     const navigation = useNavigation();
     return (
-        <View tw="">
+        <View tw="md:hidden">
             <TouchableOpacity onPress={() => navigation.toggleDrawer()} activeOpacity={0.8} tw="py-2 px-2">
                 <SIcon path={iList} size={32} tw="text-black dark:text-white" />
             </TouchableOpacity>

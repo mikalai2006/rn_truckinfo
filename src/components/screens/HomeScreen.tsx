@@ -10,6 +10,9 @@ import {useAppSelector} from '~store/hooks';
 import {tokens} from '~store/appSlice';
 import {useTranslation} from 'react-i18next';
 import WidgetHomeSync from '~components/widgets/home/WidgetHomeSync';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import WidgetHomeStat from '~components/widgets/home/WidgetHomeStat';
+import WidgetNews from '~components/widgets/help/WidgetNews';
 
 const HomeScreen = ({}) => {
     const {colorScheme} = useColorScheme();
@@ -17,43 +20,45 @@ const HomeScreen = ({}) => {
     const tokensFromStore = useAppSelector(tokens);
 
     return (
-        <View style={{flex: 1, paddingTop: 0}} tw="bg-s-200 dark:bg-s-900">
+        <View tw="flex-1 bg-s-100 dark:bg-s-950">
             <FocusStatusBar
                 barStyle={colorScheme === 'dark' ? 'light-content' : 'dark-content'}
                 translucent
                 backgroundColor="transparent"
             />
-            <View tw="mt-8 px-4">
-                <WidgetHeaderApp />
-            </View>
-            <View tw="flex-1 flex">
-                <ScrollView>
-                    <View tw="p-6 bg-s-200 dark:bg-s-900">
-                        <View tw="bg-white dark:bg-s-800 rounded-lg p-4">
-                            <WidgetAppInfo />
-                        </View>
-                    </View>
-                    <View tw="bg-s-200 dark:bg-s-900 pb-6">
-                        <Text tw="text-s-700 dark:text-s-400 text-base mb-2 px-6">{t('general:recommendations')}:</Text>
-                        <ScrollView horizontal tw="px-6">
-                            {tokensFromStore?.access_token ? null : (
-                                <View tw="rounded-lg bg-white dark:bg-s-800 max-w-[300px] mr-6">
-                                    <WidgetAuth />
+            <SafeAreaView tw="flex-1 border-b border-s-200 dark:border-s-900">
+                <View tw="mt-0 px-4">
+                    <WidgetHeaderApp />
+                </View>
+                <View tw="flex-1 flex">
+                    <ScrollView tw="flex-1">
+                        <View tw="flex-1 lg:flex-row">
+                            <View tw="lg:w-1/2 px-6 lg:pr-0 lg:pl-6 pb-6">
+                                <View tw="rounded-lg bg-white dark:bg-s-900 mb-6 p-4">
+                                    <WidgetAppInfo />
                                 </View>
-                            )}
-                            <View tw="rounded-lg bg-white dark:bg-s-800 max-w-[300px] mr-6">
-                                <WidgetHomeSync />
+                                <Text tw="text-s-700 dark:text-s-400 text-base mb-3 px-6">
+                                    {t('general:recommendations')}:
+                                </Text>
+                                {tokensFromStore?.access_token ? null : (
+                                    <View tw="rounded-lg bg-white dark:bg-s-900 mb-3 p-6">
+                                        <WidgetAuth />
+                                    </View>
+                                )}
+                                <View tw="rounded-lg bg-white dark:bg-s-900 mb-3 p-6">
+                                    <WidgetHomeSync />
+                                </View>
                             </View>
-                        </ScrollView>
-                    </View>
-                    {/* <ScrollView horizontal>
-                        <View tw="bg-white dark:bg-s-900 p-4 flex flex-row overflow-scroll">
-                            <WidgetAuth />
-                            <WidgetAuth />
+                            <View tw="lg:w-1/2 px-6 pb-6">
+                                <View tw="bg-white dark:bg-s-900 rounded-lg p-4">
+                                    {/* <WidgetHomeStat /> */}
+                                    <WidgetNews />
+                                </View>
+                            </View>
                         </View>
-                    </ScrollView> */}
-                </ScrollView>
-            </View>
+                    </ScrollView>
+                </View>
+            </SafeAreaView>
         </View>
     );
 };

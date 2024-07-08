@@ -22,14 +22,15 @@ const WidgetNodeButtons = props => {
 
     const scheme = Platform.select({
         ios: 'maps://0,0?q=',
-        android: `geo:${node?.lat?.toFixed(ACCURACITY)},${node?.lon?.toFixed(ACCURACITY)}?q=`,
+        android: `geo:${node?.lat},${node?.lon}?q=`,
     });
-    const latLng = `${node?.lat?.toFixed(ACCURACITY)},${node?.lon?.toFixed(ACCURACITY)}`;
+    const latLng = `${node?.lat},${node?.lon}`; //?.toFixed(ACCURACITY)
     const label = `${node.name}`;
     const url = Platform.select({
         ios: `${scheme}${label}@${latLng}`,
         android: `${scheme}${latLng}(${label})`,
     });
+    // console.log('latLng: ', latLng);
 
     const copyToClipboard = () => {
         const str = `geo://${node.lat.toFixed(ACCURACITY)};${node.lon.toFixed(ACCURACITY)}?q=${label}`;

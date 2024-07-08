@@ -212,6 +212,7 @@ export const WidgetSync = () => {
                         const newState = {
                             _id: element.stat._id,
                             lastUpdatedAt: currentCountry.stat.lastUpdatedAt,
+                            createdAt: new Date().toISOString(),
                         };
                         realm.write(() => {
                             realm.create('CountryStat', newState, UpdateMode.Modified);

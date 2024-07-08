@@ -6,6 +6,9 @@ export interface ILang {
     locale: string;
     code: string;
     name: string;
+    localization: {
+        [key: string]: any;
+    };
     flag: string;
     publish: boolean;
     sortOrder: number;
@@ -35,6 +38,20 @@ export interface ITokens {
 export type TTokenInput = {
     [Property in keyof ITokens]?: ITokens[Property];
 };
+
+export interface IUserStat {
+    node: number;
+    nodeLike: number;
+    nodeDLike: number;
+    nodeAuthorLike: number;
+    nodeAuthorDLike: number;
+    nodedata: number;
+    nodedataLike: number;
+    nodedataDLike: number;
+    nodedataAuthorLike: number;
+    nodedataAuthorDLike: number;
+    review: number;
+}
 export interface IUser {
     id: string;
     userId: string;
@@ -46,6 +63,9 @@ export interface IUser {
     md: number;
     images: IImage[];
     online: boolean;
+    userStat: IUserStat;
+    createdAt: string;
+    updatedAt: string;
 }
 export interface IFeature {
     type: string;
@@ -193,8 +213,12 @@ export type TTagoptInput = {
 export interface INodedataVote {
     id: string;
     userId: string;
+    nodeId: string;
     nodedataId: string;
+    nodedataUserId: string;
     value: number;
+    user?: IUser;
+    owner?: IUser;
     createdAt: string;
     updatedAt: string;
 }
@@ -208,6 +232,7 @@ export interface ICountryStat {
     count: number;
     size: number;
     lastUpdatedAt: string;
+    createdAt: string;
 }
 
 export interface ICountry {
@@ -281,6 +306,19 @@ export interface INodeAudit {
     status: number;
     props: any;
 }
+export interface INodeVote {
+    id: string;
+    userId: string;
+    user: IUser;
+    value: number;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface IMagnitData {
+    angle: number;
+    status: boolean;
+}
 
 export interface INode {
     id: string;
@@ -297,6 +335,7 @@ export interface INode {
     address: IAddress;
     images: IImage[];
     audits: INodeAudit[];
+    votes: INodeVote[];
     props: any;
     lon: number;
     lat: number;
@@ -386,6 +425,7 @@ export interface AppState {
     };
     nodes: INode[];
     historyQuery: IHistoryQuery[];
+    magnitData: IMagnitData;
 }
 
 const initialState: AppState = {
@@ -410,6 +450,10 @@ const initialState: AppState = {
             lng: 0,
             lat: 0,
         },
+    },
+    magnitData: {
+        status: false,
+        angle: 0,
     },
     zoom: 8,
     center: {lat: 50, lng: 30},
@@ -458,6 +502,9 @@ export const uiSlice = createSlice({
         setCountryStat: (state, action: PayloadAction<ICountryStat[]>) => {
             state.countryStat = action.payload;
         },
+        setMagnitData: (state, action: PayloadAction<IMagnitData>) => {
+            state.magnitData = action.payload;
+        },
         setHistoryQuery: (state, action: PayloadAction<IHistoryQuery[]>) => {
             state.historyQuery = action.payload?.length ? action.payload : [];
         },
@@ -475,9 +522,6 @@ export const uiSlice = createSlice({
             if (state.user?.md !== undefined) {
                 state.maxDistance = state.user?.md || 1;
             }
-        },
-        setMaxDistance: (state, action: PayloadAction<number>) => {
-            state.maxDistance = action.payload || 1;
         },
         // setFeature: (state, action: PayloadAction<IFeature | null>) => {
         //     console.log('setFeature: ', JSON.stringify(action?.payload?.osmId));
@@ -592,7 +636,6 @@ export const {
     setLangCode,
     setUser,
     // setFeature,
-    setMaxDistance,
     setPositions,
     clearPositions,
     setAmenities,
@@ -605,6 +648,7 @@ export const {
     setFilter,
     setNodes,
     setHistoryQuery,
+    setMagnitData,
 } = uiSlice.actions;
 // Функция ниже называется селектором и позволяет нам выбрать значение из
 // штат. Селекторы также могут быть определены встроенными, где они используются вместо
@@ -619,6 +663,7 @@ export const langCode = (state: RootState) => state.ui.langCode;
 export const activeLanguage = (state: RootState) => state.ui.activeLanguage;
 export const languages = (state: RootState) => state.ui.languages;
 export const user = (state: RootState) => state.ui.user;
+export const magnitData = (state: RootState) => state.ui.magnitData;
 // export const feature = (state: RootState) => state.ui.feature;
 export const activeNode = (state: RootState) => state.ui.activeNode;
 export const positions = (state: RootState) => state.ui.positions;

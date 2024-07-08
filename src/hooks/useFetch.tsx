@@ -1,12 +1,15 @@
 import NetInfo from '@react-native-community/netinfo';
+import {useTranslation} from 'react-i18next';
 
 const useFetch = () => {
+    const {t} = useTranslation();
+
     const onFetch = async (input: RequestInfo, init?: RequestInit | undefined): Promise<Response> => {
         const stateNet = await NetInfo.fetch();
         // console.log('onFetch:::::', stateNet);
 
         if (!stateNet.isConnected) {
-            throw new Error('Not connect');
+            throw new Error(t('general:httpError.notConnect'));
         }
 
         const controller = new AbortController();

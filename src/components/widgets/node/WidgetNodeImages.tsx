@@ -145,7 +145,7 @@ const WidgetNodeImages = (props: IWidgetNodeImagesProps) => {
                     tw="w-full flex flex-row mb-2"
                 />
             ) : null}
-            <View tw="px-4">
+            <View tw="px-3">
                 {!isRemovedNode && (
                     <UIButton type="default" twClass="w-full" onPress={() => changeModalVisiblity(true)}>
                         <View tw="flex flex-row items-center justify-center">
@@ -185,7 +185,7 @@ const WidgetNodeImages = (props: IWidgetNodeImagesProps) => {
                                     action={{
                                         type: 'library',
                                         options: {
-                                            selectionLimit: 0,
+                                            selectionLimit: 1,
                                             mediaType: 'photo',
                                             includeBase64: false,
                                             includeExtra: true,
@@ -197,7 +197,9 @@ const WidgetNodeImages = (props: IWidgetNodeImagesProps) => {
                                             <SIcon path={iImage} size={30} tw="text-s-300 dark:text-s-500" />
                                         </View>
                                         <View tw="pl-4">
-                                            <Text tw="text-lg text-black dark:text-s-200">{t('form:imageSelect')}</Text>
+                                            <Text tw="text-lg text-black dark:text-s-200">
+                                                {t('general:imageSelect')}
+                                            </Text>
                                         </View>
                                     </View>
                                 </RImagePicker>
@@ -220,7 +222,7 @@ const WidgetNodeImages = (props: IWidgetNodeImagesProps) => {
                                         </View>
                                         <View tw="pl-4">
                                             <Text tw="text-lg text-black dark:text-s-200">
-                                                {t('form:imageTakeCamera')}
+                                                {t('general:imageTakeCamera')}
                                             </Text>
                                         </View>
                                     </View>

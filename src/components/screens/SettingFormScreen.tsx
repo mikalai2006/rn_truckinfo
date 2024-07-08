@@ -5,16 +5,20 @@ import {useTranslation} from 'react-i18next';
 import {setTokens, tokens, user} from '~store/appSlice';
 import {useAppDispatch, useAppSelector} from '~store/hooks';
 import RTitle from '~components/r/RTitle';
-import RButton from '~components/r/RButton';
 import {NavigationProp} from '@react-navigation/native';
-import InputField from '~components/form/InputField';
 import useAuth from '~hooks/useAuth';
 import {HOST_API} from '@env';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {TextInput} from 'react-native-gesture-handler';
+import {useColorScheme} from 'react-native';
+import colors from '~utils/colors';
+import UIButton from '~components/ui/UIButton';
 
-const UserFormScreen = ({navigation}: {navigation: NavigationProp<any>}) => {
+const SettingFormScreen = ({navigation}: {navigation: NavigationProp<any>}) => {
     const {t} = useTranslation();
     const userFromStore = useAppSelector(user);
     const token = useAppSelector(tokens);
+    const colorScheme = useColorScheme();
 
     const [login, setLogin] = useState(userFromStore?.login);
 
@@ -63,49 +67,48 @@ const UserFormScreen = ({navigation}: {navigation: NavigationProp<any>}) => {
             })
             .finally(() => {
                 setLoading(false);
+                navigation.goBack();
             });
     };
 
     return (
-        <View tw="flex-1 bg-s-100 dark:bg-s-900">
-            <View tw="px-6 pt-12 pb-0">
-                <RTitle text={t('form:formUserTitle')} />
+        <SafeAreaView tw="flex-1 bg-s-100 dark:bg-s-950 border-b border-s-200 dark:border-s-900">
+            <View tw="px-6 pt-4">
+                <RTitle text={t('general:login')} />
             </View>
             <View tw="flex-auto">
-                <View tw="p-6 ">
-                    <InputField
+                <View tw="p-6">
+                    {/* <InputField
                         value={login}
                         setValue={newValue => setLogin(newValue)}
-                        label={t('form:login')}
+                        label={t('general:login')}
                         keyboardType="default"
+                    /> */}
+
+                    <TextInput
+                        value={login}
+                        onChangeText={newValue => setLogin(newValue)}
+                        placeholder={t('general:login')}
+                        keyboardAppearance={colorScheme === 'dark' ? 'dark' : 'light'}
+                        keyboardType="default"
+                        textAlignVertical="top"
+                        tw="mb-4 p-4 text-base border border-s-200 dark:border-s-700 text-s-500 dark:text-s-300 bg-white dark:bg-s-950 rounded-xl"
+                        placeholderTextColor={colorScheme === 'dark' ? colors.s[500] : colors.s[400]}
                     />
-
-                    {/* <InputField
-                    value={password}
-                    setValue={newValue => setPassword(newValue)}
-                    label={t('form:password')}
-                    inputType="password"
-                    fieldButtonLabel={t('form:button_forgot')}
-                    fieldButtonFunction={() => {}}
-                /> */}
-
-                    {/* <View tw="py-4">
-                    {err !== '' ? <Text tw="text-red-600 dark:text-red-400 text-lg">{err}</Text> : ''}
-                </View>
- */}
-                    <RButton
+                    <UIButton
+                        type="default"
                         disabled={false}
                         loading={loading}
-                        text={t('form:button_save')}
+                        text={t('general:save')}
                         onPress={() => onPatchUser()}
                     />
                 </View>
             </View>
             <View tw="p-6">
-                <RButton text={t('general:back')} onPress={() => navigation.goBack()} />
+                <UIButton type="default" text={t('general:back')} onPress={() => navigation.goBack()} />
             </View>
-        </View>
+        </SafeAreaView>
     );
 };
 
-export default UserFormScreen;
+export default SettingFormScreen;
