@@ -1,4 +1,4 @@
-import {HOST_API} from '@env';
+import {hostAPI} from '~utils/global';
 
 import {useQuery, useRealm} from '@realm/react';
 import {BSON, UpdateMode} from 'realm';
@@ -70,7 +70,7 @@ export const useSync = () => {
 
     const onSync = async () => {
         try {
-            const timeWork = window.performance.now();
+            // const timeWork = window.performance.now();
 
             const bodyList = nodesList.map(x => {
                 return {
@@ -100,7 +100,7 @@ export const useSync = () => {
 
             // Sync nodes with data nodes
             if (bodyList.length > 0) {
-                await onFetchWithAuth(HOST_API + '/node/list', {
+                await onFetchWithAuth(hostAPI + '/node/list', {
                     method: 'POST',
                     headers: {
                         'Access-Control-Allow-Origin-Type': '*',
@@ -145,7 +145,7 @@ export const useSync = () => {
                             });
                         }
 
-                        console.log('Inserted nodes: ', listCreatedNodes);
+                        // console.log('Inserted nodes: ', listCreatedNodes);
 
                         for (let i = 0, total = listCreatedNodes.length; i < total; i++) {
                             realm.write(() => {
@@ -302,8 +302,8 @@ export const useSync = () => {
                 : [];
 
             if (newNodedata.length > 0) {
-                console.log('newNodedata:', newNodedata);
-                await onFetchWithAuth(HOST_API + '/nodedata/list', {
+                // console.log('newNodedata:', newNodedata);
+                await onFetchWithAuth(hostAPI + '/nodedata/list', {
                     method: 'POST',
                     headers: {
                         'Access-Control-Allow-Origin-Type': '*',
@@ -407,8 +407,8 @@ export const useSync = () => {
                             value: x.value,
                         };
                     });
-                console.log('newLikes=', newLikes);
-                await onFetchWithAuth(HOST_API + '/nodedatavote/list', {
+                // console.log('newLikes=', newLikes);
+                await onFetchWithAuth(hostAPI + '/nodedatavote/list', {
                     method: 'POST',
                     headers: {
                         'Access-Control-Allow-Origin-Type': '*',
@@ -440,8 +440,8 @@ export const useSync = () => {
                         review: x.review,
                     };
                 });
-                console.log('newReviews=', newReviews);
-                await onFetchWithAuth(HOST_API + '/review/list', {
+                // console.log('newReviews=', newReviews);
+                await onFetchWithAuth(hostAPI + '/review/list', {
                     method: 'POST',
                     headers: {
                         'Access-Control-Allow-Origin-Type': '*',
@@ -488,7 +488,7 @@ export const useSync = () => {
                     if (serviceId) {
                         data.append('serviceId', serviceId);
                         // console.log('Load ', data, imageItem);
-                        onFetchWithAuth(HOST_API + '/image', {
+                        onFetchWithAuth(hostAPI + '/image', {
                             method: 'POST',
                             headers: {
                                 'Access-Control-Allow-Origin-Type': '*',
@@ -524,7 +524,7 @@ export const useSync = () => {
                 }
 
                 if (auditsData.length > 0) {
-                    onFetchWithAuth(HOST_API + '/node_audit/list', {
+                    onFetchWithAuth(hostAPI + '/node_audit/list', {
                         method: 'POST',
                         headers: {
                             'Access-Control-Allow-Origin-Type': '*',
@@ -568,7 +568,7 @@ export const useSync = () => {
                     }
                 });
             }
-            console.log('Time Complete sync: ', window.performance.now() - timeWork);
+            // console.log('Time Complete sync: ', window.performance.now() - timeWork);
 
             // let timeSet = window.performance.now();
             // // clear likes not exist nodedata
@@ -613,7 +613,7 @@ export const useSync = () => {
                 };
             });
             if (pointsBody.length > 0) {
-                onFetchWithAuth(HOST_API + '/track/list', {
+                onFetchWithAuth(hostAPI + '/track/list', {
                     method: 'POST',
                     headers: {
                         'Access-Control-Allow-Origin-Type': '*',
@@ -636,12 +636,12 @@ export const useSync = () => {
                     });
             }
 
-            console.log('All nodedatas: ', allNodedatas.length, JSON.stringify(allNodedatas));
-            console.log('All images: ', images.length, JSON.stringify(images));
-            console.log('All local likes: ', likes.length, JSON.stringify(likes));
-            console.log('All nodes: ', allNodes.length, JSON.stringify(allNodes.length)); // , JSON.stringify(allNodes)
-            console.log('All node audits: ', nodeAudits.length, JSON.stringify(nodeAudits));
-            console.log('All points: ', points.length); //, JSON.stringify(points)
+            // console.log('All nodedatas: ', allNodedatas.length, JSON.stringify(allNodedatas));
+            // console.log('All images: ', images.length, JSON.stringify(images));
+            // console.log('All local likes: ', likes.length, JSON.stringify(likes));
+            // console.log('All nodes: ', allNodes.length, JSON.stringify(allNodes.length)); // , JSON.stringify(allNodes)
+            // console.log('All node audits: ', nodeAudits.length, JSON.stringify(nodeAudits));
+            // console.log('All points: ', points.length); //, JSON.stringify(points)
         } catch (e) {
             console.log('Sync error: ', e);
         }

@@ -62,7 +62,7 @@ const WidgetNodeHeader = ({lid}: {lid: string | undefined}) => {
                         {/* <Text numberOfLines={1} tw="text-xl leading-6 font-bold text-s-900 dark:text-s-100">
                             {node?.lat}, {node?.lon}
                         </Text> */}
-                        <Text tw="text-base leading-5 text-s-700 dark:text-s-400">
+                        <Text tw="text-base leading-5 text-s-700 dark:text-s-300">
                             {node?.lat}, {node?.lon}
                         </Text>
                         <Text numberOfLines={1} tw="text-xs leading-4 text-s-400 dark:text-s-100">

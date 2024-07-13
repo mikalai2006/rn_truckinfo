@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo} from 'react';
 import {NativeModules, Platform, Text, View} from 'react-native';
-import {HOST_API} from '@env';
+import {hostAPI} from '~utils/global';
 
 import {activeLanguage, setLanguages, setCountries, langCode, languages, setCurrencies} from '../../../store/appSlice';
 import {useAppDispatch, useAppSelector} from '~store/hooks';
@@ -17,7 +17,7 @@ export const WidgetInitApp = () => {
     const activeLanguageFromStore = useAppSelector(activeLanguage);
 
     const activeLangCode = useAppSelector(langCode);
-    console.log('activeLangCode=', activeLangCode);
+    // console.log('activeLangCode=', activeLangCode);
 
     const {onChooseLanguage, onChangeLocale} = useLanguage();
     const languagesFromStore = useAppSelector(languages);
@@ -52,7 +52,7 @@ export const WidgetInitApp = () => {
             try {
                 const onFindLanguages = async () => {
                     await onFetch(
-                        HOST_API +
+                        hostAPI +
                             '/lang?' +
                             new URLSearchParams({
                                 lang: activeLanguageFromStore?.code || 'en',
@@ -83,7 +83,7 @@ export const WidgetInitApp = () => {
 
                 const onFindCountries = async () => {
                     await onFetch(
-                        HOST_API +
+                        hostAPI +
                             '/country?' +
                             new URLSearchParams({
                                 lang: activeLanguageFromStore?.code || 'en',
@@ -111,7 +111,7 @@ export const WidgetInitApp = () => {
 
                 const onFindCurrency = async () => {
                     await onFetch(
-                        HOST_API +
+                        hostAPI +
                             '/currency?' +
                             new URLSearchParams({
                                 lang: activeLanguageFromStore?.code || 'en',

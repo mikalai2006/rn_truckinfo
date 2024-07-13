@@ -74,7 +74,7 @@ const WidgetNodeRating = (props: Props) => {
     return (
         <View>
             <View tw="flex flex-row">
-                <View tw="w-5/12 self-center">
+                <View tw="self-center flex-auto">
                     <View tw="mx-auto">
                         <SRateStar value={rate} />
                     </View>
@@ -83,7 +83,7 @@ const WidgetNodeRating = (props: Props) => {
                         ({t('general:reviewTotal')}: {formatNum(count)})
                     </Text>
                 </View>
-                <View tw="w-7/12">
+                <View tw="">
                     {arrayIndex.map((i, _) => (
                         <SRate
                             value={i}

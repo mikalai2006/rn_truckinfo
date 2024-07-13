@@ -2,23 +2,24 @@ import {hostAPI} from '~utils/global';
 
 import {useFetchWithAuth} from './useFetchWithAuth';
 import {useAppSelector} from '~store/hooks';
-import {INodedataVote, TNodedataVoteInput, activeLanguage} from '~store/appSlice';
+import {INodeVote, TNodeVoteInput, activeLanguage} from '~store/appSlice';
 import {useEffect, useState} from 'react';
 import {ToastAndroid} from 'react-native';
 
 export interface INodeDataVoteProps {
-    filter?: TNodedataVoteInput;
+    filter?: TNodeVoteInput;
 }
 
-export const useNodeDataVote = (props: INodeDataVoteProps) => {
+export const useNodeVote = (props: INodeDataVoteProps) => {
     const {filter} = props;
 
     const {onFetchWithAuth} = useFetchWithAuth();
 
     const activeLanguageFromStore = useAppSelector(activeLanguage);
 
+    const [error, setError] = useState(null);
     const [isLoading, setLoading] = useState(true);
-    const [nodeDataVotes, setNodeDataVotes] = useState<INodedataVote[]>([]);
+    const [nodeVotes, setNodeVotes] = useState<INodeVote[]>([]);
 
     useEffect(() => {
         let ignore = false;
@@ -38,14 +39,14 @@ export const useNodeDataVote = (props: INodeDataVoteProps) => {
                         },
                         body: JSON.stringify({
                             query: `
-                                query findNodedatavotes($limit:Int, $skip:Int, $nodedataId:String, $nodedataUserId: String, $userId: String) {
-                                    nodedatavotes(
+                                query findNodevotes($limit:Int, $skip:Int, $nodeId:String, $nodeUserId: String, $userId: String) {
+                                    nodevotes(
                                         skip:$skip,
                                         limit:$limit,
                                         input: {
                                             userId: $userId, 
-                                            nodedataUserId: $nodedataUserId,
-                                            nodedataId: $nodedataId
+                                            nodeUserId: $nodeUserId,
+                                            nodeId: $nodeId
                                             }
                                         ) {
                                         limit
@@ -55,8 +56,7 @@ export const useNodeDataVote = (props: INodeDataVoteProps) => {
                                             id
                                             userId
                                             nodeId
-                                            nodedataId
-                                            nodedataUserId
+                                            nodeUserId
                                             value
                                             createdAt
                                             updatedAt
@@ -136,8 +136,8 @@ export const useNodeDataVote = (props: INodeDataVoteProps) => {
                 )
                     .then(r => r.json())
                     .then(response => {
-                        if (!ignore && response?.data?.nodedatavotes) {
-                            setNodeDataVotes(response?.data?.nodedatavotes?.data);
+                        if (!ignore && response?.data?.nodevotes) {
+                            setNodeVotes(response?.data?.nodevotes?.data);
                         }
                         return response;
                     })
@@ -149,6 +149,7 @@ export const useNodeDataVote = (props: INodeDataVoteProps) => {
                     });
             } catch (e) {
                 // console.log('UseNodedata error: ', e?.message);
+                setError(e?.message);
                 ToastAndroid.showWithGravity(e?.message, ToastAndroid.LONG, ToastAndroid.TOP);
             }
         };
@@ -162,6 +163,7 @@ export const useNodeDataVote = (props: INodeDataVoteProps) => {
 
     return {
         isLoading,
-        nodeDataVotes,
+        nodeVotes,
+        error,
     };
 };

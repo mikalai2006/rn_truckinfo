@@ -1,4 +1,4 @@
-import {HOST_API} from '@env';
+import {hostAPI} from '~utils/global';
 
 import {Text, View} from 'react-native';
 import React, {useCallback} from 'react';
@@ -45,7 +45,7 @@ const SettingAvatarScreen = ({navigation}: {navigation: NavigationProp<any>}) =>
             return;
         }
 
-        fetch(`${HOST_API}/image`, {
+        fetch(`${hostAPI}/image`, {
             method: 'POST',
             headers: {
                 Authorization: `Bearer ${token.access_token}`,

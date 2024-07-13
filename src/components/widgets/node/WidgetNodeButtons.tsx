@@ -33,7 +33,7 @@ const WidgetNodeButtons = props => {
     // console.log('latLng: ', latLng);
 
     const copyToClipboard = () => {
-        const str = `geo://${node.lat.toFixed(ACCURACITY)};${node.lon.toFixed(ACCURACITY)}?q=${label}`;
+        const str = `${node.lat.toFixed(ACCURACITY)},${node.lon.toFixed(ACCURACITY)}`;
         Clipboard.setString(str);
         showToast();
         onShare(str);
@@ -44,13 +44,13 @@ const WidgetNodeButtons = props => {
     //     setCopiedText(text);
     //   };
     const showToast = () => {
-        ToastAndroid.showWithGravity('All Your Base Are Belong To Us', ToastAndroid.SHORT, ToastAndroid.CENTER);
+        ToastAndroid.showWithGravity(t('general:copyCoordsBuffer'), ToastAndroid.SHORT, ToastAndroid.CENTER);
     };
 
     const onShare = async (str: string) => {
         try {
             const result = await Share.share({
-                message: 'App name ' + str,
+                message: `(POI ${node.name}) ` + str,
             });
             if (result.action === Share.sharedAction) {
                 if (result.activityType) {
@@ -73,7 +73,7 @@ const WidgetNodeButtons = props => {
                     type={'default'}
                     twClass="mr-2 p-2.5 px-3"
                     onPress={() => {
-                        console.log(url);
+                        // console.log(url);
                         url && Linking.openURL(url);
                     }}>
                     <View tw="flex flex-row items-center">

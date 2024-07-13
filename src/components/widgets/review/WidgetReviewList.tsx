@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {Text, View} from 'react-native';
-import {HOST_API} from '@env';
+import {hostAPI} from '~utils/global';
 
 import {useTranslation} from 'react-i18next';
 
@@ -70,7 +70,7 @@ const WidgetReviewList = (props: Props) => {
         // setIsLoading(true);
         try {
             await onFetchWithAuth(
-                HOST_API +
+                hostAPI +
                     '/gql/query?' +
                     new URLSearchParams({
                         lang: 'ru',

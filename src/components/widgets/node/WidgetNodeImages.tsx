@@ -1,12 +1,12 @@
-import {Image, Modal, Text, TouchableOpacity, View} from 'react-native';
-import React, {useCallback, useMemo, useState} from 'react';
-import {HOST_API} from '@env';
+import {Animated, Image, Modal, Text, TouchableOpacity, View} from 'react-native';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
+import {hostAPI} from '~utils/global';
 
 import {useAppSelector} from '~store/hooks';
 import {IImage, INode, activeNode, tokens} from '~store/appSlice';
 import RImage from '~components/r/RImage';
 import SIcon from '~components/ui/SIcon';
-import {iCamera, iChevronDown, iEye, iImage} from '~utils/icons';
+import {iCamera, iChevronDown, iCloseLg, iEye, iImage} from '~utils/icons';
 import RImagePicker from '~components/r/RImagePicker';
 
 import RButton from '~components/r/RButton';
@@ -19,6 +19,10 @@ import {NodeSchema} from '~schema/NodeSchema';
 import {ImageSchema} from '~schema/ImageSchema';
 import UIButton from '~components/ui/UIButton';
 import {FlatList} from 'react-native-gesture-handler';
+import WidgetNodeImagesGalleryItem from '../WidgetNodeImagesGalleryItem';
+import OnboardingPagination from '~components/OnboardingPagination';
+import dayjs from '~utils/dayjs';
+import WidgetUserInfo from '../user/WidgetUserInfo';
 
 export interface IWidgetNodeImagesProps {
     localNode: NodeSchema | null;
@@ -122,6 +126,33 @@ const WidgetNodeImages = (props: IWidgetNodeImagesProps) => {
         return localImagesForActiveNode.length ? localImagesForActiveNode : serverNode ? serverNode.images : [];
     }, [serverNode, allLocaleImages, localNode?._id]);
 
+    const [isModalVisible2, setisModalVisible2] = useState(false);
+
+    const changeModalVisiblity2 = (status: boolean) => {
+        setisModalVisible2(status);
+    };
+
+    const slidesRef = useRef(null);
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const scrollX = useRef(new Animated.Value(0)).current;
+
+    const viewableItemsChanged = useRef(({viewableItems}: any) => {
+        setCurrentIndex(viewableItems.length && viewableItems[0]?.index);
+    }).current;
+
+    const viewConfig = useRef({viewAreaCoveragePercentThreshold: 50}).current;
+
+    const scrollTo = (index: number) => {
+        let newIndex = index;
+        if (newIndex < 0) {
+            newIndex = images.length - 1;
+        }
+        if (newIndex > images.length - 1) {
+            newIndex = 0;
+        }
+        slidesRef.current && slidesRef.current.scrollToIndex({index: newIndex});
+    };
+
     return (
         <View tw="relative">
             {images.length ? (
@@ -131,22 +162,107 @@ const WidgetNodeImages = (props: IWidgetNodeImagesProps) => {
                     renderItem={({item}) => {
                         return (
                             <View tw="w-48 h-32 ml-3 rounded-lg overflow-hidden">
-                                <RImage
-                                    classString="w-full h-full"
-                                    uri={
-                                        item.createdAt ? '' : item.images[0].uri
-                                        // 'https://lh5.googleusercontent.com/p/AF1QipO8MMrx4AwWQxTgESA_-vCaKbovWqUcofLPn1eG=w408-h306-k-no'
-                                    }
-                                    image={item.createdAt ? item : null}
-                                />
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        changeModalVisiblity2(true);
+                                    }}>
+                                    <RImage
+                                        classString="w-full h-full"
+                                        uri={
+                                            item.createdAt ? '' : item.images[0].uri
+                                            // 'https://lh5.googleusercontent.com/p/AF1QipO8MMrx4AwWQxTgESA_-vCaKbovWqUcofLPn1eG=w408-h306-k-no'
+                                        }
+                                        image={item.createdAt ? item : null}
+                                    />
+                                </TouchableOpacity>
                             </View>
                         );
                     }}
                     tw="w-full flex flex-row mb-2"
                 />
             ) : null}
+            <Modal
+                transparent={true}
+                animationType="fade"
+                visible={isModalVisible2}
+                statusBarTranslucent={true}
+                onRequestClose={() => changeModalVisiblity2(false)}>
+                <View tw="flex-1 justify-end bg-black/70">
+                    <View tw="flex-auto bg-white dark:bg-s-800 rounded-t-3xl">
+                        <View tw="absolute z-10 px-2 top-10">
+                            <TouchableOpacity
+                                onPress={() => changeModalVisiblity2(false)}
+                                tw="bg-white/50 dark:bg-black/50 p-4 rounded-full">
+                                <SIcon path={iCloseLg} size={20} tw="text-black dark:text-white" />
+                            </TouchableOpacity>
+                        </View>
+                        {/* <Text tw="text-black">
+                            {props.node?.name}-{props.node?.id}
+                        </Text> */}
+                        <FlatList
+                            data={images}
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                            pagingEnabled
+                            bounces={false}
+                            renderItem={({item}) => <WidgetNodeImagesGalleryItem image={item} />}
+                            // keyExtractor={item => item.id}
+                            onScroll={Animated.event([{nativeEvent: {contentOffset: {x: scrollX}}}], {
+                                useNativeDriver: false,
+                            })}
+                            scrollEventThrottle={32}
+                            onViewableItemsChanged={viewableItemsChanged}
+                            viewabilityConfig={viewConfig}
+                            ref={slidesRef}
+                            style={[{flex: 3}]}
+                        />
+                        {images?.length && (
+                            <>
+                                <View tw="absolute bottom-20 left-0 right-0 flex items-center">
+                                    <OnboardingPagination slides={images} scrollX={scrollX} />
+                                </View>
+                                <View tw="flex flex-row items-center gap-2 px-2 bg-white dark:bg-s-800">
+                                    {/* <View>
+                                    <OnboardingPagination slides={props.node.images} scrollX={scrollX} />
+                                </View> */}
+                                    <View>
+                                        <RButton
+                                            customClass="bg-s-200 dark:bg-black/60 p-3 rounded-full rotate-90"
+                                            onPress={() => scrollTo(currentIndex - 1)}>
+                                            <SIcon path={iChevronDown} size={20} tw="text-black dark:text-white" />
+                                        </RButton>
+                                    </View>
+                                    <View tw="flex-auto pb-4 flex gap-x-2 items-start">
+                                        {/* <Text numberOfLines={2} tw="text-black dark:text-white text-center leading-8">
+                                            {dayjs(props.node.images[currentIndex].createdAt).format(
+                                                'YYYY-MM-DDTHH:mm:ss',
+                                            )}
+                                        </Text> */}
+                                        <Text numberOfLines={1} tw="text-black dark:text-white text-center leading-8">
+                                            {t('general:added')} {dayjs(images[currentIndex].createdAt).fromNow()}
+                                        </Text>
+                                        <View>
+                                            {images[currentIndex]?.user && (
+                                                <WidgetUserInfo userData={images[currentIndex].user} />
+                                            )}
+                                        </View>
+                                    </View>
+                                    <View>
+                                        <RButton
+                                            customClass="bg-s-200 dark:bg-black/60 p-3 rounded-full -rotate-90"
+                                            onPress={() => scrollTo(currentIndex + 1)}>
+                                            <SIcon path={iChevronDown} size={20} tw="text-black dark:text-white" />
+                                        </RButton>
+                                    </View>
+                                </View>
+                            </>
+                        )}
+                    </View>
+                </View>
+            </Modal>
+
             <View tw="px-3">
-                {!isRemovedNode && (
+                {!isRemovedNode && images.length < 3 ? (
                     <UIButton type="default" twClass="w-full" onPress={() => changeModalVisiblity(true)}>
                         <View tw="flex flex-row items-center justify-center">
                             <SIcon path={iCamera} size={30} tw="text-s-300 dark:text-s-500" />
@@ -157,7 +273,7 @@ const WidgetNodeImages = (props: IWidgetNodeImagesProps) => {
                             </View>
                         </View>
                     </UIButton>
-                )}
+                ) : null}
                 {/* <RButton
                         customClass="bg-white dark:bg-s-800 p-4 rounded-lg"
                         onPress={() => changeModalVisiblity(true)}>

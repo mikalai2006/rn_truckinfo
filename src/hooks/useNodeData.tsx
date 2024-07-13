@@ -1,4 +1,4 @@
-import {HOST_API} from '@env';
+import {hostAPI} from '~utils/global';
 
 import {useFetchWithAuth} from './useFetchWithAuth';
 import {TNodeSchema} from '~schema/NodeSchema';
@@ -38,7 +38,7 @@ export const useNodedata = (props: IUseNodeDataProps) => {
         const onGetNodedata = async () => {
             try {
                 await onFetchWithAuth(
-                    HOST_API +
+                    hostAPI +
                         '/gql/query?' +
                         new URLSearchParams({
                             lang: activeLanguageFromStore?.code || 'en',

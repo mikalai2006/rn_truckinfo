@@ -7,7 +7,7 @@ import {useAppDispatch, useAppSelector} from '~store/hooks';
 import RTitle from '~components/r/RTitle';
 import {NavigationProp} from '@react-navigation/native';
 import useAuth from '~hooks/useAuth';
-import {HOST_API} from '@env';
+import {hostAPI} from '~utils/global';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {TextInput} from 'react-native-gesture-handler';
 import {useColorScheme} from 'react-native';
@@ -41,7 +41,7 @@ const SettingFormScreen = ({navigation}: {navigation: NavigationProp<any>}) => {
 
         await onCheckAuth();
 
-        return await fetch(HOST_API + `/user/${userFromStore?.id}`, {
+        return await fetch(hostAPI + `/user/${userFromStore?.id}`, {
             method: 'PATCH',
             headers: {
                 'Access-Control-Allow-Origin-Type': '*',

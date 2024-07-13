@@ -14,7 +14,7 @@ const MapLocalScreen = (props: Props) => {
     const {route} = props;
     const marker = route.params?.marker;
     const initialCenter = route.params?.initialCenter;
-    console.log('MapLocalScreen: ');
+    // console.log('MapLocalScreen: ');
 
     const [angleDefault, setAngleDefault] = useState(0);
     const [enableMagnet, setEnableMagnet] = useState(false);
@@ -26,7 +26,7 @@ const MapLocalScreen = (props: Props) => {
                 source={webviewSource}
                 marker={marker}
                 initialCenter={initialCenter}
-                enableMagnet={true}
+                enableMagnet={enableMagnet}
                 angle={angle}
                 compass={
                     <WidgetMapHeading

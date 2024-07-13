@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {HOST_API} from '@env';
+import {hostAPI} from '~utils/global';
 
 import {useFetchWithAuth} from './useFetchWithAuth';
 import {useAppSelector} from '~store/hooks';
@@ -40,7 +40,7 @@ const useNode = (props: IUseNodeProps) => {
             try {
                 // await onGetNode(activeLanguageFromStore?.code || 'en', localNode)
                 await onFetchWithAuth(
-                    HOST_API +
+                    hostAPI +
                         '/gql/query?' +
                         new URLSearchParams({
                             lang: activeLanguageFromStore?.code || 'en',
@@ -63,6 +63,11 @@ const useNode = (props: IUseNodeProps) => {
                                         lon
                                         name
                                         userId
+                                        nodeLike {
+                                            dlike
+                                            like
+                                            status
+                                        }
                                         user {
                                             id
                                             lang

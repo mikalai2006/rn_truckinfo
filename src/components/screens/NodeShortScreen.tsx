@@ -30,7 +30,7 @@ const NodeShortScreen = (props: Props) => {
     useEffect(() => {
         // 👇️ run a function when the component unmounts 👇️
         const unsubscribe = navigation.addListener('beforeRemove', e => {
-            console.log('Close sheet');
+            // console.log('Close sheet');
             dispatch(setActiveNode(null));
         });
         return unsubscribe;

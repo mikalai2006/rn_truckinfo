@@ -1,6 +1,6 @@
 import {Image} from 'react-native';
 import React from 'react';
-import {HOST_API} from '@env';
+import {hostSERVER} from '~utils/global';
 
 export interface IImageProps {
     image?: any;
@@ -29,7 +29,7 @@ const RImage = (props: IImageProps) => {
                 image || uri
                     ? {
                           uri: image
-                              ? `http://localhost:8000/images/${image.userId}/${image.service}/${image.serviceId}/${image.path}${image.ext}`
+                              ? `${hostSERVER}/images/${image.userId}/${image.service}/${image.serviceId}/${image.path}${image.ext}`
                               : props.uri,
                       }
                     : placeholder

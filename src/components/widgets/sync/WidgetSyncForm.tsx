@@ -2,7 +2,7 @@ import {useQuery, useRealm} from '@realm/react';
 import {useState} from 'react';
 import {Button, TextInput, View} from 'react-native';
 import {BSON} from 'realm';
-import {HOST_API} from '@env';
+import {hostAPI} from '~utils/global';
 import {NodeSchema} from '~schema/NodeSchema';
 import {useAppSelector} from '~store/hooks';
 import {tokens} from '~store/appSlice';
@@ -62,7 +62,7 @@ export const WidgetSyncForm = () => {
         }
         console.log('onFindAllNodes');
 
-        fetch(HOST_API + '/gql/query', {
+        fetch(hostAPI + '/gql/query', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -1,5 +1,5 @@
 import {useEffect} from 'react';
-import {HOST_API} from '@env';
+import {hostAPI} from '~utils/global';
 
 import {activeLanguage, setAmenities, setTags, ITokens} from '../../../store/appSlice';
 import {useAppDispatch, useAppSelector} from '~store/hooks';
@@ -18,7 +18,7 @@ export const WidgetInitAppWithAuth = () => {
             try {
                 const onFindAmenities = async (tokenFromStore: ITokens) => {
                     await onFetchWithAuth(
-                        HOST_API +
+                        hostAPI +
                             '/gql/query?' +
                             new URLSearchParams({
                                 lang: activeLanguageFromStore?.code || 'en',
@@ -67,7 +67,7 @@ export const WidgetInitAppWithAuth = () => {
 
                 const onFindTags = async (tokenFromStore: ITokens) => {
                     await onFetchWithAuth(
-                        HOST_API +
+                        hostAPI +
                             '/gql/query?' +
                             new URLSearchParams({
                                 lang: activeLanguageFromStore?.code || 'en',

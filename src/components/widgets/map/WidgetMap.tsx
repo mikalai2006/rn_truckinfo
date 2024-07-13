@@ -124,7 +124,7 @@ const WidgetMap = (props: Props) => {
             if (!filterAmenities.length || showCross) {
                 filterAmenities = Object.keys(amenityFromStore);
             }
-            var testTime = window.performance.now();
+            // var testTime = window.performance.now();
             // console.log(
             //     'filterAmenities: ',
             //     filterAmenities,
@@ -182,7 +182,7 @@ const WidgetMap = (props: Props) => {
             //const result2 = result.filtered(query).sorted([['_id', true]]);
 
             // console.log('result2: ', result2.length);
-            console.log('time query: ', window.performance.now() - testTime);
+            // console.log('time query: ', window.performance.now() - testTime);
             // console.log('fullQuery=', fullQuery);
             return result;
         },
@@ -481,8 +481,10 @@ const WidgetMap = (props: Props) => {
             <View tw="flex-1">
                 {mapComponent()}
                 <WidgetNotConnect />
-                <View tw="absolute top-24 left-0 z-[999999]">
-                    <Text tw=" bg-s-500">{JSON.stringify(props.angle)}</Text>
+                <View tw="absolute bottom-0 left-0 z-[999999]">
+                    {props.enableMagnet && (
+                        <Text tw="bg-s-200 dark:bg-s-800 text-s-500">{JSON.stringify(props.angle)}</Text>
+                    )}
                 </View>
             </View>
             {typeof markers === 'number' ? (

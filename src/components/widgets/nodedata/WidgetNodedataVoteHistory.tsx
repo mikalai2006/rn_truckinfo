@@ -10,6 +10,7 @@ import {iHandThumbsDownFill, iHandThumbsUpFill} from '~utils/icons';
 import dayjs from '~utils/dayjs';
 import {useQuery} from '@realm/react';
 import {LikeSchema} from '~schema/LikeSchema';
+import WidgetUserLink from '../user/WidgetUserLink';
 
 type Props = {
     nodedataId: string;
@@ -40,12 +41,12 @@ const WidgetNodedataVoteHistory = (props: Props) => {
 
     return (
         <View tw="">
-            <Text tw="text-sm text-left text-s-500 pt-2 pb-1">{t('general:historyLikeNodedata')}</Text>
+            <Text tw="text-sm text-left text-s-500 pt-2 pb-1">{t('general:historyNodedataTitle')}</Text>
             {!isLoading
                 ? votes.map(el => (
                       <View key={el.id} tw="flex flex-row items-center py-2 border-t border-s-100 dark:border-s-800">
                           <View tw="flex-auto">
-                              <WidgetUserInfo userData={el.user} />
+                              <WidgetUserLink userData={el.user} />
                           </View>
                           {/* <View tw="">
                           </View> */}

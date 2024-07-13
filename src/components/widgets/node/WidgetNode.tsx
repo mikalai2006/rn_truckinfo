@@ -20,6 +20,7 @@ import WidgetNodeAudit from './WidgetNodeAudit';
 import UIButton from '~components/ui/UIButton';
 import {useNavigation} from '@react-navigation/native';
 import WidgetNodeAuthor from './WidgetNodeAuthor';
+import WidgetNodeVote from './WidgetNodeVote';
 
 export interface IWidgetNodeProps {
     node: TNodeSchema;
@@ -114,7 +115,6 @@ const WidgetNode = (props: IWidgetNodeProps) => {
                     />
                 </View>
             </View>
-            {/* <WidgetNodeVote lid={localNode._id.toHexString()} serverNode={serverNode} /> */}
             {/* <WidgetNodeLikes /> */}
             <View tw="flex px-3">
                 {isRemovedNode ? (
@@ -190,6 +190,9 @@ const WidgetNode = (props: IWidgetNodeProps) => {
                 {/* <WidgetNodeImagesLine /> */}
                 {/* <WidgetNodeVisited />
                         <WidgetNodeVisitedTime /> */}
+            </View>
+            <View tw="pt-3">
+                <WidgetNodeVote lid={localNode._id.toHexString()} serverNode={serverNode} />
             </View>
             <View tw="pt-3">
                 <WidgetNodeImages localNode={localNode} serverNode={serverNode} isRemovedNode={isRemovedNode} />

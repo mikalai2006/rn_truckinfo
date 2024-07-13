@@ -148,7 +148,7 @@ const WidgetMapHeading = (props: IWidgetMapHeading) => {
     // };
 
     useEffect(() => {
-        console.log('WidgetMapHeading Render');
+        // console.log('WidgetMapHeading Render');
         // // // TestModule.heading();
         // // TestModule.setUpdateInterval(300);
         // // TestModule.setUpdateAlpha(0.0);
@@ -168,46 +168,46 @@ const WidgetMapHeading = (props: IWidgetMapHeading) => {
             if (diff > 1) {
                 //  && !historyAngles.current.includes(Math.round(fixAngle))
                 prevAngle.current = fixAngle;
-                // Orientation.getDeviceOrientation(deviceOrientation => {
-                //     let diffAngle = 0;
-                //     switch (deviceOrientation) {
-                //         case OrientationType['LANDSCAPE-RIGHT']:
-                //             diffAngle = -90;
-                //             break;
-                //         case OrientationType['PORTRAIT-UPSIDEDOWN']:
-                //             diffAngle = -180;
-                //             break;
-                //         case OrientationType['LANDSCAPE-LEFT']:
-                //             diffAngle = 90;
-                //             break;
+                Orientation.getDeviceOrientation(deviceOrientation => {
+                    let diffAngle = 0;
+                    switch (deviceOrientation) {
+                        case OrientationType['LANDSCAPE-RIGHT']:
+                            diffAngle = -90;
+                            break;
+                        case OrientationType['PORTRAIT-UPSIDEDOWN']:
+                            diffAngle = -180;
+                            break;
+                        case OrientationType['LANDSCAPE-LEFT']:
+                            diffAngle = 90;
+                            break;
 
-                //         case OrientationType.UNKNOWN:
-                //             diffAngle = -90;
-                //             break;
-                //         default:
-                //             break;
-                //     }
+                        case OrientationType.UNKNOWN:
+                            diffAngle = -90;
+                            break;
+                        default:
+                            break;
+                    }
 
-                //     // setState({magnetometer: fixAngle + diffAngle});
-                //     // if (onSetAngle) {
-                //     //     onSetAngle(fixAngle + diffAngle);
-                //     // }
+                    // setState({magnetometer: fixAngle + diffAngle});
+                    // if (onSetAngle) {
+                    //     onSetAngle(fixAngle + diffAngle);
+                    // }
 
-                //     const azimut = fixAngle + diffAngle;
-                //     // setState({magnetometer: fixAngle + diffAngle});
-                //     // historyAngles.current.length > 10 && historyAngles.current.shift();
-                //     // historyAngles.current.push(Math.round(fixAngle));
+                    const azimut = fixAngle + diffAngle;
+                    // setState({magnetometer: fixAngle + diffAngle});
+                    // historyAngles.current.length > 10 && historyAngles.current.shift();
+                    // historyAngles.current.push(Math.round(fixAngle));
 
-                //     console.log('azimut=', azimut);
-                //     onSetAngle && onSetAngle(azimut);
-                // });
-                const azimut = fixAngle;
-                // setState({magnetometer: fixAngle + diffAngle});
-                // historyAngles.current.length > 10 && historyAngles.current.shift();
-                // historyAngles.current.push(Math.round(fixAngle));
+                    // console.log('azimut=', azimut);
+                    onSetAngle && onSetAngle(azimut);
+                });
+                // const azimut = fixAngle;
+                // // setState({magnetometer: fixAngle + diffAngle});
+                // // historyAngles.current.length > 10 && historyAngles.current.shift();
+                // // historyAngles.current.push(Math.round(fixAngle));
 
-                console.log('azimut=', azimut);
-                onSetAngle && onSetAngle(azimut);
+                // console.log('azimut=', azimut);
+                // onSetAngle && onSetAngle(azimut);
             }
         });
 

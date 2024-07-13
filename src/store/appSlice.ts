@@ -309,11 +309,17 @@ export interface INodeAudit {
 export interface INodeVote {
     id: string;
     userId: string;
+    nodeId: string;
+    nodeUserId: string;
     user: IUser;
+    owner: IUser;
     value: number;
     createdAt: string;
     updatedAt: string;
 }
+export type TNodeVoteInput = {
+    [Property in keyof INodeVote]?: INodeVote[Property];
+};
 
 export interface IMagnitData {
     angle: number;
@@ -335,7 +341,8 @@ export interface INode {
     address: IAddress;
     images: IImage[];
     audits: INodeAudit[];
-    votes: INodeVote[];
+    // votes: INodeVote[];
+    nodeLike: ILikeNode;
     props: any;
     lon: number;
     lat: number;
@@ -528,7 +535,7 @@ export const uiSlice = createSlice({
         //     state.feature = action.payload ? {...action.payload} : action.payload;
         // },
         setDark: (state, action: PayloadAction<boolean>) => {
-            console.log('setDark: ', action.payload);
+            // console.log('setDark: ', action.payload);
             state.dark = action.payload;
         },
         setBounds: (state, action: PayloadAction<IBounds>) => {

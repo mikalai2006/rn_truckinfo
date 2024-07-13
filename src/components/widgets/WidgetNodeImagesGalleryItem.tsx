@@ -1,8 +1,9 @@
 import React from 'react';
-import {Text, ImageBackground, View, useWindowDimensions} from 'react-native';
+import {View, useWindowDimensions} from 'react-native';
 import RImage from '~components/r/RImage';
 
 import {IImage} from '~store/appSlice';
+// import {hostSERVER} from '~utils/global';
 
 export interface IWidgetNodeImagesGalleryItemProps {
     image: IImage;
@@ -10,19 +11,24 @@ export interface IWidgetNodeImagesGalleryItemProps {
 export default function WidgetNodeImagesGalleryItem(props: IWidgetNodeImagesGalleryItemProps) {
     const {width} = useWindowDimensions();
     const {image} = props;
-    const source = {
-        uri: `http://localhost:3000/images/${image.userId}/${image.service}/${image.serviceId}/1024-${image.path}${image.ext}`,
-    };
+
+    // const source = {
+    //     uri: `${hostSERVER}/images/${image.userId}/${image.service}/${image.serviceId}/${image.path}${image.ext}`,
+    // };
 
     return (
         <View tw="items-stretch justify-center" style={[{width}]}>
             {image && (
-                <ImageBackground source={source} tw="flex-1">
-                    {/* <RImage classString="absolute h-full w-full" image={props.image} /> */}
-                    {/* <View tw="absolute bottom-0 justify-center items-stretch py-6 px-4">
-                        <Text tw="text-center text-4xl text-s-800 dark:text-s-100">{image.createdAt.toString()}</Text>
-                    </View> */}
-                </ImageBackground>
+                // <ImageBackground source={source} tw="flex-1">
+                // </ImageBackground>
+                <RImage
+                    classString="w-full h-full"
+                    uri={
+                        image.createdAt ? '' : image.images[0].uri
+                        // 'https://lh5.googleusercontent.com/p/AF1QipO8MMrx4AwWQxTgESA_-vCaKbovWqUcofLPn1eG=w408-h306-k-no'
+                    }
+                    image={image.createdAt ? image : null}
+                />
             )}
         </View>
     );

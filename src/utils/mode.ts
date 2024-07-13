@@ -5,7 +5,7 @@ import colors from './colors';
 
 export const setMode = (mode: 'dark' | 'light' | 'system') => {
     if (Platform.OS === 'android') {
-        console.log('mode=', mode);
+        // console.log('mode=', mode);
 
         if (mode === 'dark') {
             setAppearanceDark();

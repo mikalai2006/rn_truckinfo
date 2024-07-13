@@ -22,7 +22,7 @@ import {setMode} from '~utils/mode';
 const Stack = createNativeStackNavigator();
 
 const HelloStack = () => {
-    console.log('Render HelloStack');
+    // console.log('Render HelloStack');
 
     const {colorScheme} = useColorScheme();
 
@@ -57,7 +57,7 @@ const HelloStack = () => {
     useEffect(() => {
         if (languagesFromStore.length > 0) {
             for (const lang of languagesFromStore) {
-                i18n.addResources(lang.code, 'general', lang.localization);
+                i18n.addResourceBundle(lang.code, 'general', lang.localization, true);
             }
         }
     }, [languagesFromStore]);

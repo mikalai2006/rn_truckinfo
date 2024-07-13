@@ -1,7 +1,7 @@
 import {View, ActivityIndicator, Platform, Image, Text} from 'react-native';
 import React, {useCallback, useEffect, useMemo, useRef} from 'react';
 import useAuth from '~hooks/useAuth';
-import {HOST_API} from '@env';
+import {hostAPI} from '~utils/global';
 
 import {useAppDispatch, useAppSelector} from '~store/hooks';
 import {setTokens, tokens} from '~store/appSlice';
@@ -11,9 +11,9 @@ import {useTranslation} from 'react-i18next';
 import {useNavigation} from '@react-navigation/native';
 import {useNetInfo} from '@react-native-community/netinfo';
 import BottomSheet from '@gorhom/bottom-sheet';
-import colors from '~utils/colors';
-import UIBottomSheet from '~components/ui/UIBottomSheet';
-import {NativeViewGestureHandler} from 'react-native-gesture-handler';
+// import colors from '~utils/colors';
+// import UIBottomSheet from '~components/ui/UIBottomSheet';
+// import {NativeViewGestureHandler} from 'react-native-gesture-handler';
 
 const source = require('./auth.html');
 const webviewSource = Image.resolveAssetSource(source);
@@ -58,9 +58,8 @@ const AuthScreen = () => {
 
         if (!tokensFromStore) {
             //navigation.navigate('AuthScreen');
-            console.log('expand', refBottomSheet?.current);
-
-            refBottomSheet?.current?.expand();
+            // console.log('expand', refBottomSheet?.current);
+            // refBottomSheet?.current?.expand();
         } else if (tokensFromStore.access_token && tokensFromStore.refresh_token && !isTokenExpired()) {
             console.log('Get user');
             onGetIam();
@@ -148,7 +147,7 @@ const AuthScreen = () => {
 
             if (error) {
                 dispatch(setTokens(null));
-                refBottomSheet?.current?.forceClose();
+                // refBottomSheet?.current?.forceClose();
             }
 
             if (access_token && refresh_token) {
@@ -172,7 +171,7 @@ const AuthScreen = () => {
         () =>
             !isConnected
                 ? `
-        window.hapi = "${HOST_API}"
+        window.hapi = "${hostAPI}"
         document.getElementById('title').textContent = "${t('general:oauthTitleDisconnect')}";
         document.getElementById('description').textContent = "${t('general:oauthTitleDisconnectDescription')}";
         document.getElementById('buttons').style.display = 'none'
@@ -180,7 +179,7 @@ const AuthScreen = () => {
         
         `
                 : `
-        window.hapi = "${HOST_API}"
+        window.hapi = "${hostAPI}"
         document.getElementById('title').textContent = "${t('general:oauthTitle')}";
         document.getElementById('description').textContent = "${t('general:oauthDescription')}";
         true; // note: this is required, or you'll sometimes get silent failures
@@ -224,8 +223,8 @@ const AuthScreen = () => {
                             sendMessage(newNavState);
                         }}
                         userAgent={userAgent}
-                        // source={{uri: 'file:///android_asset/auth.html'}}
-                        source={webviewSource}
+                        source={{uri: 'file:///android_asset/auth.html'}}
+                        // source={webviewSource}
                         // source={{
                         //     uri: `${HOST}/${activeLanguageFromStore?.code || 'en'}/authmobileapp`,
                         // }}

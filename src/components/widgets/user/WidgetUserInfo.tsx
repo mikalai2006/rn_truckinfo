@@ -22,7 +22,7 @@ const WidgetUserInfo = (props: Props) => {
                 <RImage image={userData?.images ? userData?.images[0] : null} tw="h-10 w-10" />
             </View>
             <View tw="pl-2">
-                <Text tw="text-base text-s-900 dark:text-s-300">{userData.login}</Text>
+                <Text tw="text-base text-s-900 dark:text-s-300">{userData?.login}</Text>
                 <WidgetUserStat userData={userData} />
             </View>
         </View>

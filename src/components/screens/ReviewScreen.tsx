@@ -55,28 +55,30 @@ const ReviewScreen = (props: Props) => {
 
     return (
         <SafeAreaView tw="flex-1 flex bg-s-100 dark:bg-s-950">
-            <View tw="px-6 -mt-2 pb-2">
-                <WidgetNodeHeader lid={lid} />
-                {/* <Text tw="text-xl font-bold text-s-800 dark:text-s-200">{t('general:tagCreateListTitle')}</Text>
+            <View tw="flex lg:flex-row">
+                <View tw="px-4 pb-2">
+                    <WidgetNodeHeader lid={lid} />
+                    {/* <Text tw="text-xl font-bold text-s-800 dark:text-s-200">{t('general:tagCreateListTitle')}</Text>
                     <Text tw="mt-1 text-base leading-5 text-s-800 dark:text-s-200">
                         {t('general:tagCreateListDescription')}
                     </Text> */}
-                {/* <ReviewScreenHeader navigation={navigation} route={route} options={options} back={back} /> */}
+                    {/* <ReviewScreenHeader navigation={navigation} route={route} options={options} back={back} /> */}
+                </View>
+                <View tw="flex-auto">
+                    <View tw="mx-3 p-3 bg-white dark:bg-s-950 rounded-xl">
+                        <WidgetNodeRating lid={lid} serverNode={serverNode} />
+                    </View>
+                    {/* <WidgetReviewForm />
+                     */}
+                </View>
             </View>
-            <View tw="shrink-0 grow-0">
-                <View tw="mx-3 p-3 bg-white dark:bg-s-950 rounded-xl">
-                    <WidgetNodeRating lid={lid} serverNode={serverNode} />
-                </View>
-                {/* <WidgetReviewForm />
-                 */}
-                <View tw="mx-3 mt-2">
-                    <UIButton type="default" onPress={() => navigation.navigate('ReviewFormScreen', {lid: lid})}>
-                        <View tw="flex flex-row items-center justify-center">
-                            <SIcon path={iPlusLg} size={25} tw="text-s-500 dark:text-s-200" />
-                            <Text tw="pl-2 text-black dark:text-s-200 text-xl">{t('general:addReview')}</Text>
-                        </View>
-                    </UIButton>
-                </View>
+            <View tw="mx-3 mt-2">
+                <UIButton type="default" onPress={() => navigation.navigate('ReviewFormScreen', {lid: lid})}>
+                    <View tw="flex flex-row items-center justify-center">
+                        <SIcon path={iPlusLg} size={25} tw="text-s-500 dark:text-s-200" />
+                        <Text tw="pl-2 text-black dark:text-s-200 text-xl">{t('general:addReview')}</Text>
+                    </View>
+                </UIButton>
             </View>
             <View tw="flex-auto">
                 <WidgetReviewList lid={lid} serverNode={serverNode} />

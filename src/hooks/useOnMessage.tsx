@@ -2,7 +2,7 @@
 // import {setTokenAccess, setUser, tokens} from '../store/appSlice';
 // import {useAppDispatch, useAppSelector} from '~store/hooks';
 // import CookieManager from '@react-native-cookies/cookies';
-// import {HOST} from '@env';
+// import {HOST} from  '~utils/global';
 // import {Alert} from 'react-native';
 // import {ScreenKeys} from '~components/screens';
 

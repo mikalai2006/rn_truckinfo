@@ -1,6 +1,6 @@
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {Text, View} from 'react-native';
-import {HOST_API} from '@env';
+import {hostAPI} from '~utils/global';
 
 import {useFetchWithAuth} from '~hooks/useFetchWithAuth';
 import {ICountry, INode, countries, user} from '~store/appSlice';
@@ -207,7 +207,7 @@ export const WidgetSync2 = () => {
 
                 let newState = null;
 
-                await onFetchWithAuth(`${HOST_API}/file/${element.stat.code}`, {
+                await onFetchWithAuth(`${hostAPI}/file/${element.stat.code}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',

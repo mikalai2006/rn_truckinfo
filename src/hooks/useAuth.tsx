@@ -1,4 +1,4 @@
-import {HOST_API} from '@env';
+import {hostAPI} from '~utils/global';
 
 import {tokens, setTokens, setUser, ITokens} from '~store/appSlice';
 import {useAppDispatch, useAppSelector} from '~store/hooks';
@@ -64,7 +64,7 @@ export default function useAuth() {
         if (!tokenFromStore?.access_token || isTokenExpired()) {
             return;
         }
-        return await onFetch(HOST_API + '/auth/iam', {
+        return await onFetch(hostAPI + '/auth/iam', {
             method: 'GET',
             headers: {
                 Accept: 'application/json',
@@ -99,7 +99,7 @@ export default function useAuth() {
         }
         // console.log('onRefreshToken: tokens=', tokenFromStore);
 
-        return await onFetch(HOST_API + '/auth/refresh', {
+        return await onFetch(hostAPI + '/auth/refresh', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',

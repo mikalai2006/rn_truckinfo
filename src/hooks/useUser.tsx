@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {HOST_API} from '@env';
+import {hostAPI} from '~utils/global';
 
 import {useFetchWithAuth} from './useFetchWithAuth';
 import {useAppDispatch, useAppSelector} from '~store/hooks';
@@ -31,7 +31,7 @@ const useUser = (props: IUseUserProps) => {
         const onGetUser = async () => {
             try {
                 await onFetchWithAuth(
-                    HOST_API +
+                    hostAPI +
                         '/gql/query?' +
                         new URLSearchParams({
                             lang: activeLanguageFromStore?.code || 'en',
@@ -91,7 +91,7 @@ const useUser = (props: IUseUserProps) => {
                     .then(r => r.json())
                     .then(response => {
                         if (!ignore) {
-                            console.log('onGetUser: ', response);
+                            // console.log('onGetUser: ', response);
 
                             const responseUser: IUser = response.data.user;
                             if (!responseUser) {

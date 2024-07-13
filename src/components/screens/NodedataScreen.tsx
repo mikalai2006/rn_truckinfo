@@ -1,5 +1,5 @@
 import React, {useMemo, useRef} from 'react';
-// import {HOST_API} from '@env';
+// import {HOST_API} from  '~utils/global';
 
 import {Text, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
@@ -11,8 +11,6 @@ import SIcon from '~components/ui/SIcon';
 import {iHandThumbsDown, iHandThumbsDownFill, iHandThumbsUp, iHandThumbsUpFill, iWarning} from '~utils/icons';
 import {useAppSelector} from '~store/hooks';
 import {useNodedata} from '~hooks/useNodeData';
-import UIBottomSheetScrollView from '~components/ui/UIBottomSheetScrollView';
-import BottomSheet from '@gorhom/bottom-sheet/lib/typescript/components/bottomSheet/BottomSheet';
 import {useObject, useQuery, useRealm} from '@realm/react';
 import {NodeSchema} from '~schema/NodeSchema';
 import {BSON, UpdateMode} from 'realm';
@@ -28,6 +26,7 @@ import UIInfo from '~components/ui/UIInfo';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {ScrollView} from 'react-native-gesture-handler';
 import RImage from '~components/r/RImage';
+import WidgetUserLink from '~components/widgets/user/WidgetUserLink';
 
 type Props = NativeStackScreenProps<MapLocalStackParamList, 'NodedataScreen'>;
 
@@ -258,7 +257,7 @@ const NodedataScreen = (props: Props) => {
                                     <View key={index.toString()} tw="mb-3">
                                         {el?.user && (
                                             <View tw="pb-2">
-                                                <WidgetUserInfo userData={el.user} />
+                                                <WidgetUserLink userData={el.user} />
                                             </View>
                                         )}
                                         <View tw="flex bg-white dark:bg-s-900 px-4 py-4 rounded-xl relative mt-2">

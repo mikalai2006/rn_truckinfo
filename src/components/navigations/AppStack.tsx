@@ -3,7 +3,7 @@ import {createDrawerNavigator} from '@react-navigation/drawer';
 import {useWindowDimensions} from 'react-native';
 import {useColorScheme} from 'nativewind';
 
-import {tokens} from '../../store/appSlice';
+import {tokens, user} from '../../store/appSlice';
 import colors from '../../utils/colors';
 import SettingStack from './SettingStack';
 import {useAppSelector} from '~store/hooks';
@@ -11,6 +11,7 @@ import {CustomDrawer} from './CustomDrawer';
 import MapLocalStack from './MapLocalStack';
 import {useTranslation} from 'react-i18next';
 import {HelpScreen, HomeScreen, SyncScreen} from '~components/screens';
+import AdminScreen from '~components/screens/AdminScreen';
 
 const Drawer = createDrawerNavigator();
 
@@ -20,6 +21,7 @@ export default function AppStack() {
 
     const {t} = useTranslation();
     const tokensFromStore = useAppSelector(tokens);
+    const userFromStore = useAppSelector(user);
 
     // console.log('Render AppStack');
 
@@ -39,7 +41,7 @@ export default function AppStack() {
                         shadowColor: colorScheme === 'dark' ? colors.s[900] : colors.s[200],
                         backgroundColor: colorScheme === 'dark' ? colors.s[900] : colors.s[200],
                     },
-                    drawerType: dimensions.width >= 768 ? 'permanent' : 'front',
+                    drawerType: dimensions.width >= 1024 ? 'permanent' : 'front',
                     headerStyle: {
                         backgroundColor: colorScheme === 'dark' ? '#0f172a' : colors.p[500],
                     },
@@ -86,11 +88,18 @@ export default function AppStack() {
                         />
                     </>
                 ) : null}
-                <Drawer.Screen
+                {/* <Drawer.Screen
                     name="HelpScreen"
                     component={HelpScreen}
                     options={{title: t('general:screenHelpTitle')}}
-                />
+                /> */}
+                {userFromStore?.roles.includes('admin') && (
+                    <Drawer.Screen
+                        name="AdminScreen"
+                        component={AdminScreen}
+                        options={{title: t('general:screenAdminTitle')}}
+                    />
+                )}
             </Drawer.Navigator>
         </>
     );

@@ -11,6 +11,7 @@ import UIButton from '~components/ui/UIButton';
 import {NodeSchema} from '~schema/NodeSchema';
 import {BSON, UpdateMode} from 'realm';
 import {formatNum} from '~utils/utils';
+import {useNodeVote} from '~hooks/useNodeVote';
 
 type Props = {
     lid: string;
@@ -28,7 +29,9 @@ const WidgetNodeVote = (props: Props) => {
         return items.filtered('nlid == $0', lid);
     });
 
-    const serverNodeVote = React.useMemo(() => serverNode?.votes || [], [serverNode?.votes]);
+    const serverNodeVote = React.useMemo(() => serverNode?.nodeLike || {}, [serverNode?.nodeLike]);
+
+    //const {nodeVotes, isLoading, error} = useNodeVote({filter: {nodeId: localNode?.sid}});
 
     const localVotes = useMemo(() => {
         const result = {
@@ -45,7 +48,9 @@ const WidgetNodeVote = (props: Props) => {
 
         return result;
     }, [localNodeVote]);
-    const votes = {dlike: 10002, like: 13534};
+    const votes = useMemo(() => {
+        return {dlike: serverNodeVote.dlike + localVotes.dlike, like: serverNodeVote.like + localVotes.like};
+    }, [localVotes.dlike, localVotes.like, serverNodeVote.dlike, serverNodeVote.like]);
 
     const realm = useRealm();
     const onLike = (value: 1 | -1) => {
@@ -78,7 +83,7 @@ const WidgetNodeVote = (props: Props) => {
 
     return (
         <View tw="px-4 pb-2">
-            <View tw="p-3 rounded-xl bg-s-50">
+            <View tw="p-3 rounded-xl bg-white dark:bg-s-900">
                 <View>
                     <Text tw="font-bold text-lg leading-5 text-s-900 dark:text-s-200">
                         {t('general:feedbackTitle')}

@@ -11,6 +11,7 @@ import {INodedata} from '~store/appSlice';
 import {useQuery} from '@realm/react';
 import {LikeSchema} from '~schema/LikeSchema';
 import UIButton from '~components/ui/UIButton';
+import WidgetUserLink from '../user/WidgetUserLink';
 
 type Props = {
     nodedata: INodedata;
@@ -45,12 +46,13 @@ const WidgetNodedataVoteLast = (props: Props) => {
             {votes.map(el => (
                 <View key={el.id} tw="flex flex-row items-center pb-2">
                     <View tw="flex-auto">
-                        {el?.updatedAt && <Text tw="text-sm text-s-500">{dayjs(el?.updatedAt).fromNow()}</Text>}
-                        <WidgetUserInfo userData={el.user} />
+                        <WidgetUserLink userData={el.user} />
                     </View>
                     {/* <View tw="">
                           </View> */}
                     <View tw="flex items-end">
+                        {el?.updatedAt && <Text tw="text-sm text-s-500">{dayjs(el?.updatedAt).fromNow()}</Text>}
+
                         {el.value > 0 ? (
                             <SIcon path={iHandThumbsUpFill} size={20} tw="text-green-600" />
                         ) : (
