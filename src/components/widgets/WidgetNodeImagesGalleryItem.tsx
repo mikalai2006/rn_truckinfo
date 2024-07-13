@@ -22,7 +22,7 @@ export default function WidgetNodeImagesGalleryItem(props: IWidgetNodeImagesGall
                 // <ImageBackground source={source} tw="flex-1">
                 // </ImageBackground>
                 <RImage
-                    classString="w-full h-full"
+                    classString="w-full aspect-video"
                     uri={
                         image.createdAt ? '' : image.images[0].uri
                         // 'https://lh5.googleusercontent.com/p/AF1QipO8MMrx4AwWQxTgESA_-vCaKbovWqUcofLPn1eG=w408-h306-k-no'

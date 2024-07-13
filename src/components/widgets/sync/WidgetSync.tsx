@@ -87,7 +87,7 @@ export const WidgetSync = () => {
                 if (!ccode) {
                     return;
                 }
-                console.log('Sync ccode=', ccode);
+                // console.log('Sync ccode=', ccode);
 
                 const localNodes = [...nodes].filter(x => x.ccode === ccode);
                 const serverNodesMap = new Map(data.map(s => [s.id, s]));
@@ -96,8 +96,8 @@ export const WidgetSync = () => {
                 const nodesNotExistLocal = data.filter(x => !localNodesMap.get(x.id));
                 const nodesNotExistServer = localNodes.filter(x => !serverNodesMap.get(x.sid));
 
-                console.log('nodesNotExistLocal=', nodesNotExistLocal.length);
-                console.log('nodesNotExistServer=', nodesNotExistServer.length);
+                // console.log('nodesNotExistLocal=', nodesNotExistLocal.length);
+                // console.log('nodesNotExistServer=', nodesNotExistServer.length);
 
                 // add server nodes
                 // const newNodes = data.filter(x => !localNodesMap.get(x.id));
@@ -128,7 +128,7 @@ export const WidgetSync = () => {
                         countAddNodes++;
                     }
                 }
-                console.log(`New newNodes: countAddNodes=${countAddNodes} countUpdateNodes=${countUpdateNodes}`);
+                // console.log(`New newNodes: countAddNodes=${countAddNodes} countUpdateNodes=${countUpdateNodes}`);
 
                 // remove nodes not exist on the server
                 let countRemoveNodes = 0;
@@ -148,7 +148,7 @@ export const WidgetSync = () => {
                         countRemoveNodes++;
                     }
                 }
-                console.log(`countRemoveNodes=${countRemoveNodes}, countRemoveNodeLikes=${countRemoveNodeLikes}`);
+                // console.log(`countRemoveNodes=${countRemoveNodes}, countRemoveNodeLikes=${countRemoveNodeLikes}`);
             } catch (e) {
                 throw e;
                 // console.log(e);
@@ -248,7 +248,7 @@ export const WidgetSync = () => {
 
                 if (listSync.length && isBusy.current) {
                     // listSync.length > 55 &&
-                    console.log('listSync.length=', listSync.length);
+                    // console.log('listSync.length=', listSync.length);
                     onLoadPOI([...listSync]);
                 } else {
                     setLoadPOI(false);

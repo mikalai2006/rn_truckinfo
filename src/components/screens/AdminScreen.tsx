@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {ScrollView, Text, View} from 'react-native';
 import {useColorScheme} from 'nativewind';
 
@@ -17,7 +17,9 @@ const AdminScreen = ({}) => {
     const tokensFromStore = useAppSelector(tokens);
     const userFromStore = useAppSelector(user);
 
+    const [statusCreate, setStatusCreate] = useState(false);
     const onCreateFiles = async () => {
+        setStatusCreate(true);
         await fetch(hostAPI + '/file/create', {
             method: 'GET',
             headers: {
@@ -25,7 +27,11 @@ const AdminScreen = ({}) => {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${tokensFromStore?.access_token}`,
             },
-        }).then(r => r.json());
+        })
+            .then(r => r.json())
+            .finally(() => {
+                setStatusCreate(false);
+            });
     };
 
     return (
@@ -51,6 +57,7 @@ const AdminScreen = ({}) => {
                                             onPress={() => {
                                                 onCreateFiles();
                                             }}
+                                            loading={statusCreate}
                                         />
                                     </View>
                                 </View>

@@ -225,6 +225,7 @@ const MapLocalStack = ({}) => {
                     // statusBarAnimation: 'none',
                     // animation: 'slide_from_right',
                     headerShown: false,
+                    presentation: 'transparentModal',
                     // presentation: 'transparentModal',
                     // animation: 'none',
                 }}

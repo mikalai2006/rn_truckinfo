@@ -58,10 +58,10 @@ const RImagePicker = (props: IRImagePickerProps) => {
                     buttonPositive: 'OK',
                 });
                 if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                    console.log('You can use camera');
+                    //console.log('You can use camera');
                     ImagePicker.launchCamera(options, callback);
                 } else {
-                    console.log('Camera permission denied');
+                    //console.log('Camera permission denied');
                 }
             } else {
                 ImagePicker.launchImageLibrary(options, callback);

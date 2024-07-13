@@ -77,7 +77,7 @@ const WidgetMapLocation = (props: IWidgetMapLocation) => {
     // });
     const [enabledX, setEnabledX] = useState(false);
     const listener = addListener(({locationEnabled}) => {
-        console.log(`Location are ${locationEnabled ? 'enabled' : 'disabled'}`);
+        // console.log(`Location are ${locationEnabled ? 'enabled' : 'disabled'}`);
         setEnabledX(locationEnabled);
 
         onEnableLocation && onEnableLocation(locationEnabled);
@@ -181,7 +181,7 @@ const WidgetMapLocation = (props: IWidgetMapLocation) => {
             // });
 
             const fn = () => {
-                console.log('You can use the location');
+                // console.log('You can use the location');
                 const watchID = Geolocation.watchPosition(
                     position => {
                         // console.log('Change position', position);
@@ -218,14 +218,14 @@ const WidgetMapLocation = (props: IWidgetMapLocation) => {
             };
 
             const result = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
-            console.log('result', typeof result);
-            console.log('ACCESS_FINE_LOCATION: ', result);
+            // console.log('result', typeof result);
+            // console.log('ACCESS_FINE_LOCATION: ', result);
             // const result2 = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION);
             // console.log('ACCESS_COARSE_LOCATION: ', result2);
 
             if (result === true) {
                 // you code
-                console.log('Check permission: ', result);
+                // console.log('Check permission: ', result);
 
                 getCurrentPosition();
                 fn();

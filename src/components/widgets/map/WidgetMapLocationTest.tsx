@@ -47,7 +47,7 @@ const WidgetMapLocationTest = () => {
     // });
 
     const listener = addListener(({locationEnabled}) => {
-        console.log(`Location are ${locationEnabled ? 'enabled' : 'disabled'}`);
+        // console.log(`Location are ${locationEnabled ? 'enabled' : 'disabled'}`);
         setEnabled(locationEnabled);
 
         // onEnableLocation && onEnableLocation(locationEnabled);

@@ -178,7 +178,7 @@ const WidgetMapHeading = (props: IWidgetMapHeading) => {
                             diffAngle = -180;
                             break;
                         case OrientationType['LANDSCAPE-LEFT']:
-                            diffAngle = 90;
+                            diffAngle = -270;
                             break;
 
                         case OrientationType.UNKNOWN:
@@ -198,7 +198,7 @@ const WidgetMapHeading = (props: IWidgetMapHeading) => {
                     // historyAngles.current.length > 10 && historyAngles.current.shift();
                     // historyAngles.current.push(Math.round(fixAngle));
 
-                    // console.log('azimut=', azimut);
+                    // console.log('azimut=', azimut, deviceOrientation);
                     onSetAngle && onSetAngle(azimut);
                 });
                 // const azimut = fixAngle;

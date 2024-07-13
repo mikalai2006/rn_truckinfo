@@ -87,7 +87,7 @@ export const WidgetSync2 = () => {
                 if (!ccode) {
                     return;
                 }
-                console.log('Sync ccode=', ccode);
+                // console.log('Sync ccode=', ccode);
 
                 const localNodes = [...nodes].filter(x => x.ccode === ccode);
                 const serverNodesMap = new Map(data.map(s => [s[0], s]));
@@ -96,8 +96,8 @@ export const WidgetSync2 = () => {
                 const nodesNotExistLocal = data.filter(x => !localNodesMap.get(x[0]));
                 const nodesNotExistServer = localNodes.filter(x => !serverNodesMap.get(x.sid));
 
-                console.log('nodesNotExistLocal=', nodesNotExistLocal.length);
-                console.log('nodesNotExistServer=', nodesNotExistServer);
+                // console.log('nodesNotExistLocal=', nodesNotExistLocal.length);
+                // console.log('nodesNotExistServer=', nodesNotExistServer);
 
                 // add server nodes
                 // const newNodes = data.filter(x => !localNodesMap.get(x.id));
@@ -144,7 +144,7 @@ export const WidgetSync2 = () => {
                         countAddNodes++;
                     }
                 }
-                console.log(`New newNodes: countAddNodes=${countAddNodes} countUpdateNodes=${countUpdateNodes}`);
+                // console.log(`New newNodes: countAddNodes=${countAddNodes} countUpdateNodes=${countUpdateNodes}`);
 
                 // // remove nodes not exist on the server
                 // let countRemoveNodes = 0;

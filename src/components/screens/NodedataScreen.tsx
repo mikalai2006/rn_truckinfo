@@ -305,7 +305,7 @@ const NodedataScreen = (props: Props) => {
                                                         <Text tw="text-base leading-5 text-s-900 dark:text-s-300">
                                                             {t('general:hintAddNodedataLike')}
                                                         </Text>
-                                                        <View tw="flex flex-row items-center flex-auto justify-end">
+                                                        <View tw="flex lg:flex-row items-center flex-auto justify-end">
                                                             <Text tw="text-base leading-5 text-black dark:text-white my-1 mr-3">
                                                                 {el?.tag?.title} -{' '}
                                                                 {(el.value === 'yes'

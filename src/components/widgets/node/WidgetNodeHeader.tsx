@@ -65,7 +65,7 @@ const WidgetNodeHeader = ({lid}: {lid: string | undefined}) => {
                         <Text tw="text-base leading-5 text-s-700 dark:text-s-300">
                             {node?.lat}, {node?.lon}
                         </Text>
-                        <Text numberOfLines={1} tw="text-xs leading-4 text-s-400 dark:text-s-100">
+                        <Text numberOfLines={1} tw="text-xs leading-4 text-s-400 dark:text-s-400">
                             {t('general:added')} {dayjs(node?.createdAt).fromNow()}
                         </Text>
                     </>

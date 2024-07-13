@@ -118,7 +118,7 @@ const WidgetMapCreateNode = React.forwardRef<WidgetMapCreateNodeNodeRefProps, Wi
                 // }
 
                 // alert(JSON.stringify(newNodeData));
-                console.log(newNodeData);
+                // console.log(newNodeData);
 
                 realm.write(() => {
                     realm.create('NodeSchema', newNodeData); // , Realm.UpdateMode.All

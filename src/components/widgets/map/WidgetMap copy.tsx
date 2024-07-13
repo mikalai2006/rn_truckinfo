@@ -85,7 +85,7 @@ const WidgetMap = (props: Props) => {
     };
     const [myPositionToCenter, setmyPositionToCenter] = useState<ILatLng | null>(null);
     const onSetCenterAsMyPosition = () => {
-        console.log('onSetCenterAsMyPosition: ', myPosition);
+        // console.log('onSetCenterAsMyPosition: ', myPosition);
 
         if (myPosition) {
             setmyPositionToCenter({lat: myPosition.coords.latitude, lng: myPosition.coords.longitude});
@@ -124,7 +124,7 @@ const WidgetMap = (props: Props) => {
             if (!filterAmenities.length || showCross) {
                 filterAmenities = Object.keys(amenityFromStore);
             }
-            var testTime = window.performance.now();
+            // var testTime = window.performance.now();
             // console.log(
             //     'filterAmenities: ',
             //     filterAmenities,
@@ -182,7 +182,7 @@ const WidgetMap = (props: Props) => {
             //const result2 = result.filtered(query).sorted([['_id', true]]);
 
             // console.log('result2: ', result2.length);
-            console.log('time query: ', window.performance.now() - testTime);
+            // console.log('time query: ', window.performance.now() - testTime);
             // console.log('fullQuery=', fullQuery);
             return result;
         },

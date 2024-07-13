@@ -99,14 +99,14 @@ const SyncScreen = ({navigation}) => {
     const nodes = useQuery(NodeSchema);
     const removeUnUsedNodes = async () => {
         // setNameCountrySync(`${t('general:syncPOIRemoveUnused')}`);
-        let timeSet = window.performance.now();
+        // let timeSet = window.performance.now();
         const usedCountriesCode = countryStats.map(x => x.code);
         const idsQuery = usedCountriesCode.map(code => `'${code}'`).join(', ');
-        console.log('idsQuery=', idsQuery);
+        // console.log('idsQuery=', idsQuery);
 
         const allUnSyncNodes = nodes.filtered(`NOT ccode IN {${idsQuery}}`); //.filter(x => !usedCountriesCode.includes(x.ccode));
-        console.log('Remove unused nodes: ', allUnSyncNodes.length);
-        console.log('Time unused: ', window.performance.now() - timeSet);
+        // console.log('Remove unused nodes: ', allUnSyncNodes.length);
+        // console.log('Time unused: ', window.performance.now() - timeSet);
 
         let countRemoveNodes = 0;
         if (allUnSyncNodes.length > 0) {
@@ -127,7 +127,7 @@ const SyncScreen = ({navigation}) => {
                 //     }
                 // }
 
-                console.log('countRemoveNodes', countRemoveNodes);
+                // console.log('countRemoveNodes', countRemoveNodes);
             });
 
             const idsMyLocalNodes = myLocalNodesUnUsedCountry.map(l => `'${l._id.toHexString()}'`).join(', ');
@@ -136,7 +136,7 @@ const SyncScreen = ({navigation}) => {
                 realm.write(() => {
                     realm.delete(likeUnUsedNodes);
                 });
-                console.log('Remove likeUnUsedNodes=', likeUnUsedNodes.length);
+                // console.log('Remove likeUnUsedNodes=', likeUnUsedNodes.length);
             }
         }
     };

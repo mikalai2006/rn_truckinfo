@@ -12,7 +12,6 @@ import {useTranslation} from 'react-i18next';
 import WidgetHomeSync from '~components/widgets/home/WidgetHomeSync';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import WidgetNews from '~components/widgets/help/WidgetNews';
-import {deflate, inflate} from 'react-native-gzip';
 
 const HelpScreen = ({}) => {
     const {colorScheme} = useColorScheme();
@@ -20,13 +19,7 @@ const HelpScreen = ({}) => {
     const tokensFromStore = useAppSelector(tokens);
 
     useEffect(() => {
-        const s = async () => {
-            const data = `hello world`;
-            const compressed = await deflate(data);
-            console.log('compressed: ', compressed);
-            const decompressed = await inflate(compressed);
-            console.log('decompressed: ', decompressed);
-        };
+        const s = async () => {};
         s();
     }, []);
 

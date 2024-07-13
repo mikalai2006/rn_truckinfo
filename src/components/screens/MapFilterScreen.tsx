@@ -14,7 +14,7 @@ import UIButton from '~components/ui/UIButton';
 import RImage from '~components/r/RImage';
 
 const MapFilterScreen = () => {
-    console.log('Render MapFilterScreen');
+    // console.log('Render MapFilterScreen');
 
     const {t} = useTranslation();
     const navigation = useNavigation();
@@ -111,7 +111,7 @@ const MapFilterScreen = () => {
                 oldFilter[typeAmenity].tags[tag.id] = ['yes'];
             }
         }
-        console.log('oldFilter:', JSON.stringify(oldFilter));
+        // console.log('oldFilter:', JSON.stringify(oldFilter));
         setFilterX(oldFilter);
     };
     const onToggleValueTag = (typeAmenity: string, tag: ITag, value: any = undefined) => {
@@ -129,7 +129,7 @@ const MapFilterScreen = () => {
             } else {
                 oldFilter[typeAmenity].tags[tag.id].splice(indexExistValue, 1); // = oldFilter[typeAmenity].tags[tag.id].filter(x => x !== value);
             }
-            console.log('filter:', JSON.stringify(filterX));
+            // console.log('filter:', JSON.stringify(filterX));
         }
 
         setFilterX(oldFilter);
